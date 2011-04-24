@@ -15,4 +15,32 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Specification-Vendor>Fujitsu</Specification-Vendor>
+                                <Implementation-Vendor>Fujitsu</Implementation-Vendor>
+                                <Implementation-Title>CAS</Implementation-Title>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                                <Build-Date>${maven.build.timestamp}</Build-Date>
+                                <Premain-Class>org.wooddog.woodstub.core.WoodStub</Premain-Class>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
