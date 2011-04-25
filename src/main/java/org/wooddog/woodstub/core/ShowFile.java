@@ -248,7 +248,7 @@ public class ShowFile {
         return false;
     }
 
-    private String format(int i) {
+    private static String format(int i) {
         String hex;
 
         hex = Integer.toHexString(i);
@@ -283,9 +283,69 @@ public class ShowFile {
 
     public static void main(String[] args) throws Exception {
         ClassReader reader;
+        ByteArrayOutputStream out;
+
+        out = new ByteArrayOutputStream();
 
         reader = new ClassReader();
         reader.read(ShowFile.class.getClassLoader().getResourceAsStream("org/wooddog/woodstub/core/Test.class"));
         System.out.println(reader.toString());
+        reader.write(out);
+
+        compare(out.toByteArray());
+    }
+
+    public static void compare(byte[] result) throws IOException {
+        byte[] source;
+        int index;
+
+        index = 0;
+        source = read();
+        System.out.println(source.length + " " + result.length);
+
+        System.out.println("---- SOURCE");
+        System.out.println(hexDump(source));
+
+
+        System.out.println("\n---- TRANSF");
+        System.out.println(hexDump(result));
+
+        System.out.println("equals " + hexDump(source).equals(hexDump(result)));
+
+    }
+
+    public static byte[] read() throws IOException {
+        InputStream in;
+        int length;
+        byte[] buffer;
+        ByteArrayOutputStream result;
+
+        result = new ByteArrayOutputStream();
+        buffer = new byte[4096];
+        in = ShowFile.class.getClassLoader().getResourceAsStream("org/wooddog/woodstub/core/Test.class");
+
+        while((length = in.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+        }
+
+        return result.toByteArray();
+
+    }
+
+    public static String hexDump(byte[] bytes) {
+        StringBuffer buffer;
+
+        buffer = new StringBuffer();
+
+        for (int i = 0; i < bytes.length; i++) {
+            if (i % 32 == 0) {
+                buffer.append("\n");
+            }
+
+            buffer.append(format(Converter.asUnsigned(bytes[i])) + " ");
+
+        }
+
+        return buffer.toString();
     }
 }

@@ -1,9 +1,14 @@
 package org.wooddog.woodstub.core;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.wooddog.woodstub.core.instrumentation.Attribute;
+import org.wooddog.woodstub.core.instrumentation.AttributeFactory;
+import org.wooddog.woodstub.core.instrumentation.ConstantPool;
+import org.wooddog.woodstub.core.instrumentation.FieldInfo;
+
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,38 +18,39 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public class ClassReader {
-    private String magic;
-    private short minor;
-    private short major;
-    private ConstantPoolEntry[] constants;
+    private int magic;
+    private int minor;
+    private int major;
+    private ConstantPool constants;
     private short accessFlags;
     private short indexOfClass;
     private short indexOfSuper;
-    private short[] interfaceReferences;
-    private FieldEntry[] fields;
-    private MethodEntry[] methods;
-    private Attribute[] attributes;
+    private int[] interfaceReferences;
+    private List<FieldInfo> fields;
+    private List<FieldInfo> methods;
+    private List<Attribute> attributes;
 
     public void read(InputStream clazz) throws IOException {
         DataInputStream stream;
 
         stream = new DataInputStream(clazz);
-        magic = Integer.toHexString(stream.readInt());
-        minor = stream.readShort();
-        major = stream.readShort();
 
-        constants = readConstants(stream);
+        magic = stream.readInt();
+        minor = Converter.asUnsigned(stream.readShort());
+        major = Converter.asUnsigned(stream.readShort());
+
+        constants = new ConstantPool();
+        constants.read(stream);
+        constants.dump();
 
         accessFlags = stream.readShort();
         indexOfClass = stream.readShort();
         indexOfSuper = stream.readShort();
 
         interfaceReferences = readInterfaces(stream);
-        fields = readFields(stream);
-
-        methods = readMethods(stream);
-
-        attributes = readAttributes(stream);
+        fields = readFields(constants, stream);
+        methods = readFields(constants, stream);
+        attributes = AttributeFactory.read(constants, stream);
 
         int i = 0;
         while(clazz.read() != -1) {
@@ -54,26 +60,43 @@ public class ClassReader {
         System.out.println("remaing bytes " + i);
     }
 
-    private ConstantPoolEntry[] readConstants(DataInputStream stream) throws IOException {
-        ConstantPoolEntry[] pool;
-        int size;
+    public void write(OutputStream out) throws IOException {
+        DataOutputStream stream;
 
-        size = stream.readShort();
-        pool = new ConstantPoolEntry[size];
+        stream = new DataOutputStream(out);
+        stream.writeInt(magic);
+        stream.writeShort(minor);
+        stream.writeShort(major);
+        constants.write(stream);
+        stream.writeShort(accessFlags);
+        stream.writeShort(indexOfClass);
+        stream.writeShort(indexOfSuper);
 
-        for (int i = 0; i < pool.length - 1; i++) {
-            pool[i] = ConstantPoolEntry.read(stream);
+        stream.writeShort(interfaceReferences.length);
+        for (int reference : interfaceReferences) {
+            stream.writeShort(reference);
         }
 
-        return pool;
+        stream.writeShort(fields.size());
+        for (FieldInfo field : fields) {
+            field.write(constants, stream);
+        }
+
+        stream.writeShort(methods.size());
+        for (FieldInfo method : methods) {
+            method.write(constants, stream);
+        }
+
+        AttributeFactory.write(attributes, constants, stream);
     }
 
-    private short[] readInterfaces(DataInputStream stream) throws IOException {
-        short[] interfaces;
+
+    private int[] readInterfaces(DataInputStream stream) throws IOException {
+        int[] interfaces;
         int size;
 
-        size = stream.readShort();
-        interfaces = new short[size];
+        size = Converter.asUnsigned(stream.readShort());
+        interfaces = new int[size];
 
         for (int i = 0; i < size; i++) {
             interfaces[i] = stream.readShort();
@@ -82,47 +105,24 @@ public class ClassReader {
         return interfaces;
     }
 
-    private FieldEntry[] readFields(DataInputStream stream) throws IOException {
-        FieldEntry[] entries;
-        int size;
+    private List<FieldInfo> readFields(ConstantPool constantPool, DataInputStream stream) throws IOException {
+        FieldInfo field;
+        List<FieldInfo> fields;
+        int fieldCount;
 
-        size = stream.readShort();
-        entries = new FieldEntry[size];
+        fieldCount = Converter.asUnsigned(stream.readShort());
+        fields = new ArrayList<FieldInfo>();
 
-        for (int i = 0; i < size; i++) {
-            entries[i] = FieldEntry.read(constants, stream);
+        for (int i = 0; i < fieldCount; i++) {
+            field = new FieldInfo();
+            field.read(constantPool, stream);
+            fields.add(field);
+            field.dump(constantPool);
         }
 
-        return entries;
+        return fields;
     }
 
-    private MethodEntry[] readMethods(DataInputStream stream) throws IOException {
-        MethodEntry[] entries;
-        int size;
-
-        size = stream.readShort();
-        entries = new MethodEntry[size];
-
-        for (int i = 0; i < size; i++) {
-            entries[i] = MethodEntry.read(constants, stream);
-        }
-
-        return entries;
-    }
-
-    private Attribute[] readAttributes(DataInputStream stream) throws IOException {
-        Attribute[] attributes;
-        int size;
-
-        size = stream.readShort();
-        attributes = new Attribute[size];
-
-        for (int i = 0; i < size; i++) {
-            attributes[i] = AttributeFactory.read(constants, stream);
-        }
-
-        return attributes;
-    }
 
     @Override
     public String toString() {
