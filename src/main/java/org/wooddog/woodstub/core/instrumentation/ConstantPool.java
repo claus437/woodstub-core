@@ -21,6 +21,7 @@ import java.util.Map;
 public class ConstantPool {
     private static final Map<Integer, Class> POOLINFOTYPES = new HashMap<Integer, Class>();
     private List<ConstantPoolInfo> pool;
+    private DataInputStream stream;
 
     static {
         POOLINFOTYPES.put(1, ConstantUtf8Info.class);
@@ -47,12 +48,14 @@ public class ConstantPool {
     public void read(DataInputStream stream) throws IOException {
         ConstantPoolInfo entry;
         int length;
-        byte tag;
+        int tag;
 
-        length = Converter.asUnsigned(stream.readShort());
+        this.stream = stream;
+        length = stream.readUnsignedShort();
+        System.out.println("length " + length);
 
         for (int i = 0; i < length - 1; i++) {
-            tag = stream.readByte();
+            tag = stream.readUnsignedByte();
 
             entry = createEntry(tag);
             entry.read(stream);
@@ -70,19 +73,24 @@ public class ConstantPool {
     }
 
     public void dump() {
-        System.out.println("size: " + pool.size());
-
         for (int i = 0; i < pool.size(); i++) {
             System.out.println("#" + (i + 1) + " " + pool.get(i).toString());
         }
     }
 
-    private ConstantPoolInfo createEntry(byte tag) {
+    private ConstantPoolInfo createEntry(int tag) {
         Class clazz;
         ConstantPoolInfo entry;
 
-        clazz = POOLINFOTYPES.get((int) tag);
+        clazz = POOLINFOTYPES.get(tag);
         if (clazz == null) {
+
+            dump();
+            try {
+                System.out.println(stream.readUnsignedByte());
+            } catch (IOException x) {
+                x.printStackTrace();
+            }
             throw new InternalErrorException("unknown constant pool entry " + tag);
         }
 

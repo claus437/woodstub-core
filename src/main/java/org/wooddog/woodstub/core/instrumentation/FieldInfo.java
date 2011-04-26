@@ -32,15 +32,15 @@ public class FieldInfo {
 
     public void read(ConstantPool constantPool, DataInputStream stream) throws IOException {
         Attribute attribute;
-        int length;
+        int attributeCount;
 
-        accessFlags = Converter.asUnsigned(stream.readShort());
-        nameIndex = Converter.asUnsigned(stream.readShort());
-        descriptorIndex = Converter.asUnsigned(stream.readShort());
+        accessFlags = stream.readUnsignedShort();
+        nameIndex = stream.readUnsignedShort();
+        descriptorIndex = stream.readUnsignedShort();
 
-        length = Converter.asUnsigned(stream.readShort());
+        attributeCount = stream.readUnsignedShort();
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < attributeCount; i++) {
             attribute = AttributeFactory.create(constantPool, stream);
             attributes.add(attribute);
         }

@@ -20,10 +20,10 @@ public class TableException {
     private int catchType;
 
     public void read(DataInputStream stream) throws IOException {
-        startPc = Converter.asUnsigned(stream.readShort());
-        endPc = Converter.asUnsigned(stream.readShort());
-        handlerPc = Converter.asUnsigned(stream.readShort());
-        catchType = Converter.asUnsigned(stream.readShort());
+        startPc = stream.readUnsignedShort();
+        endPc = stream.readUnsignedShort();
+        handlerPc = stream.readUnsignedShort();
+        catchType = stream.readUnsignedShort();
     }
 
     public void write(DataOutputStream stream) throws IOException {

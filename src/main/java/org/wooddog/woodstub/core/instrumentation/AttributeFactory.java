@@ -31,7 +31,7 @@ public class AttributeFactory {
         int poolIndex;
         String type;
 
-        poolIndex = Converter.asUnsigned(stream.readShort());
+        poolIndex = stream.readUnsignedShort();
         type = constantPool.getUtf8(poolIndex).getValue();
 
         attribute = createAttribute(type);
@@ -46,7 +46,7 @@ public class AttributeFactory {
         List<Attribute> attributes;
         int attributeCount;
 
-        attributeCount = Converter.asUnsigned(stream.readShort());
+        attributeCount = stream.readUnsignedShort();
         attributes = new ArrayList<Attribute>();
 
         for (int i = 0; i < attributeCount; i++) {

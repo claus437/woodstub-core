@@ -39,23 +39,22 @@ public class AttributeCode implements Attribute {
         int length;
         TableException exception;
 
-        System.out.println("ATT LEN: " + stream.readInt());
-        maxStack = Converter.asUnsigned(stream.readShort());
-        maxLocals = Converter.asUnsigned(stream.readShort());
+        length = stream.readInt();
+        maxStack = stream.readUnsignedShort();
+        maxLocals = stream.readUnsignedShort();
 
         codeLength = stream.readInt();
         code = new byte[codeLength];
+        stream.readFully(code);
 
-        for (int i = 0; i < codeLength; i++) {
-            code[i] = stream.readByte();
-        }
         /*
         ByteCodeReader br;
         br = new ByteCodeReader();
         br.read(stream, codeLength);
         br.dump();
         */
-        exceptionCount = Converter.asUnsigned(stream.readShort());
+
+        exceptionCount = stream.readUnsignedShort();
         exceptions = new ArrayList<TableException>();
 
         for (int i = 0; i < exceptionCount; i++) {
@@ -64,7 +63,7 @@ public class AttributeCode implements Attribute {
             exceptions.add(exception);
         }
 
-        attributeCount = Converter.asUnsigned(stream.readShort());
+        attributeCount = stream.readUnsignedShort();
         attributes = new ArrayList<Attribute>();
 
         for (int i = 0; i < attributeCount; i++) {
@@ -79,19 +78,15 @@ public class AttributeCode implements Attribute {
         stream.writeShort(maxLocals);
         stream.writeInt(code.length);
         stream.write(code);
+
         stream.writeShort(exceptions.size());
         for (TableException exception : exceptions) {
             exception.write(stream);
-            System.out.println("exp");
         }
-
-        System.out.println("ATW: " + (getLength() - 6));
-
 
         stream.writeShort(attributes.size());
         for (Attribute attribute : attributes) {
             attribute.write(constantPool, stream);
-            System.out.println("att");
         }
     }
 

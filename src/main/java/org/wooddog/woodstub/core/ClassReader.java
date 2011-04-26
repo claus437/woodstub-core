@@ -22,9 +22,9 @@ public class ClassReader {
     private int minor;
     private int major;
     private ConstantPool constants;
-    private short accessFlags;
-    private short indexOfClass;
-    private short indexOfSuper;
+    private int accessFlags;
+    private int indexOfClass;
+    private int indexOfSuper;
     private int[] interfaceReferences;
     private List<FieldInfo> fields;
     private List<FieldInfo> methods;
@@ -36,16 +36,15 @@ public class ClassReader {
         stream = new DataInputStream(clazz);
 
         magic = stream.readInt();
-        minor = Converter.asUnsigned(stream.readShort());
-        major = Converter.asUnsigned(stream.readShort());
+        minor = stream.readUnsignedShort();
+        major = stream.readUnsignedShort();
 
         constants = new ConstantPool();
         constants.read(stream);
-        constants.dump();
 
-        accessFlags = stream.readShort();
-        indexOfClass = stream.readShort();
-        indexOfSuper = stream.readShort();
+        accessFlags = stream.readUnsignedShort();
+        indexOfClass = stream.readUnsignedShort();
+        indexOfSuper = stream.readUnsignedShort();
 
         interfaceReferences = readInterfaces(stream);
         fields = readFields(constants, stream);
@@ -57,7 +56,9 @@ public class ClassReader {
             i++;
         }
 
-        System.out.println("remaing bytes " + i);
+        if (i != 0) {
+            throw new InternalErrorException("remaining bytes exsts " + i);
+        }
     }
 
     public void write(OutputStream out) throws IOException {
@@ -95,11 +96,11 @@ public class ClassReader {
         int[] interfaces;
         int size;
 
-        size = Converter.asUnsigned(stream.readShort());
+        size = stream.readUnsignedShort();
         interfaces = new int[size];
 
         for (int i = 0; i < size; i++) {
-            interfaces[i] = stream.readShort();
+            interfaces[i] = stream.readUnsignedShort();
         }
 
         return interfaces;
@@ -110,14 +111,13 @@ public class ClassReader {
         List<FieldInfo> fields;
         int fieldCount;
 
-        fieldCount = Converter.asUnsigned(stream.readShort());
+        fieldCount = stream.readUnsignedShort();
         fields = new ArrayList<FieldInfo>();
 
         for (int i = 0; i < fieldCount; i++) {
             field = new FieldInfo();
             field.read(constantPool, stream);
             fields.add(field);
-            field.dump(constantPool);
         }
 
         return fields;

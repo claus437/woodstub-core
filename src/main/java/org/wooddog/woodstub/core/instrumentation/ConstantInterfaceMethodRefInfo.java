@@ -25,8 +25,8 @@ public class ConstantInterfaceMethodRefInfo implements ConstantPoolInfo {
     }
 
     public void read(DataInputStream stream) throws IOException {
-        classIndex = Converter.asUnsigned(stream.readShort());
-        nameAndTypeIndex = Converter.asUnsigned(stream.readShort());
+        classIndex = stream.readUnsignedShort();
+        nameAndTypeIndex = stream.readUnsignedShort();
     }
 
     public void write(DataOutputStream stream) throws IOException {

@@ -32,8 +32,8 @@ public class ConstantNameAndTypeInfo implements ConstantPoolInfo {
     }
 
     public void read(DataInputStream stream) throws IOException {
-        nameIndex = Converter.asUnsigned(stream.readShort());
-        descriptorIndex = Converter.asUnsigned(stream.readShort());
+        nameIndex = stream.readUnsignedShort();
+        descriptorIndex = stream.readUnsignedShort();
     }
 
     public void write(DataOutputStream stream) throws IOException {

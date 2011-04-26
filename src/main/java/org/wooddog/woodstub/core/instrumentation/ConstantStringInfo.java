@@ -35,7 +35,7 @@ public class ConstantStringInfo implements ConstantPoolInfo {
     }
 
     public void read(DataInputStream stream) throws IOException {
-        stringIndex = Converter.asUnsigned(stream.readShort());
+        stringIndex = stream.readUnsignedShort();
     }
 
     public void write(DataOutputStream stream) throws IOException {
