@@ -1,8 +1,7 @@
 package org.wooddog.woodstub.core.instrumentation;
 
 
-import org.wooddog.woodstub.core.Converter;
-import org.wooddog.woodstub.core.asm.ByteCodeReader;
+import org.wooddog.woodstub.core.asm.InstructionReader;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,8 +25,6 @@ public class AttributeCode implements Attribute {
     private int maxLocals;
     private byte[] code;
 
-    // need to be long ???
-
     public void setConstantPoolIndex(int index) {
         this.poolIndex = index;
     }
@@ -45,14 +42,11 @@ public class AttributeCode implements Attribute {
 
         codeLength = stream.readInt();
         code = new byte[codeLength];
-        stream.readFully(code);
+        //stream.readFully(code);
 
-        /*
-        ByteCodeReader br;
-        br = new ByteCodeReader();
-        br.read(stream, codeLength);
-        br.dump();
-        */
+        InstructionReader ir;
+        ir = new InstructionReader();
+        ir.readBlock(stream, codeLength);
 
         exceptionCount = stream.readUnsignedShort();
         exceptions = new ArrayList<TableException>();
@@ -106,5 +100,9 @@ public class AttributeCode implements Attribute {
         total += code.length;
 
         return total;
+    }
+
+    public String getName() {
+        return "Code";
     }
 }

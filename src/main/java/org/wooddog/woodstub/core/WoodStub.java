@@ -1,5 +1,9 @@
 package org.wooddog.woodstub.core;
 
+import org.wooddog.woodstub.core.runtime.Stub;
+import org.wooddog.woodstub.core.runtime.StubFactory;
+
+import javax.xml.parsers.FactoryConfigurationError;
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
 
@@ -11,22 +15,27 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public class WoodStub {
+    private static StubFactory DEFAULT_FACTORY = new StubFactory() {
+        public Stub createStub(Object source, String clazz, String name, String description) {
+            return null;
+        }
+    };
+
+    private static StubFactory FACTORY = DEFAULT_FACTORY;
+
  	public static void premain(String agentArguments, Instrumentation instrumentation) {
 		instrumentation.addTransformer(new WoodTransformer());
 	}
 
-    public static boolean isStubbed(String className, String methodName, String descriptor) {
-        System.out.println(className + " " + methodName + " " + descriptor);
-        return false;
+    public static StubFactory getStubFactory() {
+        return FACTORY;
     }
 
-    public static Result evaluate(Object src, String className, String methodName, String descriptor, Object[] values) {
-        System.out.println(src);
-        System.out.println(className);
-        System.out.println(methodName);
-        System.out.println(descriptor);
-        System.out.println(Arrays.asList(values));
-
-        return null;
+    public static void setStubFactory(StubFactory factory) {
+        if (factory == null) {
+            FACTORY = DEFAULT_FACTORY;
+        } else {
+            FACTORY = factory;
+        }
     }
 }

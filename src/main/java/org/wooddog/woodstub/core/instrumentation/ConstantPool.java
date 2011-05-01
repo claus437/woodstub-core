@@ -41,6 +41,10 @@ public class ConstantPool {
         pool = new ArrayList<ConstantPoolInfo>();
     }
 
+    public ConstantPoolInfo get(int index) {
+        return pool.get(index - 1);
+    }
+
     public ConstantUtf8Info getUtf8(int index) {
         return (ConstantUtf8Info) pool.get(index -1);
     }
@@ -61,6 +65,11 @@ public class ConstantPool {
             entry.read(stream);
 
             pool.add(entry);
+
+            if (entry instanceof ConstantLongInfo || entry instanceof ConstantDoubleInfo) {
+                pool.add(null);
+                i++;
+            }
         }
     }
 
@@ -68,12 +77,18 @@ public class ConstantPool {
         stream.writeShort(pool.size() + 1);
 
         for (ConstantPoolInfo entry : pool) {
-            entry.write(stream);
+            if (entry != null) {
+                entry.write(stream);
+            }
         }
     }
 
     public void dump() {
         for (int i = 0; i < pool.size(); i++) {
+            if (pool.get(i) == null) {
+                continue;
+            }
+
             System.out.println("#" + (i + 1) + " " + pool.get(i).toString());
         }
     }

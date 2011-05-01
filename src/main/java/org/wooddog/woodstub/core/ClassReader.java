@@ -1,9 +1,6 @@
 package org.wooddog.woodstub.core;
 
-import org.wooddog.woodstub.core.instrumentation.Attribute;
-import org.wooddog.woodstub.core.instrumentation.AttributeFactory;
-import org.wooddog.woodstub.core.instrumentation.ConstantPool;
-import org.wooddog.woodstub.core.instrumentation.FieldInfo;
+import org.wooddog.woodstub.core.instrumentation.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,7 +38,7 @@ public class ClassReader {
 
         constants = new ConstantPool();
         constants.read(stream);
-
+        constants.dump();
         accessFlags = stream.readUnsignedShort();
         indexOfClass = stream.readUnsignedShort();
         indexOfSuper = stream.readUnsignedShort();
@@ -51,13 +48,14 @@ public class ClassReader {
         methods = readFields(constants, stream);
         attributes = AttributeFactory.read(constants, stream);
 
+
         int i = 0;
         while(clazz.read() != -1) {
             i++;
         }
 
         if (i != 0) {
-            throw new InternalErrorException("remaining bytes exsts " + i);
+            throw new InternalErrorException("not fully read, remaining bytes " + i);
         }
     }
 
@@ -91,6 +89,26 @@ public class ClassReader {
         AttributeFactory.write(attributes, constants, stream);
     }
 
+    public List<? extends Attribute> getAttributes(String name) {
+        List<Attribute> attributes;
+
+        attributes = new ArrayList<Attribute>();
+        for (FieldInfo method : methods) {
+            attributes.addAll(method.getAttributes(name));
+        }
+
+        for (FieldInfo field : fields) {
+            attributes.addAll(field.getAttributes(name));
+        }
+
+        for (Attribute attribute : this.attributes) {
+            if (name.equals(attribute.getName())) {
+                attributes.add(attribute);
+            }
+        }
+
+        return attributes;
+    }
 
     private int[] readInterfaces(DataInputStream stream) throws IOException {
         int[] interfaces;

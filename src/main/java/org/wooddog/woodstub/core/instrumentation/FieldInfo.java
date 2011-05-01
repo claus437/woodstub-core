@@ -65,4 +65,18 @@ public class FieldInfo {
         }
         System.out.println("-------------------------------\n");
     }
+
+    public List<Attribute> getAttributes(String name) {
+        List<Attribute> attributes;
+
+        attributes = new ArrayList<Attribute>();
+
+        for (Attribute attribute : this.attributes) {
+            if (name.equals(attribute.getName())) {
+                attributes.add(attribute);
+            }
+        }
+
+        return attributes;
+    }
 }

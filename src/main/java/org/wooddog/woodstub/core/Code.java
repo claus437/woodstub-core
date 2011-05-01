@@ -1,7 +1,5 @@
 package org.wooddog.woodstub.core;
 
-import org.wooddog.woodstub.core.asm.ByteCodeReader;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -33,11 +31,6 @@ public class Code {
     //public static final byte OP_MAX_LOCALS = (byte)
 
     public static void read(DataInputStream stream, int length) throws IOException {
-        ByteCodeReader br;
-
-        br = new ByteCodeReader();
-        br.read(stream, length);
-        br.dump();
     }
     public static void read2(DataInputStream stream, int length) throws IOException {
         int remaining;

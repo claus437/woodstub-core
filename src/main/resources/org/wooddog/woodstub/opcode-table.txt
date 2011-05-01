@@ -128,7 +128,7 @@ ineg                116 (0x74)
 instanceof          193 (0xc1)  S
 invokeinterface     185 (0xb9)  SBB     # last byte should always be null
 invokespecial       183 (0xb7)  S
-invokestatic        184 (0xb8)  S
+invokestatic        184 (0xb8)  S       # CONSTANT_METHOD_REF
 invokevirtual       182 (0xb6)  S
 ior                 128 (0x80)
 irem                112 (0x70)
@@ -166,7 +166,7 @@ lload_2              32 (0x20)
 lload_3              33 (0x21)
 lmul                105 (0x69)
 lneg                117 (0x75)
-lookupswitch        171 (0xab)  V       # has a variable length , need to implement this
+lookupswitch        171 (0xab)  L
 lor                 129 (0x81)
 lrem                113 (0x71)
 lreturn             173 (0xad)
@@ -197,6 +197,6 @@ sastore              86 (0x56)
 sipush               17 (0x11)  S
 swap                 95 (0x5f)
 tableswitch         170 (0xaa)  V       # variable length need to implement.
-wide                196 (0xc4)  V       # parameters depends on previioues opcode.
+wide                196 (0xc4)  V       # parameters depends on previoues opcode.
 
 

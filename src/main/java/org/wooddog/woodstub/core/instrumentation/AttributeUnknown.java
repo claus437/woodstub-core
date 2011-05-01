@@ -16,6 +16,7 @@ import java.io.IOException;
 public class AttributeUnknown implements Attribute {
     private int poolIndex;
     private byte[] content;
+    private String name;
 
 
     public void setConstantPoolIndex(int index) {
@@ -28,6 +29,8 @@ public class AttributeUnknown implements Attribute {
 
     public void read(ConstantPool constantPool, DataInputStream stream) throws IOException {
         int length;
+
+        name = constantPool.getUtf8(poolIndex).getValue();
 
         length = stream.readInt();
         content = new byte[length];
@@ -49,5 +52,9 @@ public class AttributeUnknown implements Attribute {
                 "poolIndex=" + poolIndex +
                 ", content=" + new String(content) +
                 '}';
+    }
+
+    public String getName() {
+        return name;
     }
 }

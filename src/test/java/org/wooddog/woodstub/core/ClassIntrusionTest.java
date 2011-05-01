@@ -45,13 +45,10 @@ public class ClassIntrusionTest {
 
         err = System.out;
 
-        //65537
-        System.out.println("SHO: " + Short.MAX_VALUE);
-        System.out.println("INT: " + Integer.MAX_VALUE);
+        //file = new File("c:\\woodstub-test\\classes\\com\\sun\\corba\\se\\impl\\activation\\RepositoryImpl.class");
+        file = new File("C:\\git-hub\\woodstub-core\\target\\classes\\org\\wooddog\\woodstub\\core\\Template.class");
 
-        file = new File("c:\\woodstub-test\\classes\\com\\sun\\corba\\se\\impl\\activation\\RepositoryImpl.class");
         load(file);
-
     }
 
 

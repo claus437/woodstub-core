@@ -19,4 +19,6 @@ public interface Attribute {
     void read(ConstantPool constantPool, DataInputStream stream) throws IOException;
 
     void write(ConstantPool constantPool, DataOutputStream stream) throws IOException;
+
+    String getName();
 }

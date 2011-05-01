@@ -24,6 +24,7 @@ public class AttributeFactory {
 
     static {
         ATTRIBUTE_TYPES.put("Code", AttributeCode.class);
+        //ATTRIBUTE_TYPES.put("LocalVariableTable", AttributeLocalVariable.class);
     }
 
     public static Attribute create(ConstantPool constantPool, DataInputStream stream) throws  IOException {

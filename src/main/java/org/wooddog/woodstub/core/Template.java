@@ -1,5 +1,7 @@
 package org.wooddog.woodstub.core;
 
+import org.wooddog.woodstub.core.runtime.Stub;
+
 /**
  * Created by IntelliJ IDEA.
  * User: claus
@@ -8,30 +10,45 @@ package org.wooddog.woodstub.core;
  * To change this template use File | Settings | File Templates.
  */
 public class Template {
-   public Template() {
-        System.out.println(100);
 
-        for (int i = 0; i < 100; i++) {
-            System.out.println(i);
-        }
-    }
+    public int methodB(final String a, String b) throws Throwable {
+        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
-    public int methodA(String value) throws Throwable {
-        if (WoodStub.isStubbed("org/wooddog/woodstub/core/Test", "methodA", "(Ljava/lang/String;)I}")) {
+        if (stub != null) {
+            stub.setParameters(new String[]{"a", "b"}, new Object[]{a, b});
 
-            String[] parameterValues = new String[] {value};
+            stub.execute();
 
-            Result result = WoodStub.evaluate(this, "org/wooddog/woodstub/core/Test", "methodA", "(Ljava/lang/String;)I}", parameterValues);
-            if (result != null) {
-                if (result.getException() != null) {
-                    throw result.getException();
-                }
+            switch (stub.getBehavior()) {
+                case Stub.RETURN:
+                    return ((Integer) stub.getResult()).intValue();
 
-                return result.getInt();
+                case Stub.THROW:
+                    throw (Throwable) stub.getResult();
             }
         }
 
-        System.out.println("I WAS NOT STUBBED");
+        System.out.println("im not stubbed");
+        return 0;
+    }
 
-        return 10;
-    }}
+
+    public int methodA(final String a, String b) {
+        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
+
+        if (stub != null) {
+            stub.setParameters(null, new Object[]{a, b});
+
+            stub.execute();
+
+            return ((Integer) stub.getResult()).intValue();
+        }
+
+        System.out.println("im not stubbed");
+        return 0;
+    }
+
+}
+
+
+
