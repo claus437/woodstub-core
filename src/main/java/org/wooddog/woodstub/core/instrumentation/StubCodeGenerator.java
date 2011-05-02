@@ -89,7 +89,7 @@ public class StubCodeGenerator {
 
         addInstruction("invokestatic", idxMethodStubFactory);
         addInstruction("aload_0");
-        addInstruction("LDC", idxStringClassName);
+        addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringName);
         addInstruction("ldc", idxStringDescriptor);
         addInstruction("invokeinterface", idxMethodCreateStub, 5, 0);
