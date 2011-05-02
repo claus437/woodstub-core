@@ -12,7 +12,7 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public interface ConstantPoolInfo {
-    byte getTag();
+    int getTag();
     void read(DataInputStream stream) throws IOException;
     void write(DataOutputStream stream) throws IOException;
 }

@@ -10,7 +10,7 @@ import org.wooddog.woodstub.core.runtime.Stub;
  * To change this template use File | Settings | File Templates.
  */
 public class Template {
-
+    /*
     public int methodB(final String a, String b) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
@@ -31,10 +31,10 @@ public class Template {
         System.out.println("im not stubbed");
         return 0;
     }
-
+    */
 
     public int methodA(final String a, String b) {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
+        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "methodA", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
         if (stub != null) {
             stub.setParameters(null, new Object[]{a, b});

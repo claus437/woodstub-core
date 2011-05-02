@@ -14,16 +14,13 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class ConstantFloatInfo implements ConstantPoolInfo {
-    private byte tag = 4;
+    private static final int TAG = 4;
     private float value;
 
-    public byte getTag() {
-        return tag;
+    public int getTag() {
+        return TAG;
     }
 
-    public void setTag(byte tag) {
-        this.tag = tag;
-    }
 
     public float getValue() {
         return value;
@@ -38,14 +35,14 @@ public class ConstantFloatInfo implements ConstantPoolInfo {
     }
 
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeByte(tag);
+        stream.writeByte(TAG);
         stream.writeFloat(value);
     }
 
     @Override
     public String toString() {
         return "ConstantFloatInfo{" +
-                "tag=" + tag +
+                "tag=" + TAG +
                 ", value=" + value +
                 '}';
     }

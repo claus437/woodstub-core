@@ -29,6 +29,38 @@ public class AttributeCode implements Attribute {
         this.poolIndex = index;
     }
 
+    public int getPoolIndex() {
+        return poolIndex;
+    }
+
+    public void setPoolIndex(int poolIndex) {
+        this.poolIndex = poolIndex;
+    }
+
+    public int getMaxStack() {
+        return maxStack;
+    }
+
+    public void setMaxStack(int maxStack) {
+        this.maxStack = maxStack;
+    }
+
+    public int getMaxLocals() {
+        return maxLocals;
+    }
+
+    public void setMaxLocals(int maxLocals) {
+        this.maxLocals = maxLocals;
+    }
+
+    public byte[] getCode() {
+        return code;
+    }
+
+    public void setCode(byte[] code) {
+        this.code = code;
+    }
+
     public void read(ConstantPool constantPool, DataInputStream stream) throws IOException {
         int codeLength;
         int exceptionCount;

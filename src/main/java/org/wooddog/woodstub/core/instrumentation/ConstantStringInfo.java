@@ -6,6 +6,7 @@ import org.wooddog.woodstub.core.InternalErrorException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,15 +16,18 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class ConstantStringInfo implements ConstantPoolInfo {
-    private byte tag = 8;
+    private static final int TAG = 8;
     private int stringIndex;
 
-    public byte getTag() {
-        return tag;
+    public ConstantStringInfo() {
     }
 
-    public void setTag(byte tag) {
-        this.tag = tag;
+    public ConstantStringInfo(int stringIndex) {
+        this.stringIndex = stringIndex;
+    }
+
+    public int getTag() {
+        return TAG;
     }
 
     public int getStringIndex() {
@@ -39,14 +43,32 @@ public class ConstantStringInfo implements ConstantPoolInfo {
     }
 
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeByte(tag);
+        stream.writeByte(TAG);
         stream.writeShort(stringIndex);
+    }
+
+    public static int indexOf(List<ConstantPoolInfo> pool, int stringIndex) {
+        ConstantPoolInfo info;
+
+        for (int i = 0; i < pool.size(); i++) {
+            info = pool.get(i);
+
+            if (info == null) {
+                continue;
+            }
+
+            if (info.getTag() == TAG && ((ConstantStringInfo) info).getStringIndex() == stringIndex) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override
     public String toString() {
         return "ConstantStringInfo{" +
-                "tag=" + tag +
+                "tag=" + TAG +
                 ", stringIndex=" + stringIndex +
                 '}';
     }

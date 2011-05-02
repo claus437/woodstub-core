@@ -15,17 +15,14 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class ConstantFieldRefInfo implements ConstantPoolInfo {
-    private byte tag = 9;
+    private static final int TAG = 9;
     private int classIndex;
     private int nameAndTypeIndex;
 
-    public byte getTag() {
-        return tag;
+    public int getTag() {
+        return TAG;
     }
 
-    public void setTag(byte tag) {
-        this.tag = tag;
-    }
 
     public int getClassIndex() {
         return classIndex;
@@ -49,7 +46,7 @@ public class ConstantFieldRefInfo implements ConstantPoolInfo {
     }
 
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeByte(tag);
+        stream.writeByte(TAG);
         stream.writeShort(classIndex);
         stream.writeShort(nameAndTypeIndex);
     }
@@ -57,7 +54,7 @@ public class ConstantFieldRefInfo implements ConstantPoolInfo {
     @Override
     public String toString() {
         return "ConstantFieldRefInfo{" +
-                "tag=" + tag +
+                "tag=" + TAG +
                 ", classIndex=" + classIndex +
                 ", nameAndTypeIndex=" + nameAndTypeIndex +
                 '}';

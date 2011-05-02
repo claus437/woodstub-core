@@ -1,5 +1,6 @@
 package org.wooddog.woodstub.core.instrumentation;
 
+import com.sun.org.apache.bcel.internal.classfile.Constant;
 import org.wooddog.woodstub.core.Converter;
 import org.wooddog.woodstub.core.InternalErrorException;
 
@@ -39,14 +40,19 @@ public class ConstantPool {
 
     public ConstantPool() {
         pool = new ArrayList<ConstantPoolInfo>();
+        pool.add(null);
+    }
+
+    public List<ConstantPoolInfo> getConstants() {
+        return pool;
     }
 
     public ConstantPoolInfo get(int index) {
-        return pool.get(index - 1);
+        return pool.get(index);
     }
 
     public ConstantUtf8Info getUtf8(int index) {
-        return (ConstantUtf8Info) pool.get(index -1);
+        return (ConstantUtf8Info) pool.get(index);
     }
 
     public void read(DataInputStream stream) throws IOException {
@@ -120,5 +126,155 @@ public class ConstantPool {
         return entry;
     }
 
+    public int add(ConstantPoolInfo entry) {
+        pool.add(entry);
+        return pool.size() - 1;
+    }
 
+
+    // InterfaceMethodRefInfo -> ClassInfo -> Utf8Info
+    //                        |
+    //                        -> NameAndTypeInfo -> Utf8Info
+    //                                           |
+    //                                           -> Utf8Info
+    public int addInterfaceMethodRefInfo(String className, String methodName, String descriptor) {
+        int idxU8ClassName;
+        int idxClassInfo;
+        int idxU8MethodName;
+        int idxU8Descriptor;
+        int idxNameAndType;
+        int idxMethodRefInfo;
+
+        // CLASS
+        idxU8ClassName = ConstantUtf8Info.indexOf(pool, className);
+        if (idxU8ClassName == -1) {
+            idxU8ClassName = add(new ConstantUtf8Info(className));
+        }
+
+        idxClassInfo = ConstantClassInfo.indexOf(pool, idxU8ClassName);
+        if (idxClassInfo == -1) {
+            idxClassInfo = add(new ConstantClassInfo(idxU8ClassName));
+        }
+
+
+        // METHOD & TYPE
+        idxU8MethodName = ConstantUtf8Info.indexOf(pool, methodName);
+        if (idxU8MethodName == -1) {
+            idxU8MethodName = add(new ConstantUtf8Info(methodName));
+        }
+
+        idxU8Descriptor = ConstantUtf8Info.indexOf(pool, descriptor);
+        if (idxU8Descriptor == -1) {
+            idxU8Descriptor = add(new ConstantUtf8Info(descriptor));
+        }
+
+        idxNameAndType = ConstantNameAndTypeInfo.indexOf(pool, idxU8MethodName, idxU8Descriptor);
+        if (idxNameAndType == -1) {
+            idxNameAndType = add(new ConstantNameAndTypeInfo(idxU8MethodName, idxU8Descriptor));
+        }
+
+
+        // ROOT
+        idxMethodRefInfo = ConstantInterfaceMethodRefInfo.indexOf(pool, idxClassInfo, idxNameAndType);
+        if (idxMethodRefInfo == -1) {
+            idxMethodRefInfo = add(new ConstantInterfaceMethodRefInfo(idxClassInfo, idxNameAndType));
+        }
+
+        return idxMethodRefInfo;
+    }
+
+
+    // MethodRefInfo -> ClassInfo -> Utf8Info
+    //               |
+    //               -> NameAndTypeInfo -> Utf8Info
+    //                                  |
+    //                                  -> Utf8Info
+    public int addMethodRef(String className, String methodName, String descriptor) {
+        int idxU8ClassName;
+        int idxClassInfo;
+        int idxU8MethodName;
+        int idxU8Descriptor;
+        int idxNameAndType;
+        int idxMethodRefInfo;
+
+        System.out.println("----start: " + className + " " + methodName + " " + descriptor);
+        // CLASS
+        idxU8ClassName = ConstantUtf8Info.indexOf(pool, className);
+        if (idxU8ClassName == -1) {
+            idxU8ClassName = add(new ConstantUtf8Info(className));
+            System.out.println("found no utf8 class name");
+        }
+
+        idxClassInfo = ConstantClassInfo.indexOf(pool, idxU8ClassName);
+        if (idxClassInfo == -1) {
+            System.out.println("found no class info " + idxU8ClassName);
+            idxClassInfo = add(new ConstantClassInfo(idxU8ClassName));
+        }
+
+
+        // METHOD & TYPE
+        idxU8MethodName = ConstantUtf8Info.indexOf(pool, methodName);
+        if (idxU8MethodName == -1) {
+            idxU8MethodName = add(new ConstantUtf8Info(methodName));
+            System.out.println("found no utf8 method name");
+        }
+
+        idxU8Descriptor = ConstantUtf8Info.indexOf(pool, descriptor);
+        if (idxU8Descriptor == -1) {
+            idxU8Descriptor = add(new ConstantUtf8Info(descriptor));
+            System.out.println("found no utf8 method description");
+        }
+
+        idxNameAndType = ConstantNameAndTypeInfo.indexOf(pool, idxU8MethodName, idxU8Descriptor);
+        if (idxNameAndType == -1) {
+            idxNameAndType = add(new ConstantNameAndTypeInfo(idxU8MethodName, idxU8Descriptor));
+            System.out.println("found no name and type");
+        }
+
+
+        // ROOT
+        idxMethodRefInfo = ConstantMethodRefInfo.indexOf(pool, idxClassInfo, idxNameAndType);
+        if (idxMethodRefInfo == -1) {
+            idxMethodRefInfo = add(new ConstantMethodRefInfo(idxClassInfo, idxNameAndType));
+            System.out.println("found no method ref");
+        }
+
+        System.out.println("----end: " + className + " " + methodName + " " + descriptor);
+        return idxMethodRefInfo;
+    }
+
+    public int addClass(String name) {
+        int idxUtf8;
+        int idxClassInfo;
+
+        idxUtf8 = ConstantUtf8Info.indexOf(pool, name);
+        if (idxUtf8 == -1) {
+            idxUtf8 = add(new ConstantUtf8Info(name));
+        }
+
+        idxClassInfo = ConstantClassInfo.indexOf(pool, idxUtf8);
+        if (idxClassInfo == -1) {
+            idxClassInfo = add(new ConstantClassInfo(idxUtf8));
+        }
+
+        return idxClassInfo;
+
+    }
+
+    public int addString(String value) {
+        int idxUtf8;
+        int idxString;
+
+        idxUtf8 = ConstantUtf8Info.indexOf(pool, value);
+        if (idxUtf8 == -1) {
+            idxUtf8 = add(new ConstantUtf8Info(value));
+        }
+
+        idxString = ConstantStringInfo.indexOf(pool, idxUtf8);
+        if (idxString == -1) {
+            idxString = add(new ConstantStringInfo(idxUtf8));
+        }
+
+        return idxString;
+    }
 }

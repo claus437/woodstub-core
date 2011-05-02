@@ -14,11 +14,11 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class ConstantIntegerInfo implements ConstantPoolInfo {
-    private byte tag = 3;
+    private static final int TAG = 3;
     private int value;
 
-    public byte getTag() {
-        return tag;
+    public int getTag() {
+        return TAG;
     }
 
     public void read(DataInputStream stream) throws IOException {
@@ -26,14 +26,14 @@ public class ConstantIntegerInfo implements ConstantPoolInfo {
     }
 
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeByte(tag);
+        stream.writeByte(TAG);
         stream.writeInt(value);
     }
 
     @Override
     public String toString() {
         return "ConstantIntegerInfo{" +
-                "tag=" + tag +
+                "tag=" + TAG +
                 ", value=" + value +
                 '}';
     }

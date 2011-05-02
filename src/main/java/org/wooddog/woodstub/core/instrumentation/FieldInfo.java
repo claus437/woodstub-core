@@ -25,9 +25,40 @@ public class FieldInfo {
     private int nameIndex;
     private int descriptorIndex;
 
-
     public FieldInfo() {
         attributes = new ArrayList<Attribute>();
+    }
+
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
+
+    public int getAccessFlags() {
+        return accessFlags;
+    }
+
+    public void setAccessFlags(int accessFlags) {
+        this.accessFlags = accessFlags;
+    }
+
+    public int getNameIndex() {
+        return nameIndex;
+    }
+
+    public void setNameIndex(int nameIndex) {
+        this.nameIndex = nameIndex;
+    }
+
+    public int getDescriptorIndex() {
+        return descriptorIndex;
+    }
+
+    public void setDescriptorIndex(int descriptorIndex) {
+        this.descriptorIndex = descriptorIndex;
     }
 
     public void read(ConstantPool constantPool, DataInputStream stream) throws IOException {

@@ -1,11 +1,13 @@
 package org.wooddog.woodstub.core.instrumentation;
 
+import com.sun.xml.internal.bind.v2.model.core.ClassInfo;
 import org.wooddog.woodstub.core.Converter;
 import org.wooddog.woodstub.core.InternalErrorException;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,15 +17,18 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class ConstantClassInfo implements ConstantPoolInfo {
-    private byte tag = 7;
+    private static final int TAG = 7;
     private int nameIndex;
 
-    public byte getTag() {
-        return tag;
+    public ConstantClassInfo() {
     }
 
-    public void setTag(byte tag) {
-        this.tag = tag;
+    public ConstantClassInfo(int nameIndex) {
+        this.nameIndex = nameIndex;
+    }
+
+    public int getTag() {
+        return TAG;
     }
 
     public int getNameIndex() {
@@ -39,14 +44,30 @@ public class ConstantClassInfo implements ConstantPoolInfo {
     }
 
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeByte(tag);
+        stream.writeByte(TAG);
         stream.writeShort(nameIndex);
+    }
+
+    public static int indexOf(List<ConstantPoolInfo> constants, int nameIndex) {
+        for (int i = 0; i < constants.size(); i++) {
+            if (constants.get(i) == null) {
+                continue;
+            }
+
+            if (constants.get(i) instanceof ConstantClassInfo) {
+                if (nameIndex == ((ConstantClassInfo) constants.get(i)).getNameIndex()) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
 
     @Override
     public String toString() {
         return "ConstantClassInfo{" +
-                "tag=" + tag +
+                "tag=" + TAG +
                 ", nameIndex=" + nameIndex +
                 '}';
     }

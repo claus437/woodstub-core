@@ -1,11 +1,13 @@
 package org.wooddog.woodstub.core.instrumentation;
 
+import com.sun.org.apache.bcel.internal.classfile.ConstantMethodref;
 import org.wooddog.woodstub.core.ClassReader;
 import org.wooddog.woodstub.core.asm.Instruction;
 import org.wooddog.woodstub.core.asm.SymbolicLink;
 import org.wooddog.woodstub.core.asm.SymbolicLinkTable;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,143 +20,130 @@ import java.util.List;
  */
 public class StubCodeGenerator {
     private byte[] code;
-    private ConstantPool constantPool;
-    private int classNameIndex;
+    private ConstantPool pool;
+    private ClassReader reader;
+
+    private int idxMethodStubFactory;
+    private int idxMethodCreateStub;
+    private int idxMethodSetParameters;
+    private int idxMethodExecute;
+    private int idxMethodResult;
+    private int idxMethodIntValue;
+    private int idxClassObject;
+    private int idxClassInteger;
+    private int adrCodeStart;
+
+    private int idxStringClassName;
 
     public byte[] stubClass(InputStream stream) throws IOException {
         ByteArrayOutputStream stubbedClass;
-        List<AttributeCode> blocks;
-        ClassReader reader;
+        List<FieldInfo> methods;
 
         reader = new ClassReader();
         reader.read(stream);
+        pool = reader.getConstantPool();
+
+        System.out.println("class" + reader.getIndexOfClass());
 
         List l = reader.getAttributes("Code");
-        blocks = (List<AttributeCode>) reader.getAttributes("Code");
+        methods = reader.getMethods();
 
-        for (AttributeCode block : blocks) {
-            stub(block);
+        setup();
+
+        for (FieldInfo method : methods) {
+            stub(method);
         }
 
+        pool.dump();
+
         stubbedClass = new ByteArrayOutputStream();
-        reader.write(stubbedClass);
+        //reader.write(stubbedClass);
 
         return stubbedClass.toByteArray();
     }
 
-    public void stub(AttributeCode block) {
-        System.out.println(block.toString());
+    public void setup() {
+        String className;
+
+        className = ((ConstantUtf8Info) pool.get(((ConstantClassInfo) pool.get(reader.getIndexOfClass())).getNameIndex())).getValue();
+
+
+        idxMethodStubFactory = pool.addMethodRef("org/wooddog/woodstub/core/WoodStub", "getStubFactory", "()Lorg/wooddog/woodstub/core/runtime/StubFactory;");
+        idxStringClassName = pool.addString(className);
+        idxMethodCreateStub = pool.addInterfaceMethodRefInfo("org/wooddog/woodstub/core/runtime/StubFactory", "createStub", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub;");
+        idxMethodSetParameters = pool.addInterfaceMethodRefInfo("org/wooddog/woodstub/core/runtime/StubFactory", "setParameters", "([Ljava/lang/String;[Ljava/lang/Object;)V");
+        idxMethodExecute = pool.addInterfaceMethodRefInfo("org/wooddog/woodstub/core/runtime/StubFactory", "execute", "()V");
+        idxMethodResult = pool.addInterfaceMethodRefInfo("org/wooddog/woodstub/core/runtime/StubFactory", "getResult", "()Ljava/lang/Object;");
+        idxMethodIntValue = pool.addMethodRef("java/lang/Integer", "intValue", "()I");
+        idxClassObject = pool.addClass("java/lang/Object");
+        idxClassInteger = pool.addClass("java/lang/Integer");
+
     }
 
-    public void generate(ConstantMethodRefInfo methodRef) {
-        SymbolicLinkTable symTable;
-        int methodNameIndex;
-        int address;
-        ConstantNameAndTypeInfo nameAndTypeInfo;
+    public void stub(FieldInfo method) {
+        int idxStringName;
+        int idxStringDescriptor;
 
-        nameAndTypeInfo = (ConstantNameAndTypeInfo) constantPool.get(methodRef.getNameAndTypeIndex());
+        idxStringName = pool.addString(((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue());
+        idxStringDescriptor = pool.addString(((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
 
-        symTable = new SymbolicLinkTable();
-        // created once
-        SymbolicLink METHOD_STUB_FACTORY = new SymbolicLink("METHOD_STUB_FACTORY", -1);
-        SymbolicLink INTERFACE_METHOD_REF_CREATE_STUB = new SymbolicLink("INTERFACE_CREATE_STUB", -1);
-        SymbolicLink INTERFACE_METHOD_REF_SET_PARAMETERS = new SymbolicLink("INTERFACE_SET_PARAMETERS", -1);
-        SymbolicLink INTERFACE_METHOD_REF_EXECUTE = new SymbolicLink("INTERFACE_EXECUTE", -1);
-        SymbolicLink INTERFACE_METHOD_REF_BEHAVIOR = new SymbolicLink("INTERFACE_BEHAVIOR", -1);
-        SymbolicLink INTERFACE_METHOD_REF_RESULT = new SymbolicLink("INTERFACE_RESULT", -1);
+        addInstruction("invokestatic", idxMethodStubFactory);
+        addInstruction("aload_0");
+        addInstruction("LDC", idxStringClassName);
+        addInstruction("ldc", idxStringName);
+        addInstruction("ldc", idxStringDescriptor);
+        addInstruction("invokeinterface", idxMethodCreateStub, 5, 0);
+        addInstruction("astore_3");
+        addInstruction("aload_3");
+        addInstruction("ifnull", adrCodeStart);
+        addInstruction("aload_3");
+        addInstruction("aconst_null");
+        addInstruction("iconst_2");
+        addInstruction("anewarray", idxClassObject);
 
-        // present
-        SymbolicLink STRING_INFO_CLASS_NAME = new SymbolicLink("STRING_CLASS_NAME", -1);
-        SymbolicLink STRING_INFO_METHOD_NAME = new SymbolicLink("STRING_METHOD_NAME", -1);
-        SymbolicLink STRING_INFO_METHOD_DESCRIPTION = new SymbolicLink("STRING_METHOD_DESCRIPTION", -1);
+        addInstruction("dup");
+        addInstruction("iconst_0");
+        addInstruction("aload_1");
+        addInstruction("aastore");
 
-        // might not be present
-        SymbolicLink CLASS_INFO_STRING = new SymbolicLink("CLASS_STRING", -1);
-        SymbolicLink CLASS_INFO_OBJECT = new SymbolicLink("CLASS_OBJECT", -1);
-        SymbolicLink CLASS_INFO_INTEGER = new SymbolicLink("CLASS_INTEGER", -1);
-        SymbolicLink CLASS_INFO_THROWABLE = new SymbolicLink("CLASS_THROWABLE", -1);
+        addInstruction("dup");
+        addInstruction("iconst_1");
+        addInstruction("aload_2");
+        addInstruction("aastore");
 
-        SymbolicLink METHOD_REF_INFO_INT_VALUE = new SymbolicLink("INVOKE_INT_VALUE", -1);
-
-
-        SymbolicLink LABEL_CODE_ADDRESS = new SymbolicLink("LABEL_CODE_ADDRESS", -1);
-        SymbolicLink LABEL_RETURN_ADDRESS = new SymbolicLink("LABEL_RETURN_ADDRESS", -1);
-        SymbolicLink LABEL_THROW_ADDRESS = new SymbolicLink("LABEL_THROW_ADDRESS", -1);
-
-
-        SymbolicLink STRING_INFO_PARAMETER_NAME_0 = new SymbolicLink("STRING_PARAMETER_0", -1);
-
-
-
-        addInstruction("INVOKESTATIC", METHOD_STUB_FACTORY); // "org/wooddog/woodstub/core/WoodStub.getStubFactory ()Lorg/wooddog/woodstub/core/runtime/StubFactory;");
-        addInstruction("ALOAD", "0");
-        addInstruction("LDC", STRING_INFO_CLASS_NAME);
-        addInstruction("LDC", STRING_INFO_METHOD_NAME);
-        addInstruction("LDC", STRING_INFO_METHOD_DESCRIPTION);
-        addInstruction("INVOKEINTERFACE", INTERFACE_METHOD_REF_CREATE_STUB, 5, 0);//"org/wooddog/woodstub/core/runtime/StubFactory.createStub (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub;");
-        addInstruction("ASTORE", "3");
-
-        addInstruction("ALOAD", "3");
-        addInstruction("IFNULL", LABEL_CODE_ADDRESS);
-
-
-        addInstruction("ALOAD", 3);
-        addInstruction("ICONST_2"); // number of arguments
-        addInstruction("ANEWARRAY", CLASS_INFO_STRING);
-
-        // dyn
-        addInstruction("DUP");
-        addInstruction("ICONST_0");
-        addInstruction("LDC", STRING_INFO_PARAMETER_NAME_0);
-        addInstruction("AASTORE");
-
-
-        addInstruction("ANEWARRAY", CLASS_INFO_OBJECT);
-
-        // dyn
-        addInstruction("DUP");
-        addInstruction("ICONST_0");
-        addInstruction("ALOAD_1");
-        addInstruction("AASTORE");
-
-
-        addInstruction("INVOKEINTERFACE", INTERFACE_METHOD_REF_SET_PARAMETERS, 3, 0); // "org/wooddog/woodstub/core/runtime/Stub.setParameters ([Ljava/lang/String;[Ljava/lang/Object;)V");
-        addInstruction("ALOAD", 3);
-        addInstruction("INVOKEINTERFACE", INTERFACE_METHOD_REF_EXECUTE, 1, 0);
-
-        addInstruction("ALOAD", 3);
-        addInstruction("INVOKEINTERFACE", INTERFACE_METHOD_REF_BEHAVIOR, 1, 0);
-        addInstruction("LOOKUPSWITCH", LABEL_CODE_ADDRESS, 2, 0, LABEL_RETURN_ADDRESS, 1, LABEL_THROW_ADDRESS);
-
-        //L6
-        address = addInstruction("ALOAD", 3);
-        LABEL_RETURN_ADDRESS.setReference(address);
-
-        addInstruction("INVOKEINTERFACE", INTERFACE_METHOD_REF_RESULT, 1, 0);
-        addInstruction("CHECKCAST", CLASS_INFO_INTEGER);
-        addInstruction("INVOKEVIRTUAL", METHOD_REF_INFO_INT_VALUE);
-        addInstruction("IRETURN");
-
-        //L7
-        address = addInstruction("ALOAD", 3);
-        LABEL_THROW_ADDRESS.setReference(address);
-        addInstruction("INVOKEINTERFACE", INTERFACE_METHOD_REF_RESULT, 1, 0); // org/wooddog/woodstub/core/runtime/Stub.getResult ()Ljava/lang/Object;");
-        addInstruction("CHECKCAST, ", CLASS_INFO_THROWABLE);
-        addInstruction("ATHROW");
+        addInstruction("invokeinterface", idxMethodSetParameters, 3, 0);
+        addInstruction("aload_3");
+        addInstruction("invokeinterface", idxMethodExecute, 1, 0);
+        addInstruction("aload_3");
+        addInstruction("invokeinterface", idxMethodResult, 1, 0);
+        addInstruction("checkcast", idxClassInteger);
+        addInstruction("invokevirtual", idxMethodIntValue);
+        addInstruction("ireturn");
     }
 
 
-    private int addInstruction(String instruction, Object... parameters) {
-        return 0;
+    private void addInstruction(String instruction, Object... parameters) {
+        System.out.println(instruction + " " + Arrays.asList(parameters));
     }
 
     public static void main(String[] args) throws IOException {
-
-        File file = new File("C:\\git-hub\\woodstub-core\\target\\classes\\org\\wooddog\\woodstub\\core\\Template.class");
+        File file;
         FileInputStream stream;
+        FileOutputStream out;
+        StubCodeGenerator cg;
+        byte[] stubbedClass;
+
+        file = new File("C:\\git-projects\\woodstub-core\\target\\classes\\org\\wooddog\\woodstub\\core\\Test.class");
+
 
         stream = new FileInputStream(file);
-        new StubCodeGenerator().stubClass(stream);
+
+        cg = new StubCodeGenerator();
+        stubbedClass = cg.stubClass(stream);
         stream.close();
+
+        //out = new FileOutputStream(file);
+        //out.write(stubbedClass);
+        //out.close();
     }
 }

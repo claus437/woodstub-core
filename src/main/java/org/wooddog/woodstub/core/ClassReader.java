@@ -59,6 +59,14 @@ public class ClassReader {
         }
     }
 
+    public ConstantPool getConstantPool() {
+        return constants;
+    }
+
+    public int getIndexOfClass() {
+        return indexOfClass;
+    }
+
     public void write(OutputStream out) throws IOException {
         DataOutputStream stream;
 
@@ -108,6 +116,10 @@ public class ClassReader {
         }
 
         return attributes;
+    }
+
+    public List<FieldInfo> getMethods() {
+        return methods;
     }
 
     private int[] readInterfaces(DataInputStream stream) throws IOException {
