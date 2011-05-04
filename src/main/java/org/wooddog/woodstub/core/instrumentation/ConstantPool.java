@@ -80,7 +80,7 @@ public class ConstantPool {
     }
 
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeShort(pool.size() + 1);
+        stream.writeShort(pool.size());
 
         for (ConstantPoolInfo entry : pool) {
             if (entry != null) {

@@ -14,7 +14,7 @@ public interface Stub {
 
     void setParameters(String[] names, Object[] values);
 
-    void execute();
+    void execute() throws Throwable;
 
     int getBehavior();
 

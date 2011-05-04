@@ -6,7 +6,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public class CodeTable {
     private static final InstructionDefinition[] TABLE = new InstructionDefinition[255];
+    private static final Map<String, InstructionDefinition> MAP = new HashMap <String, InstructionDefinition>();
 
     static {
         InstructionDefinition entry;
@@ -33,11 +35,20 @@ public class CodeTable {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     entry = createTableEntry(line);
                     TABLE[entry.getCode()] = entry;
+                    MAP.put(entry.getName(), entry);
                 }
             }
         } catch (IOException x) {
             throw new InstantiationError("failed reading opcode table");
         }
+    }
+
+    public static InstructionDefinition getInstructionDefinition(String name) {
+        if (MAP.get(name) == null) {
+            throw new InternalErrorException("unknown instruction code " + name);
+        }
+
+        return MAP.get(name);
     }
 
     public static InstructionDefinition getInstructionDefinition(int code) {
@@ -47,6 +58,7 @@ public class CodeTable {
 
         return TABLE[code];
     }
+
 
     private static InstructionDefinition createTableEntry(String line) {
         InstructionDefinition entry;

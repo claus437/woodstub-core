@@ -33,7 +33,7 @@ public class Template {
     }
     */
 
-    public int methodA(final String a, String b) {
+    public int methodA(final String a, String b) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "methodA", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
         if (stub != null) {
@@ -44,8 +44,11 @@ public class Template {
             return ((Integer) stub.getResult()).intValue();
         }
 
-        System.out.println("im not stubbed");
-        return 0;
+        if (true) {
+            System.out.println("Hello World");
+        }
+
+        return 10;
     }
 
 }

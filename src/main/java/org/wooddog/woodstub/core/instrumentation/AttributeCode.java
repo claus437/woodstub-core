@@ -74,12 +74,12 @@ public class AttributeCode implements Attribute {
 
         codeLength = stream.readInt();
         code = new byte[codeLength];
-        //stream.readFully(code);
-
+        stream.readFully(code);
+        /*
         InstructionReader ir;
         ir = new InstructionReader();
         ir.readBlock(stream, codeLength);
-
+        */
         exceptionCount = stream.readUnsignedShort();
         exceptions = new ArrayList<TableException>();
 

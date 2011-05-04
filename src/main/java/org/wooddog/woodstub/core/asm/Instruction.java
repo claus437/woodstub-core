@@ -2,9 +2,8 @@ package org.wooddog.woodstub.core.asm;
 
 import org.wooddog.woodstub.core.InternalErrorException;
 
-import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,10 +44,88 @@ public class Instruction  {
     }
 
     public int getLength() {
+        char[] types;
+        int length;
+
+        length = 1;
+        types = getParameterTypes();
+
+        for (char t : types) {
+            switch (t) {
+                    case 'b':
+                        length ++;
+                        break;
+
+                    case 'B':
+                        length ++;
+                        break;
+
+                    case 's':
+                        length += 2;
+                        break;
+
+                    case 'S':
+                        length += 2;
+                        break;
+
+                    case 'I':
+                        length += 4;
+                        break;
+
+                    case 'V':
+                        length ++;
+                        break;
+
+                    case 'L':
+                        // todo implement;
+                        break;
+
+                    default:
+                        throw new InternalErrorException("unknown parameter type " + t);
+                }
+        }
+
         return length;
     }
 
     public void setLength(int length) {
         this.length = length;
+    }
+
+    public void write(DataOutputStream out) throws IOException {
+        char[] parameterTypes;
+
+        parameterTypes = getParameterTypes();
+        out.writeByte(getCode());
+
+
+        for (int i = 0; i < parameterTypes.length; i++) {
+            switch (Character.toUpperCase(parameterTypes[i])) {
+                case 'B':
+                    out.writeByte(values[i]);
+                    break;
+
+                case 'S':
+                    out.writeShort(values[i]);
+                    break;
+
+                case 'I':
+                    out.writeInt(values[i]);
+
+                    break;
+
+                case 'V':
+                    out.writeByte(values[i]);
+                    break;
+
+                case 'L':
+                    // todo implement;
+                    break;
+
+                default:
+                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i]);
+            }
+
+        }
     }
 }
