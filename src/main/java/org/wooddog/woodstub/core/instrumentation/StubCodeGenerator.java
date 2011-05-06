@@ -76,6 +76,9 @@ public class StubCodeGenerator {
             code.setCode(buffer.toByteArray());
 
             instructions.clear();
+
+            System.out.println("ml: " + code.getMaxLocals());
+            System.out.println("ms: " + code.getMaxStack());
         }
 
         pool.dump();
@@ -124,7 +127,6 @@ public class StubCodeGenerator {
         addInstruction("ifnull", -1);
         addInstruction("aload_3");
         addInstruction("aconst_null");
-        addInstruction("iconst_2");
 
         addParameterValues(methodDescriptor);
 
@@ -145,6 +147,7 @@ public class StubCodeGenerator {
 
         instructions.get(8).setValues(new int[]{size - jumpOffset});
 
+        dump();
     }
 
     private void addParameterValues(String methodDescriptor) {
@@ -169,6 +172,18 @@ public class StubCodeGenerator {
         lIndex = 0;
 
         for (index = 0; index < args.length(); index++) {
+
+            if (args.charAt(index) == ')') {
+                if (lIndex > 5) {
+                    instruction = new Instruction(CodeTable.getInstructionDefinition("bipush"));
+                    instruction.setValues(new int[]{lIndex});
+                } else {
+                    instruction = new Instruction(CodeTable.getInstructionDefinition("iconst_" + lIndex));
+                }
+                instructions.set(arrayIndex, instruction);
+                return;
+            }
+
             lIndex++;
 
             addInstruction("dup");
@@ -194,6 +209,11 @@ public class StubCodeGenerator {
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;"));
                     break;
 
+                case 'S':
+                    addInstruction("iload", lIndex);
+                    addInstruction("invokestatic", pool.addMethodRef("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;"));
+                    break;
+
                 case 'I':
                     addInstruction("iload", lIndex);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;"));
@@ -202,6 +222,12 @@ public class StubCodeGenerator {
                 case 'F':
                     addInstruction("fload", lIndex);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;"));
+                    break;
+
+                case 'J':
+                    addInstruction("lload", lIndex);
+                    addInstruction("invokestatic", pool.addMethodRef("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;"));
+                    lIndex ++;
                     break;
 
                 case 'D':
@@ -232,16 +258,6 @@ public class StubCodeGenerator {
 
                     addInstruction("aload", lIndex);
                     break;
-
-                case ')':
-                    if (index > 5) {
-                        instruction = new Instruction(CodeTable.getInstructionDefinition("bipush"));
-                        instruction.setValues(new int[]{index});
-                    } else {
-                        instruction = new Instruction(CodeTable.getInstructionDefinition("iconst_" + index));
-                    }
-                    instructions.set(arrayIndex, instruction);
-                    return;
 
                 default:
                     throw new InternalErrorException("unable to parse parameters in description " + methodDescriptor + " failed on index " + index + "/" + args.charAt(index));
@@ -380,6 +396,7 @@ public class StubCodeGenerator {
 
         add = 0;
 
+        System.out.println();
         for (int i = 0; i < instructions.size(); i++) {
             instruction = instructions.get(i);
 

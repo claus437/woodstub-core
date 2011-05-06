@@ -46,9 +46,6 @@ public class Test {
     public void integer(int integer, int integer1) {
     }
 
-    public void parameters(boolean a, byte b, char c, int d, float e, double f, int[] g, int[][] h, Object i, Object[] j) {
-        System.out.println("im not stubbed");
-    }
 
     public boolean methodBoolean(String a, String b) {
         return true;

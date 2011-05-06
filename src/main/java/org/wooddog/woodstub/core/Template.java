@@ -49,7 +49,6 @@ public class Template {
         }
 
         throw new RuntimeException("not thrown");
-
     }
 
 
