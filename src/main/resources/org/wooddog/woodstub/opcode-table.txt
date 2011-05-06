@@ -1,4 +1,4 @@
-aaload               50 (0x32)
+aload                50 (0x32)
 aastore              83 (0x53)
 aconst_null           1 (0x1)
 aload_0              42 (0x2a)

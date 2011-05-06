@@ -2,6 +2,9 @@ package org.wooddog.woodstub.core;
 
 import org.wooddog.woodstub.core.runtime.Stub;
 
+import java.io.File;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: claus
@@ -10,6 +13,7 @@ import org.wooddog.woodstub.core.runtime.Stub;
  * To change this template use File | Settings | File Templates.
  */
 public class Template {
+    List list;
     /*
     public int methodB(final String a, String b) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
@@ -33,23 +37,23 @@ public class Template {
     }
     */
 
-    public int methodA(final String a, String b) throws Throwable {
+    public double methodA(boolean a, byte b, char c, int d, float e, double f, int[] g, int[][] h, Object i, Object[] j) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "methodA", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
         if (stub != null) {
-            stub.setParameters(null, new Object[]{a, b});
+            stub.setParameters(null, new Object[]{a, b, c, d, e, f, g, h, i}); //
 
             stub.execute();
 
-            return ((Integer) stub.getResult()).intValue();
+            return ((Double) stub.getResult()).doubleValue();
         }
 
-        if (true) {
-            System.out.println("Hello World");
-        }
+        throw new RuntimeException("not thrown");
 
-        return 10;
     }
+
+
+
 
 }
 
