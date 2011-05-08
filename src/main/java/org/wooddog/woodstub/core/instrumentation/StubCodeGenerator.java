@@ -240,7 +240,7 @@ public class StubCodeGenerator {
                     while (args.charAt(index) != ';') {
                         index++;
                     }
-                    addInstruction("aload", lIndex);
+                    addInstruction("aload_1");
                     System.out.println("done reading at index " + index);
 
                     break;
@@ -256,7 +256,7 @@ public class StubCodeGenerator {
                         }
                     }
 
-                    addInstruction("aload", lIndex);
+                    addInstruction("aload_1");
                     break;
 
                 default:

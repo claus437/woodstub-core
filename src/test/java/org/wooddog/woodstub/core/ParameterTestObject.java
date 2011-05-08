@@ -12,21 +12,22 @@ import org.wooddog.woodstub.core.runtime.Stub;
 public class ParameterTestObject {
     /*
     public void template(Object b) throws Throwable {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Boolean;)Z}");
+        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
 
         if (stub != null) {
             stub.setParameters(null, new Object[]{b}); //
 
             stub.execute();
+            stub.getResult();
 
             return;
         }
 
         throw new RuntimeException("not thrown");
     }
-
+    */
     public void parameterBoolean(boolean b) {
-        System.out.println("boolean");
+        System.out.println("z");
     }
 
     public void parameterByte(byte b) {
@@ -34,42 +35,43 @@ public class ParameterTestObject {
     }
 
     public void parameterChar(char b) {
-        System.out.println("boolean");
+        System.out.println("c");
     }
 
     public void parameterShort(short b) {
-        System.out.println("boolean");
+        System.out.println("s");
     }
 
     public void parameterInteger(int b) {
-        System.out.println("boolean");
+        System.out.println("i");
     }
 
     public void parameterFloat(float b) {
-        System.out.println("boolean");
+        System.out.println("f");
     }
 
     public void parameterLong(long b) {
-        System.out.println("boolean");
+        System.out.println("j");
     }
 
     public void parameterDouble(double b) {
-        System.out.println("boolean");
-    }
-    */
-    public void parameterObject(Object o) {
-        System.out.println("boolean");
+        System.out.println("d");
     }
 
-    /*
+    public void parameterObject(Object o) {
+        System.out.println("l");
+    }
+
     public void parameterArray(int[] i) {
-        System.out.println("boolean");
+        System.out.println("[");
     }
-    */
-    /*
+
     public void parameter2Array(int[][] i) {
-        System.out.println("boolean");
+        System.out.println("[[");
     }
-    */
+
+    public void all(boolean z, byte b){ //, char c){//, short s, int i, float f, long j, double d, Object l, Object[] a) {
+        System.out.println("all");
+    }
 
 }
