@@ -1,6 +1,7 @@
-aload                50 (0x32)
+aaload               50 (0x32)
 aastore              83 (0x53)
 aconst_null           1 (0x1)
+aload                25 (0x19) B
 aload_0              42 (0x2a)
 aload_1              43 (0x2b)
 aload_2              44 (0x2c)

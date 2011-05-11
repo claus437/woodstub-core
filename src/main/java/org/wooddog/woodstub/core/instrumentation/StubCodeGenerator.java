@@ -42,6 +42,7 @@ public class StubCodeGenerator {
         ByteArrayOutputStream buffer;
         List<FieldInfo> methods;
         AttributeCode code;
+        int mem[];
 
         instructions = new ArrayList<Instruction>();
         reader = new ClassReader();
@@ -63,10 +64,8 @@ public class StubCodeGenerator {
 
             if (!((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue().equals("()V")) {
                 System.out.println("stubbing: \"" + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
-                stub(method);
+                stub(code, method);
                 write(out);
-                code.setMaxLocals(code.getMaxLocals() + 4);
-                code.setMaxStack(code.getMaxStack() + 6);
             }
 
             out.flush();
@@ -76,12 +75,9 @@ public class StubCodeGenerator {
             code.setCode(buffer.toByteArray());
 
             instructions.clear();
-
-            System.out.println("ml: " + code.getMaxLocals());
-            System.out.println("ms: " + code.getMaxStack());
         }
 
-        pool.dump();
+        //pool.dump();
 
         reader.write(target);
     }
@@ -102,14 +98,28 @@ public class StubCodeGenerator {
 
     }
 
-    public void stub(FieldInfo method) {
+    public void stub(AttributeCode code, FieldInfo method) {
         int idxStringName;
         int idxStringDescriptor;
         int size;
         int jumpOffset;
         String methodDescriptor;
+        char[] parameterTypes;
+        int parameterRegisterSize;
+
 
         methodDescriptor = ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue();
+
+        parameterTypes = getParameterBaseTypes(methodDescriptor);
+        parameterRegisterSize = getRegisterSize(parameterTypes);
+
+        if (code.getMaxStack() < 5) {
+            code.setMaxStack(5);
+        }
+
+        if (code.getMaxLocals() < 3 + parameterRegisterSize) {
+            code.setMaxLocals(parameterRegisterSize + 3);
+        }
 
         idxStringName = pool.addString(((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue());
         idxStringDescriptor = pool.addString(methodDescriptor);
@@ -120,23 +130,28 @@ public class StubCodeGenerator {
         addInstruction("ldc", idxStringName);
         addInstruction("ldc", idxStringDescriptor);
         addInstruction("invokeinterface", idxMethodCreateStub, 5, 0);
-        addInstruction("astore_3");
-        addInstruction("aload_3");
+        addInstruction("astore", parameterRegisterSize + 1);
 
+        addInstruction("aload", parameterRegisterSize + 1);
         jumpOffset = calculateCodeSize();
         addInstruction("ifnull", -1);
-        addInstruction("aload_3");
+
+        addParameterValueArray(parameterTypes, parameterRegisterSize + 2);
+
+        addInstruction("aload", parameterRegisterSize + 1);
         addInstruction("aconst_null");
-
-        addParameterValues(methodDescriptor);
-
+        addInstruction("aload", parameterRegisterSize + 2);
         addInstruction("invokeinterface", idxMethodSetParameters, 3, 0);
-        addInstruction("aload_3");
-        addInstruction("invokeinterface", idxMethodExecute, 1, 0);
-        addInstruction("aload_3");
-        addInstruction("invokeinterface", idxMethodResult, 1, 0);
 
-        addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1));
+        addInstruction("aload", parameterRegisterSize + 1);
+        addInstruction("invokeinterface", idxMethodExecute, 1, 0);
+
+        addInstruction("aload", parameterRegisterSize + 1);
+        addInstruction("invokeinterface", idxMethodResult, 1, 0);
+        addInstruction("pop");
+        addInstruction("return");
+
+        //addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1));
 
 
         size = calculateCodeSize();
@@ -147,125 +162,97 @@ public class StubCodeGenerator {
 
         instructions.get(8).setValues(new int[]{size - jumpOffset});
 
-        dump();
+        //dump();
     }
 
-    private void addParameterValues(String methodDescriptor) {
-        CharSequence args;
-        int arrayIndex;
-        int lIndex;
-        Instruction instruction;
-        int index;
+
+    private void addParameterValueArray(char[] parameterTypes, int address) {
+        int arrayAddress;
+        int stackAddress;
 
 
-        args = methodDescriptor.subSequence(1, methodDescriptor.length() - 1);
-
-        if (args.length() == 0) {
-            addInstruction("iconst_0");
-            addInstruction("anewarray", pool.addClass("java/lang/Object"));
+        if (parameterTypes.length > 5) {
+            addInstruction("bipush", parameterTypes.length);
+        } else {
+            addInstruction("iconst_" + parameterTypes.length);
         }
 
-        arrayIndex = instructions.size();
-        instructions.add(null);
+        arrayAddress = address;
         addInstruction("anewarray", pool.addClass("java/lang/Object"));
+        addInstruction("astore", arrayAddress);
 
-        lIndex = 0;
+        stackAddress = 1;
 
-        for (index = 0; index < args.length(); index++) {
+        for (int i = 0; i < parameterTypes.length; i++) {
+            addInstruction("aload", arrayAddress);
 
-            if (args.charAt(index) == ')') {
-                if (lIndex > 5) {
-                    instruction = new Instruction(CodeTable.getInstructionDefinition("bipush"));
-                    instruction.setValues(new int[]{lIndex});
-                } else {
-                    instruction = new Instruction(CodeTable.getInstructionDefinition("iconst_" + lIndex));
-                }
-                instructions.set(arrayIndex, instruction);
-                return;
-            }
-
-            lIndex++;
-
-            addInstruction("dup");
-            if (index > 5) {
-                addInstruction("bipush", index);
+            if (i < 5) {
+                addInstruction("iconst_" + i);
             } else {
-                addInstruction("iconst_" + index);
+                addInstruction("bipush", i);
             }
 
-            switch (args.charAt(index)) {
+            switch (parameterTypes[i]) {
                 case 'Z':
-                    addInstruction("iload", lIndex);
+                    addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;"));
                     break;
 
                 case 'B':
-                    addInstruction("iload", lIndex);
+                    addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;"));
+                    stackAddress ++;
                     break;
 
                 case 'C':
-                    addInstruction("iload", lIndex);
+                    addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;"));
+                    stackAddress ++;
                     break;
 
                 case 'S':
-                    addInstruction("iload", lIndex);
+                    addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;"));
+                    stackAddress ++;
                     break;
 
                 case 'I':
-                    addInstruction("iload", lIndex);
+                    addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;"));
                     break;
 
                 case 'F':
-                    addInstruction("fload", lIndex);
+                    addInstruction("fload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;"));
                     break;
 
                 case 'J':
-                    addInstruction("lload", lIndex);
+                    addInstruction("lload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;"));
-                    lIndex ++;
+                    stackAddress++;
                     break;
 
                 case 'D':
-                    addInstruction("dload", lIndex);
+                    addInstruction("dload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;"));
-                    lIndex++;
+                    stackAddress++;
                     break;
 
                 case 'L':
-                    while (args.charAt(index) != ';') {
-                        index++;
-                    }
-                    addInstruction("aload_1");
-                    System.out.println("done reading at index " + index);
-
-                    break;
-
-                case '[':
-                    while (args.charAt(index) == '[') {
-                        index++;
-                    }
-
-                    if (args.charAt(index) == 'L') {
-                        while (args.charAt(index) != ';') {
-                            index++;
-                        }
-                    }
-
-                    addInstruction("aload_1");
+                    addInstruction("aload", stackAddress);
                     break;
 
                 default:
-                    throw new InternalErrorException("unable to parse parameters in description " + methodDescriptor + " failed on index " + index + "/" + args.charAt(index));
+                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i]);
             }
 
+            stackAddress ++;
             addInstruction("aastore");
         }
+
+
     }
+
 
     private void addReturn(String methodDescriptor) {
         String type;
@@ -343,6 +330,32 @@ public class StubCodeGenerator {
     private void addInstruction(String name, int... parameters) {
         Instruction instruction;
 
+        if ("aload".equals(name)) {
+            if (parameters[0] < 4) {
+                name = "aload_" + parameters[0];
+                parameters = new int[0];
+            }
+        }
+
+        if ("astore".equals(name)) {
+            if (parameters[0] < 4) {
+                name = "astore_" + parameters[0];
+                parameters = new int[0];
+            }
+        }
+
+        if ("iload".equals(name)) {
+            if (parameters[0] < 4) {
+                name = "iload_" + parameters[0];
+                parameters = new int[0];
+            }
+        }
+
+        if (parameters.length > 0) {
+            System.out.println(name + " " + parameters[0]);
+        } else {
+            System.out.println(name);
+        }
         instruction = new Instruction(CodeTable.getInstructionDefinition(name));
         instruction.setValues(parameters);
 
@@ -408,5 +421,43 @@ public class StubCodeGenerator {
 
             add += instruction.getLength();
         }
+    }
+
+    private char[] getParameterBaseTypes(String descriptor) {
+        StringBuffer types;
+
+        types = new StringBuffer();
+
+        for (int i = 1; descriptor.charAt(i) != ')'; i++) {
+            if (descriptor.charAt(i) == '[') {
+                do {
+                    i++;
+                } while (descriptor.charAt(i) == '[');
+            }
+
+            if (descriptor.charAt(i) == 'L') {
+                types.append('L');
+
+                while (descriptor.charAt(i) != ';') {
+                    i++;
+                }
+            } else {
+                types.append(descriptor.charAt(i));
+            }
+        }
+
+        return types.toString().toCharArray();
+    }
+
+    public int getRegisterSize(char[] types) {
+        int size;
+
+        size = 0;
+
+        for (char type : types) {
+            size += type == 'J' || type == 'D' ? 2 : 1;
+        }
+
+        return size;
     }
 }

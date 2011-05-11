@@ -40,6 +40,7 @@ public class ParameterTest {
 
         ParameterTestObject p = new ParameterTestObject();
 
+        /*
         p.parameterBoolean(true);
         p.parameterByte(Byte.MAX_VALUE);
         p.parameterChar('c');
@@ -49,8 +50,8 @@ public class ParameterTest {
         p.parameterLong(20);
         p.parameterDouble(30);
         p.parameterObject(new Object());
-        p.parameterArray(new int[]{1});
-
+        //p.parameterArray(new int[]{1});
+        */
 
         int i[][];
 
@@ -58,8 +59,8 @@ public class ParameterTest {
         i[0][0] = 1;
 
 
-        p.parameter2Array(i);
-        p.all(true, Byte.MAX_VALUE);//, 'c');//, Short.MAX_VALUE); //, Integer.MAX_VALUE, 10, 20 , 30, new Object(), new Object[]{3});
+        //p.parameter2Array(i);
+        //p.all(true, Byte.MAX_VALUE);//, 'c');//, Short.MAX_VALUE); //, Integer.MAX_VALUE, 10, 20 , 30, new Object(), new Object[]{3});
 
 
 

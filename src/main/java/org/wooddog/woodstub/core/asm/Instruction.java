@@ -4,6 +4,7 @@ import org.wooddog.woodstub.core.InternalErrorException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
@@ -72,16 +73,8 @@ public class Instruction  {
                         length += 4;
                         break;
 
-                    case 'V':
-                        length ++;
-                        break;
-
-                    case 'L':
-                        // todo implement;
-                        break;
-
                     default:
-                        throw new InternalErrorException("unknown parameter type " + t);
+                        throw new InternalErrorException("unknown parameter type " + t + " for instruction code");
                 }
         }
 
@@ -98,7 +91,7 @@ public class Instruction  {
         parameterTypes = getParameterTypes();
         out.writeByte(getCode());
 
-
+        System.out.println("writing " + getCode() + " " + getName() + " " + toString(parameterTypes) + " " + toString(values));
         for (int i = 0; i < parameterTypes.length; i++) {
             switch (Character.toUpperCase(parameterTypes[i])) {
                 case 'B':
@@ -114,18 +107,31 @@ public class Instruction  {
 
                     break;
 
-                case 'V':
-                    out.writeByte(values[i]);
-                    break;
-
-                case 'L':
-                    // todo implement;
-                    break;
-
                 default:
-                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i]);
+                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i] + " instruction code");
             }
 
         }
     }
+
+    private String toString(int[] values) {
+        String s = "";
+
+        for (Object i : values) {
+            s += i + ",";
+        }
+
+        return s;
+    }
+
+    private String toString(char[] values) {
+        String s = "";
+
+        for (Object i : values) {
+            s += i + ",";
+        }
+
+        return s;
+    }
+
 }
