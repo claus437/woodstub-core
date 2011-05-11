@@ -136,7 +136,7 @@ public class StubCodeGenerator {
         jumpOffset = calculateCodeSize();
         addInstruction("ifnull", -1);
 
-        addParameterValueArray(parameterTypes, parameterRegisterSize + 2);
+        addParameterValueArray(parameterTypes, parameterRegisterSize + 2, methodDescriptor);
 
         addInstruction("aload", parameterRegisterSize + 1);
         addInstruction("aconst_null");
@@ -166,7 +166,7 @@ public class StubCodeGenerator {
     }
 
 
-    private void addParameterValueArray(char[] parameterTypes, int address) {
+    private void addParameterValueArray(char[] parameterTypes, int address, String descriptor) {
         int arrayAddress;
         int stackAddress;
 
@@ -243,7 +243,7 @@ public class StubCodeGenerator {
                     break;
 
                 default:
-                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i]);
+                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i] + " " + descriptor + " " + toString(parameterTypes));
             }
 
             stackAddress ++;
@@ -428,25 +428,52 @@ public class StubCodeGenerator {
 
         types = new StringBuffer();
 
-        for (int i = 1; descriptor.charAt(i) != ')'; i++) {
+        int i = 1;
+
+        while (descriptor.charAt(i) != ')') {
             if (descriptor.charAt(i) == '[') {
-                do {
+                while (descriptor.charAt(i) == '[') {
                     i++;
-                } while (descriptor.charAt(i) == '[');
+                }
+
+                if (descriptor.charAt(i) == 'L') {
+                    i = firstIndexOfNextParameter(i, descriptor);
+                } else {
+                    i++;
+                }
+
+                types.append("L");
+
+                System.out.println("fi: " + i);
+                continue;
             }
 
             if (descriptor.charAt(i) == 'L') {
+                i = firstIndexOfNextParameter(i, descriptor);
                 types.append('L');
-
-                while (descriptor.charAt(i) != ';') {
-                    i++;
-                }
             } else {
                 types.append(descriptor.charAt(i));
+                i++;
             }
+
+
+            System.out.println("si: " + i);
+
         }
 
         return types.toString().toCharArray();
+    }
+
+    private int firstIndexOfNextParameter(int index, String descriptor) {
+        int i = index;
+
+        while (descriptor.charAt(i) != ';') {
+            i++;
+        }
+
+        i++;
+        System.out.println("N:" + descriptor.charAt(i));
+        return i;
     }
 
     public int getRegisterSize(char[] types) {
@@ -460,4 +487,15 @@ public class StubCodeGenerator {
 
         return size;
     }
+
+    private String toString(char[] values) {
+        String s = "";
+
+        for (Object i : values) {
+            s += i + ",";
+        }
+
+        return s;
+    }
+
 }

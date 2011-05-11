@@ -40,6 +40,7 @@ public class ParameterTestObject {
             return;
         }
 
+
         throw new RuntimeException("not thrown");
     }
     */
@@ -73,57 +74,61 @@ public class ParameterTestObject {
 
 
     }
+    */
 
+    public void parameterBoolean(boolean z) {
+        System.out.println("boolean " + z);
+    }
 
-    /*
     public void parameterByte(byte b) {
-        System.out.println("boolean");
+        System.out.println("byte " + b);
     }
 
-
-
-    public void parameterChar(char b) {
-        System.out.println("c");
+    public void parameterChar(char c) {
+        System.out.println("char " + c);
     }
 
-    public void parameterShort(short b) {
-        System.out.println("s");
+    public void parameterShort(short s) {
+        System.out.println("short " + s);
     }
 
-    public void parameterInteger(int b) {
-        System.out.println("i");
+    public void parameterInteger(int i) {
+        System.out.println("integer " + i);
     }
 
-    public void parameterFloat(float b) {
-        System.out.println("f");
+    public void parameterFloat(float f) {
+        System.out.println("float " + f);
     }
 
-    public void parameterLong(long b) {
-        //System.out.println("j");
+    public void parameterLong(long j) {
+        System.out.println("long " + j);
     }
     public void parameterDouble(double b) {
-        System.out.println("d");
+        System.out.println("double " + b);
     }
+
 
     public void parameterObject(Object o) {
-        System.out.println("l");
+        System.out.println("object " + o);
     }
-      */
+
     public void parameterArray(int[] i) {
-        System.out.println("[");
+        System.out.println("[integer " + i);
     }
 
-    /*
+
     public void parameter2Array(int[][] i) {
-        System.out.println("[[");
+        System.out.println("[[integer " + i);
     }
 
-    public void all(boolean z, byte b){ //, char c){//, short s, int i, float f, long j, double d, Object l, Object[] a) {
-        System.out.println("all");
+    public void all(boolean z, byte b) {//, char c, short s, int i, float f, long j, double d, Object l, Object[] a) {
+        //System.out.println("all " + z + " " + b + " " + c + " " + s + " " + i + " " + f + " " + j + " " + d + " " + l + a);
+    }
+    /*
+    public void non() throws Throwable {
+        System.out.println("non");
     }
     */
-    public void parameterBoolean(boolean z, byte b) throws Throwable {
-    }
 
 
 }
