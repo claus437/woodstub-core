@@ -8,15 +8,9 @@ package org.wooddog.woodstub.core.runtime;
  * To change this template use File | Settings | File Templates.
  */
 public interface Stub {
-    public static final int RETURN = 0;
-    public static final int THROW = 1;
-    public static final int EVALUATE = 2;
-
     void setParameters(String[] names, Object[] values);
 
     void execute() throws Throwable;
-
-    int getBehavior();
 
     Object getResult();
 }

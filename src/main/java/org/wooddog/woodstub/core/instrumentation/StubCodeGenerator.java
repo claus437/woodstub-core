@@ -3,6 +3,7 @@ package org.wooddog.woodstub.core.instrumentation;
 import com.sun.org.apache.bcel.internal.classfile.ConstantMethodref;
 import org.wooddog.woodstub.core.ClassReader;
 import org.wooddog.woodstub.core.InternalErrorException;
+import org.wooddog.woodstub.core.ToolBox;
 import org.wooddog.woodstub.core.asm.CodeTable;
 import org.wooddog.woodstub.core.asm.Instruction;
 import org.wooddog.woodstub.core.asm.SymbolicLink;
@@ -60,12 +61,12 @@ public class StubCodeGenerator {
             buffer = new ByteArrayOutputStream();
             out = new DataOutputStream(buffer);
 
-            System.out.println("nameindex: " + method.getNameIndex());
-
             if (!((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue().equals("()V")) {
                 System.out.println("stubbing: \"" + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
                 stub(code, method);
                 write(out);
+            } else {
+                System.out.println("skipping " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
             }
 
             out.flush();
@@ -76,9 +77,6 @@ public class StubCodeGenerator {
 
             instructions.clear();
         }
-
-        //pool.dump();
-
         reader.write(target);
     }
 
@@ -110,7 +108,7 @@ public class StubCodeGenerator {
 
         methodDescriptor = ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue();
 
-        parameterTypes = getParameterBaseTypes(methodDescriptor);
+        parameterTypes = ToolBox.getParameterBaseTypes(methodDescriptor);
         parameterRegisterSize = getRegisterSize(parameterTypes);
 
         if (code.getMaxStack() < 5) {
@@ -148,10 +146,8 @@ public class StubCodeGenerator {
 
         addInstruction("aload", parameterRegisterSize + 1);
         addInstruction("invokeinterface", idxMethodResult, 1, 0);
-        addInstruction("pop");
-        addInstruction("return");
 
-        //addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1));
+        addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1));
 
 
         size = calculateCodeSize();
@@ -201,19 +197,16 @@ public class StubCodeGenerator {
                 case 'B':
                     addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;"));
-                    stackAddress ++;
                     break;
 
                 case 'C':
                     addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;"));
-                    stackAddress ++;
                     break;
 
                 case 'S':
                     addInstruction("iload", stackAddress);
                     addInstruction("invokestatic", pool.addMethodRef("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;"));
-                    stackAddress ++;
                     break;
 
                 case 'I':
@@ -259,8 +252,6 @@ public class StubCodeGenerator {
 
         type = methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1);
 
-        System.out.println("TYPE: ");
-
         if (type.length() == 1) {
             switch (type.charAt(0)) {
                 case 'Z':
@@ -305,7 +296,14 @@ public class StubCodeGenerator {
                     addInstruction("dreturn");
                     break;
 
+                 case 'J':
+                    addInstruction("checkcast", pool.addClass("java/lang/Long"));
+                    addInstruction("invokevirtual", pool.addMethodRef("java/lang/Long", "longValue", "()J"));
+                    addInstruction("lreturn");
+                    break;
+
                 case 'V':
+                    addInstruction("pop");
                     addInstruction("return");
                     break;
 
@@ -351,11 +349,6 @@ public class StubCodeGenerator {
             }
         }
 
-        if (parameters.length > 0) {
-            System.out.println(name + " " + parameters[0]);
-        } else {
-            System.out.println(name);
-        }
         instruction = new Instruction(CodeTable.getInstructionDefinition(name));
         instruction.setValues(parameters);
 
@@ -371,7 +364,6 @@ public class StubCodeGenerator {
             size += instruction.getLength();
         }
 
-        System.out.println("size: " + size);
         return size;
     }
 
@@ -423,58 +415,7 @@ public class StubCodeGenerator {
         }
     }
 
-    private char[] getParameterBaseTypes(String descriptor) {
-        StringBuffer types;
 
-        types = new StringBuffer();
-
-        int i = 1;
-
-        while (descriptor.charAt(i) != ')') {
-            if (descriptor.charAt(i) == '[') {
-                while (descriptor.charAt(i) == '[') {
-                    i++;
-                }
-
-                if (descriptor.charAt(i) == 'L') {
-                    i = firstIndexOfNextParameter(i, descriptor);
-                } else {
-                    i++;
-                }
-
-                types.append("L");
-
-                System.out.println("fi: " + i);
-                continue;
-            }
-
-            if (descriptor.charAt(i) == 'L') {
-                i = firstIndexOfNextParameter(i, descriptor);
-                types.append('L');
-            } else {
-                types.append(descriptor.charAt(i));
-                i++;
-            }
-
-
-            System.out.println("si: " + i);
-
-        }
-
-        return types.toString().toCharArray();
-    }
-
-    private int firstIndexOfNextParameter(int index, String descriptor) {
-        int i = index;
-
-        while (descriptor.charAt(i) != ';') {
-            i++;
-        }
-
-        i++;
-        System.out.println("N:" + descriptor.charAt(i));
-        return i;
-    }
 
     public int getRegisterSize(char[] types) {
         int size;

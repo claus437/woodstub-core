@@ -62,7 +62,6 @@ public class ConstantPool {
 
         this.stream = stream;
         length = stream.readUnsignedShort();
-        System.out.println("length " + length);
 
         for (int i = 0; i < length - 1; i++) {
             tag = stream.readUnsignedByte();
@@ -106,7 +105,6 @@ public class ConstantPool {
         clazz = POOLINFOTYPES.get(tag);
         if (clazz == null) {
 
-            dump();
             try {
                 System.out.println(stream.readUnsignedByte());
             } catch (IOException x) {
@@ -197,17 +195,14 @@ public class ConstantPool {
         int idxNameAndType;
         int idxMethodRefInfo;
 
-        System.out.println("----start: " + className + " " + methodName + " " + descriptor);
         // CLASS
         idxU8ClassName = ConstantUtf8Info.indexOf(pool, className);
         if (idxU8ClassName == -1) {
             idxU8ClassName = add(new ConstantUtf8Info(className));
-            System.out.println("found no utf8 class name");
         }
 
         idxClassInfo = ConstantClassInfo.indexOf(pool, idxU8ClassName);
         if (idxClassInfo == -1) {
-            System.out.println("found no class info " + idxU8ClassName);
             idxClassInfo = add(new ConstantClassInfo(idxU8ClassName));
         }
 
@@ -216,19 +211,16 @@ public class ConstantPool {
         idxU8MethodName = ConstantUtf8Info.indexOf(pool, methodName);
         if (idxU8MethodName == -1) {
             idxU8MethodName = add(new ConstantUtf8Info(methodName));
-            System.out.println("found no utf8 method name");
         }
 
         idxU8Descriptor = ConstantUtf8Info.indexOf(pool, descriptor);
         if (idxU8Descriptor == -1) {
             idxU8Descriptor = add(new ConstantUtf8Info(descriptor));
-            System.out.println("found no utf8 method description");
         }
 
         idxNameAndType = ConstantNameAndTypeInfo.indexOf(pool, idxU8MethodName, idxU8Descriptor);
         if (idxNameAndType == -1) {
             idxNameAndType = add(new ConstantNameAndTypeInfo(idxU8MethodName, idxU8Descriptor));
-            System.out.println("found no name and type");
         }
 
 
@@ -236,10 +228,8 @@ public class ConstantPool {
         idxMethodRefInfo = ConstantMethodRefInfo.indexOf(pool, idxClassInfo, idxNameAndType);
         if (idxMethodRefInfo == -1) {
             idxMethodRefInfo = add(new ConstantMethodRefInfo(idxClassInfo, idxNameAndType));
-            System.out.println("found no method ref");
         }
 
-        System.out.println("----end: " + className + " " + methodName + " " + descriptor);
         return idxMethodRefInfo;
     }
 

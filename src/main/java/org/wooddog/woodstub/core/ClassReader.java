@@ -38,7 +38,6 @@ public class ClassReader {
 
         constants = new ConstantPool();
         constants.read(stream);
-        constants.dump();
         accessFlags = stream.readUnsignedShort();
         indexOfClass = stream.readUnsignedShort();
         indexOfSuper = stream.readUnsignedShort();

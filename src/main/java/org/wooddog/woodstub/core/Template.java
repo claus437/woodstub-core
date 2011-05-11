@@ -22,13 +22,7 @@ public class Template {
 
             stub.execute();
 
-            switch (stub.getBehavior()) {
-                case Stub.RETURN:
-                    return ((Integer) stub.getResult()).intValue();
-
-                case Stub.THROW:
-                    throw (Throwable) stub.getResult();
-            }
+            return ((Integer) stub.getResult()).intValue();
         }
 
         System.out.println("im not stubbed");

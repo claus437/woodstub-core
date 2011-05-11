@@ -26,17 +26,11 @@ public class InstructionReader {
         instructions = new ArrayList<Instruction>();
         remaining = length;
 
-        try {
-            while (remaining > 0) {
-                instruction = read(stream);
-                instructions.add(instruction);
+        while (remaining > 0) {
+            instruction = read(stream);
+            instructions.add(instruction);
 
-                remaining = remaining - instruction.getLength();
-            }
-        } finally {
-            System.out.println("length: " + length + " / remaing " + remaining);
-            dump();
-
+            remaining = remaining - instruction.getLength();
         }
     }
 
@@ -109,9 +103,6 @@ public class InstructionReader {
 
         length = 0;
 
-        System.out.println("nop: " + stream.readUnsignedByte());
-        System.out.println("nop: " + stream.readUnsignedByte());
-        System.out.println("nop: " + stream.readUnsignedByte());
         length += 3;
 
 

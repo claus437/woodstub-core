@@ -91,7 +91,6 @@ public class Instruction  {
         parameterTypes = getParameterTypes();
         out.writeByte(getCode());
 
-        System.out.println("writing " + getCode() + " " + getName() + " " + toString(parameterTypes) + " " + toString(values));
         for (int i = 0; i < parameterTypes.length; i++) {
             switch (Character.toUpperCase(parameterTypes[i])) {
                 case 'B':
