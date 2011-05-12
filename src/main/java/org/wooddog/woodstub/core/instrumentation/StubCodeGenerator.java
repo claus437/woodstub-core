@@ -319,6 +319,7 @@ public class StubCodeGenerator {
             addInstruction("checkcast", pool.addClass(type));
             addInstruction("checkcast", pool.addClass(type));
             addInstruction("areturn");
+            return;
         }
 
         addInstruction("checkcast", pool.addClass(type.substring(1, type.length() - 1)));

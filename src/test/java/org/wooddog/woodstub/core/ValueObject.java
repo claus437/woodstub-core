@@ -1,16 +1,11 @@
 package org.wooddog.woodstub.core;
 
 
-import org.wooddog.woodstub.core.runtime.Stub;
-
 /**
- * Created by IntelliJ IDEA.
- * User: claus
- * Date: 06-05-11
- * Time: 22:57
- * To change this template use File | Settings | File Templates.
+ * This Class is used only during compile time, runtime it is replaced by CleanValueObject.class found in resources
+ *
  */
-public class ParameterTestObject {
+public class ValueObject {
     private boolean booleanValue;
     private byte byteValue;
     private char charValue;
@@ -103,57 +98,42 @@ public class ParameterTestObject {
         this.array2DValue = array2DValue;
     }
 
+    public int[][] getArray3DValue() {
+        return array3DValue;
+    }
+
+    public void setArray3DValue(int[][] array3DValue) {
+        this.array3DValue = array3DValue;
+    }
+
+    public void setAll(
+            boolean booleanValue,
+            byte byteValue,
+            char charValue,
+            short shortValue,
+            int integerValue,
+            float floatValue,
+            double doubleValue,
+            long longValue,
+            Object objectValue,
+            int[] array2DValue,
+            int[][] array3DValue) {
+
+        this.booleanValue = booleanValue;
+        this.byteValue = byteValue;
+        this.charValue = charValue;
+        this.shortValue = shortValue;
+        this.integerValue = integerValue;
+        this.floatValue = floatValue;
+        this.doubleValue = doubleValue;
+        this.longValue = longValue;
+        this.objectValue = objectValue;
+        this.array2DValue = array2DValue;
+        this.array3DValue = array3DValue;
+    }
+
+
     /*
-    public boolean template() throws Throwable {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
-
-        if (stub != null) {
-            Object[] o = new Object[0];
-            //o[0] = z;
-            //o[1] = b;
-            //o[2] = c;
-            //o[3] = i;
-            //o[4] = f;
-            //o[5] = j;
-            //o[6] = d;
-            //o[7] = l;
-
-            stub.setParameters(null, o);
-
-            stub.execute();
-            return ((Boolean) stub.getResult()).booleanValue();
-        }
-
-        throw new RuntimeException("not thrown");
-    }
-
-
-
-    /*
-
-    public void parameterObject(Object o) {
-        System.out.println("object " + o);
-    }
-
-    public void parameterArray(int[] i) {
-        System.out.println("[integer " + i);
-    }
-
-
-    public void parameter2Array(int[][] i) {
-        System.out.println("[[integer " + i);
-    }
-
-
-    public void all(boolean z, byte b, char c, short s, int i, float f, long j, double d, Object l, Object[] a) {
-        System.out.println("all " + z + " " + b + " " + c + " " + s + " " + i + " " + f + " " + j + " " + d + " " + l + a);
-    }
-
-    public void non() throws Throwable {
-        System.out.println("non");
-    }
-    */
-
     public void setTemplate(int[] i) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
 
@@ -171,10 +151,35 @@ public class ParameterTestObject {
             stub.setParameters(null, o);
 
             stub.execute();
+            stub.getResult();
+
             return;
         }
 
         throw new RuntimeException("not thrown");
     }
 
+
+    public int[][] getTemplate() throws Throwable {
+        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
+
+        if (stub != null) {
+            Object[] o = new Object[0];
+            //o[1] = b;
+            //o[2] = c;
+            //o[3] = i;
+            //o[4] = f;
+            //o[5] = j;
+            //o[6] = d;
+            //o[7] = l;
+
+            stub.setParameters(null, o);
+
+            stub.execute();
+            return (int[][]) stub.getResult();
+        }
+
+        return this.array3DValue;
+    }
+    */
 }
