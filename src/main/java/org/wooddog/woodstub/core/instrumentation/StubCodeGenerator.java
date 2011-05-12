@@ -145,8 +145,6 @@ public class StubCodeGenerator {
         addInstruction("invokeinterface", idxMethodExecute, 1, 0);
 
         addInstruction("aload", parameterRegisterSize + 1);
-        addInstruction("invokeinterface", idxMethodResult, 1, 0);
-
         addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1));
 
 
@@ -252,6 +250,15 @@ public class StubCodeGenerator {
 
         type = methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1);
 
+        if (type.charAt(0) == 'V') {
+            addInstruction("pop");
+            addInstruction("return");
+
+            return;
+        }
+
+        addInstruction("invokeinterface", idxMethodResult, 1, 0);
+
         if (type.length() == 1) {
             switch (type.charAt(0)) {
                 case 'Z':
@@ -301,12 +308,6 @@ public class StubCodeGenerator {
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Long", "longValue", "()J"));
                     addInstruction("lreturn");
                     break;
-
-                case 'V':
-                    addInstruction("pop");
-                    addInstruction("return");
-                    break;
-
 
                 default:
                     throw new InternalErrorException("unable to generate return code for method " + methodDescriptor);

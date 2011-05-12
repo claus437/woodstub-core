@@ -1,6 +1,8 @@
 package org.wooddog.woodstub.core;
 
 
+import org.wooddog.woodstub.core.runtime.Stub;
+
 /**
  * This Class is used only during compile time, runtime it is replaced by CleanValueObject.class found in resources
  *
@@ -133,8 +135,8 @@ public class ValueObject {
     }
 
 
-    /*
-    public void setTemplate(int[] i) throws Throwable {
+
+    public void setTemplate(int i) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
 
         if (stub != null) {
@@ -160,7 +162,7 @@ public class ValueObject {
     }
 
 
-    public int[][] getTemplate() throws Throwable {
+    public int getTemplate() throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
 
         if (stub != null) {
@@ -176,10 +178,10 @@ public class ValueObject {
             stub.setParameters(null, o);
 
             stub.execute();
-            return (int[][]) stub.getResult();
+            return ((Integer)stub.getResult()).intValue();
         }
 
-        return this.array3DValue;
+        return 10;
     }
-    */
+
 }
