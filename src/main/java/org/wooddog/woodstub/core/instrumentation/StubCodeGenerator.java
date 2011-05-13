@@ -440,5 +440,4 @@ public class StubCodeGenerator {
 
         return s;
     }
-
 }

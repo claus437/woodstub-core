@@ -17,6 +17,7 @@ import java.security.ProtectionDomain;
  */
 public class WoodTransformer implements ClassFileTransformer {
     PrintWriter out;
+    File dump = new File("c:\\woodstub-dump");
 
 	public WoodTransformer() {
 		super();
@@ -41,8 +42,10 @@ public class WoodTransformer implements ClassFileTransformer {
 
         if (loader.getResourceAsStream("org/wooddog/woodstub/core/WoodStub.class") != null) {
             try {
+                write(className, bytes);
                 stubGenerator = new StubCodeGenerator();
                 stubGenerator.stubClass(source, target);
+                write(className + "_WOODSTUBBED", target.toByteArray());
                 out.println("STUB: " + className + " " + loader + " "  + redefiningClass);
             } catch (Throwable x) {
                 out.println("FAIL: " + className + " " + loader + " "  + redefiningClass);
@@ -62,5 +65,21 @@ public class WoodTransformer implements ClassFileTransformer {
         out.close();
 
         super.finalize();
+    }
+
+    private void write(String name, byte[] bytes) throws IOException {
+        OutputStream out;
+
+        out = null;
+
+        try {
+            out = new BufferedOutputStream(new FileOutputStream(new File(dump, name + ".class")));
+            out.write(bytes);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException x) {
+            }
+        }
     }
 }
