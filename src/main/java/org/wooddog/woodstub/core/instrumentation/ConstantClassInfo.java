@@ -1,9 +1,5 @@
 package org.wooddog.woodstub.core.instrumentation;
 
-import com.sun.xml.internal.bind.v2.model.core.ClassInfo;
-import org.wooddog.woodstub.core.Converter;
-import org.wooddog.woodstub.core.InternalErrorException;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

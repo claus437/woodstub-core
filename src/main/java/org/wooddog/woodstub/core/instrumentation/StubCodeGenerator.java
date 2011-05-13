@@ -61,12 +61,12 @@ public class StubCodeGenerator {
             buffer = new ByteArrayOutputStream();
             out = new DataOutputStream(buffer);
 
-            if (!((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue().equals("()V")) {
-                System.out.println("stubbing: \"" + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
+            if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().equals("<init>")) {
+                System.out.println("stubbing: \"" + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
                 stub(code, method);
                 write(out);
             } else {
-                System.out.println("skipping " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
+                System.out.println("skipping " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
             }
 
             out.flush();

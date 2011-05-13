@@ -1,9 +1,5 @@
 package org.wooddog.woodstub.core.instrumentation;
 
-import com.sun.org.apache.bcel.internal.classfile.ConstantNameAndType;
-import com.sun.org.apache.bcel.internal.classfile.ConstantUtf8;
-import com.sun.xml.internal.bind.v2.model.core.ClassInfo;
-
 import java.util.List;
 
 /**
