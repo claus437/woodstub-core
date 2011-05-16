@@ -1,18 +1,11 @@
 package org.wooddog.woodstub.core.instrumentation;
 
-import com.sun.org.apache.bcel.internal.classfile.ConstantMethodref;
-import org.wooddog.woodstub.core.ClassReader;
-import org.wooddog.woodstub.core.InternalErrorException;
-import org.wooddog.woodstub.core.ToolBox;
-import org.wooddog.woodstub.core.asm.CodeTable;
-import org.wooddog.woodstub.core.asm.Instruction;
-import org.wooddog.woodstub.core.asm.SymbolicLink;
-import org.wooddog.woodstub.core.asm.SymbolicLinkTable;
+
+import org.wooddog.woodstub.core.*;
+import org.wooddog.woodstub.core.asm.*;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -55,12 +48,16 @@ public class StubCodeGenerator {
         reader.read(stream);
         pool = reader.getConstantPool();
 
+        pool.dump();
 
         methods = reader.getMethods();
 
         setup();
 
         for (FieldInfo method : methods) {
+            instructions.clear();
+
+
             attributes = method.getAttributes("Code");
 
             if (!attributes.isEmpty()) {
@@ -71,23 +68,25 @@ public class StubCodeGenerator {
 
 
                 if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().startsWith("<")) {
-                    System.out.println("stubbing: \"" + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
+                    WoodTransformer.write("\nstubbing: \"" + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"\n");
+                    WoodTransformer.write(DeCompile.asSource(code.getCode()));
                     stub(code, method);
                     write(out);
+                    out.flush();
+                    out.close();
+                    buffer.write(code.getCode());
+                    code.setCode(buffer.toByteArray());
+                    WoodTransformer.write("-------------------\n");
+                    WoodTransformer.write(DeCompile.asSource(code.getCode()));
                 } else {
                     System.out.println("skipping "  + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
                 }
-
-                out.flush();
-                out.close();
-
-                buffer.write(code.getCode());
-                code.setCode(buffer.toByteArray());
-
-                instructions.clear();
             }
         }
         reader.write(target);
+
+        WoodTransformer.write("-------NEW POOL -----------\n");
+        pool.dump();
     }
 
     public void setup() {

@@ -3,10 +3,12 @@ package org.wooddog.woodstub.core.instrumentation;
 import com.sun.org.apache.bcel.internal.classfile.Constant;
 import org.wooddog.woodstub.core.Converter;
 import org.wooddog.woodstub.core.InternalErrorException;
+import org.wooddog.woodstub.core.WoodTransformer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +96,7 @@ public class ConstantPool {
                 continue;
             }
 
-            System.out.println("#" + (i + 1) + " " + pool.get(i).toString());
+            WoodTransformer.write("#" + (i + 1) + " " + pool.get(i).toString() + "\n");
         }
     }
 

@@ -1,7 +1,6 @@
 package org.wooddog.woodstub.core;
 
 import org.wooddog.woodstub.core.instrumentation.StubCodeGenerator;
-import org.wooddog.woodstub.core.runtime.Stub;
 
 import java.io.*;
 import java.lang.instrument.ClassFileTransformer;
@@ -17,7 +16,7 @@ import java.security.ProtectionDomain;
  */
 public class WoodTransformer implements ClassFileTransformer {
     PrintWriter out;
-    File dump = new File("c:\\woodstub-dump");
+    private static final File DUMP = new File("c:\\woodstub-DUMP");
 
 	public WoodTransformer() {
 		super();
@@ -50,7 +49,7 @@ public class WoodTransformer implements ClassFileTransformer {
                 stubGenerator = new StubCodeGenerator();
                 stubGenerator.stubClass(className, source, target);
                 write(className + "_WOODSTUBBED", target.toByteArray());
-                out.println("STUB: " + className + " " + loader + " "  + redefiningClass);
+                out.println("STUB: " + className + " " + loader + " " + redefiningClass);
                 out.flush();
             } catch (Throwable x) {
                 out.println("FAIL: " + className + " " + loader + " "  + redefiningClass + " " + x.getMessage());
@@ -80,7 +79,7 @@ public class WoodTransformer implements ClassFileTransformer {
 
         out = null;
 
-        file = new File(dump, name + ".class");
+        file = new File(DUMP, name + ".class");
         file.getParentFile().mkdirs();
 
         try {
@@ -89,12 +88,31 @@ public class WoodTransformer implements ClassFileTransformer {
         } catch (IOException x) {
             this.out.println("FAILED WRITING " + file.toString() + " " + x.getMessage());
         } finally {
+            close(out);
+        }
+    }
+
+    public static void write(String text) {
+        BufferedWriter out;
+
+        out = null;
+
+        try {
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(DUMP, "decompile.log"), true)));
+            out.write(text);
+        } catch (IOException x) {
+            System.out.println("error closing DUMP file");
+        } finally {
+            close(out);
+        }
+    }
+
+    private static void close(Closeable resource) {
+        if (resource != null) {
             try {
-                if (out != null) {
-                    out.close();
-                }
+                resource.close();
             } catch (IOException x) {
-                this.out.println("FAILED CLOSING " + file.toString() + " " + x.getMessage());
+                System.out.println("FAILED CLOSING " + x.getMessage());
             }
         }
     }
