@@ -23,10 +23,12 @@ public class WoodTransformer implements ClassFileTransformer {
 		super();
 
         try {
-            out = new PrintWriter(new FileOutputStream(new File("c:\\woodstub.log"), true));
-            out.println("1");
+            File file = new File("woodstub.log");
+            out = new PrintWriter(new FileOutputStream(file));
+            System.out.println("created logger " + file.getCanonicalPath());
+
         } catch (IOException x) {
-            System.out.println("failed creating logger");
+            System.out.println("failed creating logger " + x.getMessage());
         }
 
     }
@@ -40,22 +42,27 @@ public class WoodTransformer implements ClassFileTransformer {
         source = new ByteArrayInputStream(bytes);
         target = new ByteArrayOutputStream();
 
+
+
         if (loader.getResourceAsStream("org/wooddog/woodstub/core/WoodStub.class") != null) {
             try {
                 write(className, bytes);
                 stubGenerator = new StubCodeGenerator();
-                stubGenerator.stubClass(source, target);
+                stubGenerator.stubClass(className, source, target);
                 write(className + "_WOODSTUBBED", target.toByteArray());
                 out.println("STUB: " + className + " " + loader + " "  + redefiningClass);
+                out.flush();
             } catch (Throwable x) {
-                out.println("FAIL: " + className + " " + loader + " "  + redefiningClass);
+                out.println("FAIL: " + className + " " + loader + " "  + redefiningClass + " " + x.getMessage());
+                x.printStackTrace(out);
+                out.flush();
                 return bytes;
             }
         } else {
             out.println("SKIP: " + className + " " + loader + " "  + redefiningClass);
+            out.flush();
             return bytes;
         }
-        out.flush();
 
 		return target.toByteArray();
 	}
@@ -69,16 +76,25 @@ public class WoodTransformer implements ClassFileTransformer {
 
     private void write(String name, byte[] bytes) throws IOException {
         OutputStream out;
+        File file;
 
         out = null;
 
+        file = new File(dump, name + ".class");
+        file.getParentFile().mkdirs();
+
         try {
-            out = new BufferedOutputStream(new FileOutputStream(new File(dump, name + ".class")));
+            out = new BufferedOutputStream(new FileOutputStream(file));
             out.write(bytes);
+        } catch (IOException x) {
+            this.out.println("FAILED WRITING " + file.toString() + " " + x.getMessage());
         } finally {
             try {
-                out.close();
+                if (out != null) {
+                    out.close();
+                }
             } catch (IOException x) {
+                this.out.println("FAILED CLOSING " + file.toString() + " " + x.getMessage());
             }
         }
     }

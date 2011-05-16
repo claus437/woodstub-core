@@ -39,10 +39,15 @@ public class StubCodeGenerator {
     private int idxStringClassName;
 
     public void stubClass(InputStream stream, OutputStream target) throws IOException {
+        stubClass("un", stream, target);
+    }
+
+    public void stubClass(String className, InputStream stream, OutputStream target) throws IOException {
         DataOutputStream out;
         ByteArrayOutputStream buffer;
         List<FieldInfo> methods;
         AttributeCode code;
+        List<Attribute> attributes;
         int mem[];
 
         instructions = new ArrayList<Instruction>();
@@ -56,26 +61,31 @@ public class StubCodeGenerator {
         setup();
 
         for (FieldInfo method : methods) {
-            code = (AttributeCode) method.getAttributes("Code").get(0);
+            attributes = method.getAttributes("Code");
 
-            buffer = new ByteArrayOutputStream();
-            out = new DataOutputStream(buffer);
+            if (!attributes.isEmpty()) {
+                code = (AttributeCode) attributes.get(0);
 
-            if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().equals("<init>")) {
-                System.out.println("stubbing: \"" + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
-                stub(code, method);
-                write(out);
-            } else {
-                System.out.println("skipping " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
+                buffer = new ByteArrayOutputStream();
+                out = new DataOutputStream(buffer);
+
+
+                if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().startsWith("<")) {
+                    System.out.println("stubbing: \"" + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"");
+                    stub(code, method);
+                    write(out);
+                } else {
+                    System.out.println("skipping "  + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
+                }
+
+                out.flush();
+                out.close();
+
+                buffer.write(code.getCode());
+                code.setCode(buffer.toByteArray());
+
+                instructions.clear();
             }
-
-            out.flush();
-            out.close();
-
-            buffer.write(code.getCode());
-            code.setCode(buffer.toByteArray());
-
-            instructions.clear();
         }
         reader.write(target);
     }
@@ -156,6 +166,12 @@ public class StubCodeGenerator {
 
         instructions.get(8).setValues(new int[]{size - jumpOffset});
 
+        List<TableException> exceptions = code.getExceptions();
+        for (TableException exception : exceptions) {
+            exception.setStartPc(exception.getStartPc() + size );
+            exception.setEndPc(exception.getEndPc() + size);
+            exception.setHandlerPc(exception.getHandlerPc() + size);
+        }
         //dump();
     }
 
