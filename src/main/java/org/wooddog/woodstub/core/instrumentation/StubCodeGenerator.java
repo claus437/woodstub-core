@@ -69,7 +69,7 @@ public class StubCodeGenerator {
 
                 if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().startsWith("<")) {
                     WoodTransformer.write("\nstubbing: \"" + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"\n");
-                    WoodTransformer.write(DeCompile.asSource(code.getCode()));
+                    //WoodTransformer.write(DeCompile.asSource(code.getCode()));
                     stub(code, method);
                     write(out);
                     out.flush();
@@ -77,7 +77,7 @@ public class StubCodeGenerator {
                     buffer.write(code.getCode());
                     code.setCode(buffer.toByteArray());
                     WoodTransformer.write("-------------------\n");
-                    WoodTransformer.write(DeCompile.asSource(code.getCode()));
+                    //WoodTransformer.write(DeCompile.asSource(code.getCode()));
                 } else {
                     System.out.println("skipping "  + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
                 }
