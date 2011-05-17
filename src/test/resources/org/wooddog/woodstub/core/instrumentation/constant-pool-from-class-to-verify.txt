@@ -1,0 +1,19 @@
+#2 ConstantMethodRefInfo{tag=10, classIndex=3, nameAndTypeIndex=17}
+#3 ConstantClassInfo{tag=7, nameIndex=18}
+#4 ConstantClassInfo{tag=7, nameIndex=19}
+#5 ConstantUtf8Info{tag=1, value='<init>'}
+#6 ConstantUtf8Info{tag=1, value='()V'}
+#7 ConstantUtf8Info{tag=1, value='Code'}
+#8 ConstantUtf8Info{tag=1, value='LineNumberTable'}
+#9 ConstantUtf8Info{tag=1, value='LocalVariableTable'}
+#10 ConstantUtf8Info{tag=1, value='this'}
+#11 ConstantUtf8Info{tag=1, value='Lorg/wooddog/woodstub/core/instrumentation/ConstantPoolTestClassToVerify;'}
+#12 ConstantUtf8Info{tag=1, value='main'}
+#13 ConstantUtf8Info{tag=1, value='([Ljava/lang/String;)V'}
+#14 ConstantUtf8Info{tag=1, value='args'}
+#15 ConstantUtf8Info{tag=1, value='[Ljava/lang/String;'}
+#16 ConstantUtf8Info{tag=1, value='SourceFile'}
+#17 ConstantUtf8Info{tag=1, value='ConstantPoolTestClassToVerify.java'}
+#18 ConstantNameAndTypeInfo{tag=12, nameIndex=4, descriptorIndex=5}
+#19 ConstantUtf8Info{tag=1, value='org/wooddog/woodstub/core/instrumentation/ConstantPoolTestClassToVerify'}
+#20 ConstantUtf8Info{tag=1, value='java/lang/Object'}

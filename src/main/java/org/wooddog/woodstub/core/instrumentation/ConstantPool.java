@@ -100,6 +100,10 @@ public class ConstantPool {
         }
     }
 
+    public int size() {
+        return pool.size();
+    }
+
     private ConstantPoolInfo createEntry(int tag) {
         Class clazz;
         ConstantPoolInfo entry;
@@ -189,6 +193,10 @@ public class ConstantPool {
     //               -> NameAndTypeInfo -> Utf8Info
     //                                  |
     //                                  -> Utf8Info
+    //
+    //
+    //
+
     public int addMethodRef(String className, String methodName, String descriptor) {
         int idxU8ClassName;
         int idxClassInfo;
