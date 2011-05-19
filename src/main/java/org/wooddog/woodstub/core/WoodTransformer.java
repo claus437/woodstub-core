@@ -25,7 +25,6 @@ public class WoodTransformer implements ClassFileTransformer {
             File file = new File("woodstub.log");
             out = new PrintWriter(new FileOutputStream(file));
             System.out.println("created logger " + file.getCanonicalPath());
-
         } catch (IOException x) {
             System.out.println("failed creating logger " + x.getMessage());
         }

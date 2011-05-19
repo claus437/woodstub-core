@@ -20,6 +20,14 @@ public class ValueObject {
     private int[] array2DValue;
     private int[][] array3DValue;
 
+    public static int testStatic(int i) {
+        return i + i;
+    }
+
+    public int test(int i) {
+        return i + i;
+    }
+
     public boolean getBooleanValue() {
         return booleanValue;
     }
@@ -135,7 +143,7 @@ public class ValueObject {
     }
 
 
-
+    /*
     public void setTemplate(int i) throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
 
@@ -160,8 +168,8 @@ public class ValueObject {
 
         throw new RuntimeException("not thrown");
     }
-
-
+    */
+    /*
     public int getTemplate() throws Throwable {
         Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
 
@@ -183,5 +191,5 @@ public class ValueObject {
 
         return 10;
     }
-
+    */
 }

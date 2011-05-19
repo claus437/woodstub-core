@@ -1,6 +1,7 @@
 package org.wooddog.woodstub.core.instrumentation;
 
 import com.sun.org.apache.bcel.internal.classfile.Constant;
+import com.sun.org.apache.bcel.internal.classfile.ConstantUtf8;
 import org.wooddog.woodstub.core.Converter;
 import org.wooddog.woodstub.core.InternalErrorException;
 import org.wooddog.woodstub.core.WoodTransformer;
@@ -65,6 +66,7 @@ public class ConstantPool {
         this.stream = stream;
         length = stream.readUnsignedShort();
 
+
         for (int i = 0; i < length - 1; i++) {
             tag = stream.readUnsignedByte();
 
@@ -96,7 +98,7 @@ public class ConstantPool {
                 continue;
             }
 
-            WoodTransformer.write("#" + (i + 1) + " " + pool.get(i).toString() + "\n");
+            WoodTransformer.write("#" + i + " " + pool.get(i).toString() + "\n");
         }
     }
 
@@ -261,20 +263,43 @@ public class ConstantPool {
 
     }
 
-    public int addString(String value) {
+    public int addUtf8Info(String value) {
         int idxUtf8;
-        int idxString;
 
         idxUtf8 = ConstantUtf8Info.indexOf(pool, value);
         if (idxUtf8 == -1) {
             idxUtf8 = add(new ConstantUtf8Info(value));
         }
 
-        idxString = ConstantStringInfo.indexOf(pool, idxUtf8);
-        if (idxString == -1) {
-            idxString = add(new ConstantStringInfo(idxUtf8));
+        return idxUtf8;
+    }
+
+    public int addNameAndType(String name, String type) {
+        int nameIndex;
+        int descriptorIndex;
+        int index;
+
+        nameIndex = addUtf8Info(name);
+        descriptorIndex = addUtf8Info(type);
+
+        index = ConstantNameAndTypeInfo.indexOf(pool, nameIndex, descriptorIndex);
+        if (index == -1) {
+            index = add(new ConstantNameAndTypeInfo(nameIndex, descriptorIndex));
         }
 
-        return idxString;
+        return index;
+    }
+
+    public int addString(String value) {
+        int utf8Index;
+        int index;
+
+        utf8Index = addUtf8Info(value);
+        index = ConstantStringInfo.indexOf(pool, utf8Index);
+        if (index == -1) {
+            index = add(new ConstantStringInfo(utf8Index));
+        }
+
+        return index;
     }
 }

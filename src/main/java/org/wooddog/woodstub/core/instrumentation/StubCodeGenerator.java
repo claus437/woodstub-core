@@ -48,7 +48,7 @@ public class StubCodeGenerator {
         reader.read(stream);
         pool = reader.getConstantPool();
 
-        pool.dump();
+        //pool.dump();
 
         methods = reader.getMethods();
 
@@ -67,7 +67,7 @@ public class StubCodeGenerator {
                 out = new DataOutputStream(buffer);
 
 
-                if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().startsWith("<")) {
+                if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().startsWith("<") && !AccessFlags.isStatic(method.getAccessFlags())) {
                     WoodTransformer.write("\nstubbing: \"" + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"\n");
                     //WoodTransformer.write(DeCompile.asSource(code.getCode()));
                     stub(code, method);
@@ -76,17 +76,17 @@ public class StubCodeGenerator {
                     out.close();
                     buffer.write(code.getCode());
                     code.setCode(buffer.toByteArray());
-                    WoodTransformer.write("-------------------\n");
+                    //WoodTransformer.write("-------------------\n");
                     //WoodTransformer.write(DeCompile.asSource(code.getCode()));
                 } else {
-                    System.out.println("skipping "  + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
+                    WoodTransformer.write("skipping "  + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
                 }
             }
         }
         reader.write(target);
 
-        WoodTransformer.write("-------NEW POOL -----------\n");
-        pool.dump();
+        //WoodTransformer.write("-------NEW POOL -----------\n");
+        //pool.dump();
     }
 
     public void setup() {
@@ -132,7 +132,8 @@ public class StubCodeGenerator {
         idxStringDescriptor = pool.addString(methodDescriptor);
 
         addInstruction("invokestatic", idxMethodStubFactory);
-        addInstruction("aload_0");
+        //addInstruction("aload_0");
+        addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringName);
         addInstruction("ldc", idxStringDescriptor);

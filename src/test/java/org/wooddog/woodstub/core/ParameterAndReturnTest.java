@@ -43,6 +43,11 @@ public class ParameterAndReturnTest {
         WoodStub.setStubFactory(new StubReturnWriter());
     }
 
+    @Test
+    public void testStatic() {
+        System.out.print(ValueObject.testStatic(10));
+    }
+
 
     @Test
     public void testReturnValues() throws Exception {
@@ -125,6 +130,8 @@ public class ParameterAndReturnTest {
 
         public Stub createStub(Object source, String clazz, String name, String description) {
             StubReturnWriter stub;
+
+            System.out.println(source);
 
             stub = new StubReturnWriter();
             stub.description = description;
