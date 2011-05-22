@@ -1,11 +1,14 @@
 package org.wooddog.woodstub.core;
 
 import org.wooddog.woodstub.core.instrumentation.StubCodeGenerator;
+import sun.security.krb5.internal.LoginOptions;
 
 import java.io.*;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,20 +18,12 @@ import java.security.ProtectionDomain;
  * To change this template use File | Settings | File Templates.
  */
 public class WoodTransformer implements ClassFileTransformer {
-    PrintWriter out;
-    private static final File DUMP = new File("c:\\woodstub-DUMP");
+    private static final Logger LOGGER = Logger.getLogger(WoodTransformer.class.getName());
 
 	public WoodTransformer() {
 		super();
 
-        try {
-            File file = new File("woodstub.log");
-            out = new PrintWriter(new FileOutputStream(file));
-            System.out.println("created logger " + file.getCanonicalPath());
-        } catch (IOException x) {
-            System.out.println("failed creating logger " + x.getMessage());
-        }
-
+        MyLogger.init();
     }
 
 
@@ -37,82 +32,25 @@ public class WoodTransformer implements ClassFileTransformer {
         ByteArrayInputStream source;
         ByteArrayOutputStream target;
 
+        if (loader.getResourceAsStream("org/wooddog/woodstub/core/WoodStub.class") == null) {
+            LOGGER.log(Level.FINE, "skipping " +  className + " on loader " + loader + " as found no client lib");
+            return bytes;
+        }
+
         source = new ByteArrayInputStream(bytes);
         target = new ByteArrayOutputStream();
 
-
-
-        if (loader.getResourceAsStream("org/wooddog/woodstub/core/WoodStub.class") != null) {
-            try {
-                write(className, bytes);
-                stubGenerator = new StubCodeGenerator();
-                stubGenerator.stubClass(className, source, target);
-                write(className + "_WOODSTUBBED", target.toByteArray());
-                out.println("STUB: " + className + " " + loader + " " + redefiningClass);
-                out.flush();
-            } catch (Throwable x) {
-                out.println("FAIL: " + className + " " + loader + " "  + redefiningClass + " " + x.getMessage());
-                x.printStackTrace(out);
-                out.flush();
-                return bytes;
-            }
-        } else {
-            out.println("SKIP: " + className + " " + loader + " "  + redefiningClass);
-            out.flush();
+        try {
+            MyLogger.write(className, bytes);
+            stubGenerator = new StubCodeGenerator();
+            stubGenerator.stubClass(className, source, target);
+            MyLogger.write(className + "_WS", target.toByteArray());
+            LOGGER.log(Level.FINE, "stubbed " +  className + " on loader " + loader);
+        } catch (Throwable x) {
+            LOGGER.log(Level.WARNING, "failed stubbing " +  className + " on loader " + loader + " " + x.getMessage(), x);
             return bytes;
         }
 
 		return target.toByteArray();
 	}
-
-    @Override
-    protected void finalize() throws Throwable {
-        out.close();
-
-        super.finalize();
-    }
-
-    private void write(String name, byte[] bytes) throws IOException {
-        OutputStream out;
-        File file;
-
-        out = null;
-
-        file = new File(DUMP, name + ".class");
-        file.getParentFile().mkdirs();
-
-        try {
-            out = new BufferedOutputStream(new FileOutputStream(file));
-            out.write(bytes);
-        } catch (IOException x) {
-            this.out.println("FAILED WRITING " + file.toString() + " " + x.getMessage());
-        } finally {
-            close(out);
-        }
-    }
-
-    public static void write(String text) {
-        BufferedWriter out;
-
-        out = null;
-
-        try {
-            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(DUMP, "decompile.log"), true)));
-            out.write(text);
-        } catch (IOException x) {
-            System.out.println("error closing DUMP file");
-        } finally {
-            close(out);
-        }
-    }
-
-    private static void close(Closeable resource) {
-        if (resource != null) {
-            try {
-                resource.close();
-            } catch (IOException x) {
-                System.out.println("FAILED CLOSING " + x.getMessage());
-            }
-        }
-    }
 }

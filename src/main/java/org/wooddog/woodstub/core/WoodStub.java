@@ -1,12 +1,13 @@
 package org.wooddog.woodstub.core;
 
+import org.wooddog.woodstub.core.instrumentation.AttributeFactory;
+import org.wooddog.woodstub.core.instrumentation.StubCodeGenerator;
 import org.wooddog.woodstub.core.runtime.Stub;
 import org.wooddog.woodstub.core.runtime.StubFactory;
 
-import javax.xml.parsers.FactoryConfigurationError;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.util.Arrays;
+import java.util.logging.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +17,9 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public class WoodStub {
+    private static final Logger LOGGER = Logger.getLogger(WoodStub.class.getName());
+    private static FileHandler handler;
+
     private static final Stub STUB = new Stub() {
         public void setParameters(String[] names, Object[] values) {
         }
@@ -38,8 +42,35 @@ public class WoodStub {
     private static StubFactory FACTORY = DEFAULT_FACTORY;
 
  	public static void premain(String agentArguments, Instrumentation instrumentation) {
-		instrumentation.addTransformer(new WoodTransformer());
-	}
+
+
+
+        try {
+            // Create a file handler that write log record to a file called my.log
+            handler = new FileHandler("woodstub.log");
+            handler.setFormatter(new Formatter() {
+                @Override
+                public String format(LogRecord record) {
+                    return record.getMessage() + "\n";
+                }
+            });
+            handler.setLevel(Level.ALL);
+
+            Logger.getLogger(WoodStub.class.getName()).addHandler(handler);
+            Logger.getLogger(WoodTransformer.class.getName()).addHandler(handler);
+            Logger.getLogger(StubCodeGenerator.class.getName()).addHandler(handler);
+            Logger.getLogger(AttributeFactory.class.getName()).addHandler(handler);
+        } catch (IOException x) {
+            LOGGER.log(Level.SEVERE, "failed creating file logger", x);
+        }
+
+        instrumentation.addTransformer(new WoodTransformer());
+        LOGGER.log(Level.INFO, "woodstub transformer installed successfully");
+    }
+
+    public static void flushLog() {
+        handler.flush();
+    }
 
     public static StubFactory getStubFactory() {
         return FACTORY;

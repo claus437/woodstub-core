@@ -7,16 +7,16 @@ import java.io.IOException;
 /**
  * Created by IntelliJ IDEA.
  * User: claus
- * Date: 01-05-11
- * Time: 13:48
+ * Date: 22-05-11
+ * Time: 17:05
  * To change this template use File | Settings | File Templates.
  */
-public class TableEntryLocalVariable {
-    int startPc;
-    int length;
-    int nameIndex;
-    int descriptorIndex;
-    int index;
+public class TableLocalVariableType {
+    private int startPc;
+    private int length;
+    private int nameIndex;
+    private int signatureIndex;
+    private int index;
 
     public int getStartPc() {
         return startPc;
@@ -42,12 +42,12 @@ public class TableEntryLocalVariable {
         this.nameIndex = nameIndex;
     }
 
-    public int getDescriptorIndex() {
-        return descriptorIndex;
+    public int getSignatureIndex() {
+        return signatureIndex;
     }
 
-    public void setDescriptorIndex(int descriptorIndex) {
-        this.descriptorIndex = descriptorIndex;
+    public void setSignatureIndex(int signatureIndex) {
+        this.signatureIndex = signatureIndex;
     }
 
     public int getIndex() {
@@ -62,7 +62,7 @@ public class TableEntryLocalVariable {
         startPc = stream.readUnsignedShort();
         length = stream.readUnsignedShort();
         nameIndex = stream.readUnsignedShort();
-        descriptorIndex = stream.readUnsignedShort();
+        signatureIndex = stream.readUnsignedShort();
         index = stream.readUnsignedShort();
     }
 
@@ -70,8 +70,7 @@ public class TableEntryLocalVariable {
         stream.writeShort(startPc);
         stream.writeShort(length);
         stream.writeShort(nameIndex);
-        stream.writeShort(descriptorIndex);
+        stream.writeShort(signatureIndex);
         stream.writeShort(index);
     }
-
 }

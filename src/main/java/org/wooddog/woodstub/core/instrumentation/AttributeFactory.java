@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,12 +21,15 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class AttributeFactory {
+    private static final Logger LOGGER = Logger.getLogger(AttributeFactory.class.getName());
     private static final Class ATTRIBUTE_UNKNOWN = AttributeUnknown.class;
     private static final Map<String, Class> ATTRIBUTE_TYPES = new HashMap<String, Class>();
 
     static {
         ATTRIBUTE_TYPES.put("Code", AttributeCode.class);
-        //ATTRIBUTE_TYPES.put("LocalVariableTable", AttributeLocalVariable.class);
+        ATTRIBUTE_TYPES.put("LineNumberTable", AttributeLineNumber.class);
+        ATTRIBUTE_TYPES.put("LocalVariableTable", AttributeLocalVariable.class);
+        ATTRIBUTE_TYPES.put("LocalVariableTypeTable", AttributeLocalVariable.class);
     }
 
     public static Attribute create(ConstantPool constantPool, DataInputStream stream) throws  IOException {
@@ -74,6 +79,8 @@ public class AttributeFactory {
         if (clazz == null) {
             clazz = ATTRIBUTE_UNKNOWN;
         }
+
+        LOGGER.log(Level.INFO, "created attribute " + clazz.getSimpleName() + " for " + type);
 
         try {
             attribute = (Attribute) clazz.newInstance();

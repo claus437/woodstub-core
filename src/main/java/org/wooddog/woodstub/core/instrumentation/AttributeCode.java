@@ -69,6 +69,14 @@ public class AttributeCode implements Attribute {
         this.exceptions = exceptions;
     }
 
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
+
     public void read(ConstantPool constantPool, DataInputStream stream) throws IOException {
         int codeLength;
         int exceptionCount;

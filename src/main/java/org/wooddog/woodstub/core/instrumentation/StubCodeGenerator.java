@@ -3,10 +3,13 @@ package org.wooddog.woodstub.core.instrumentation;
 
 import org.wooddog.woodstub.core.*;
 import org.wooddog.woodstub.core.asm.*;
+import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +19,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class StubCodeGenerator {
+    private static final Logger LOGGER = Logger.getLogger(StubCodeGenerator.class.getName());
     private List<Instruction> instructions;
     private byte[] code;
     private ConstantPool pool;
@@ -41,59 +45,61 @@ public class StubCodeGenerator {
         List<FieldInfo> methods;
         AttributeCode code;
         List<Attribute> attributes;
-        int mem[];
+        String methodName;
+
 
         instructions = new ArrayList<Instruction>();
         reader = new ClassReader();
         reader.read(stream);
+
         pool = reader.getConstantPool();
-
-        //pool.dump();
-
         methods = reader.getMethods();
-
         setup();
 
         for (FieldInfo method : methods) {
             instructions.clear();
 
+            methodName = ((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue();
+
+            if (methodName.startsWith("<")) {
+                LOGGER.log(Level.INFO, "skipping constructor " + className + " " + methodName + " (yet to be implemented)");
+                continue;
+            }
+
+            if (AccessFlags.isStatic(method.getAccessFlags())) {
+                LOGGER.log(Level.INFO, "skipping static method " + className + " " + methodName + " (yet to be implemented)");
+                continue;
+            }
 
             attributes = method.getAttributes("Code");
-
-            if (!attributes.isEmpty()) {
-                code = (AttributeCode) attributes.get(0);
-
-                buffer = new ByteArrayOutputStream();
-                out = new DataOutputStream(buffer);
-
-
-                if (!((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue().startsWith("<") && !AccessFlags.isStatic(method.getAccessFlags())) {
-                    WoodTransformer.write("\nstubbing: \"" + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue() + "\"\n");
-                    //WoodTransformer.write(DeCompile.asSource(code.getCode()));
-                    stub(code, method);
-                    write(out);
-                    out.flush();
-                    out.close();
-                    buffer.write(code.getCode());
-                    code.setCode(buffer.toByteArray());
-                    //WoodTransformer.write("-------------------\n");
-                    //WoodTransformer.write(DeCompile.asSource(code.getCode()));
-                } else {
-                    WoodTransformer.write("skipping "  + className + " " + ((ConstantUtf8Info) pool.get(method.getNameIndex())) + " " + ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue());
-                }
+            if (attributes.isEmpty()) {
+                LOGGER.log(Level.INFO, "skipping empty method " + className + " " + methodName + " (yet to be implemented)");
+                continue;
             }
-        }
-        reader.write(target);
 
-        //WoodTransformer.write("-------NEW POOL -----------\n");
-        //pool.dump();
+            code = (AttributeCode) attributes.get(0);
+
+            buffer = new ByteArrayOutputStream();
+            out = new DataOutputStream(buffer);
+
+            stub(code, method);
+            write(out);
+            out.flush();
+            out.close();
+            buffer.write(code.getCode());
+            code.setCode(buffer.toByteArray());
+
+            LOGGER.log(Level.INFO, "stubbed method " + className + " " + methodName);
+        }
+
+        reader.write(target);
+        LOGGER.log(Level.FINE, "stubbed " + methods.size() + " methods in class " + className);
     }
 
     public void setup() {
         String className;
 
         className = ((ConstantUtf8Info) pool.get(((ConstantClassInfo) pool.get(reader.getIndexOfClass())).getNameIndex())).getValue();
-
 
         idxMethodStubFactory = pool.addMethodRef("org/wooddog/woodstub/core/WoodStub", "getStubFactory", "()Lorg/wooddog/woodstub/core/runtime/StubFactory;");
         idxStringClassName = pool.addString(className);
@@ -103,6 +109,7 @@ public class StubCodeGenerator {
         idxMethodResult = pool.addInterfaceMethodRefInfo("org/wooddog/woodstub/core/runtime/Stub", "getResult", "()Ljava/lang/Object;");
         idxClassObject = pool.addClass("java/lang/Object");
 
+        LOGGER.log(Level.FINE, "setup " + idxStringClassName + " name " + className);
     }
 
     public void stub(AttributeCode code, FieldInfo method) {
@@ -132,8 +139,8 @@ public class StubCodeGenerator {
         idxStringDescriptor = pool.addString(methodDescriptor);
 
         addInstruction("invokestatic", idxMethodStubFactory);
-        //addInstruction("aload_0");
-        addInstruction("ldc", idxStringClassName);
+        addInstruction("aload_0");
+        //addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringName);
         addInstruction("ldc", idxStringDescriptor);
@@ -172,9 +179,45 @@ public class StubCodeGenerator {
             exception.setEndPc(exception.getEndPc() + size);
             exception.setHandlerPc(exception.getHandlerPc() + size);
         }
-        //dump();
+
+        List attributes =  code.getAttributes();
+        for (int i = 0; i < attributes.size(); i++) {
+            Attribute attribute = (Attribute) attributes.get(i);
+
+            if ("LineNumberTable".equals(attribute.getName())) {
+                moveLineNumbers(((AttributeLineNumber) attribute).getLineNumberList(), size);
+                continue;
+            }
+
+            if ("LocalVariableTable".equals(attribute.getName())) {
+                moveLocalVariables(((AttributeLocalVariable) attribute).getLocalVariableList(), size);
+                continue;
+            }
+
+            if ("LocalVariableTypeTable".equals(attribute.getName())) {
+                moveLocalVariableTypess(((AttributeLocalVariableType) attribute).getLocalVariableTypeList(), size);
+            }
+        }
     }
 
+
+    private void moveLineNumbers(List<TableLineNumber> lineNumbers, int offset) {
+        for (TableLineNumber lineNumber : lineNumbers) {
+            lineNumber.setStartPc(lineNumber.getStartPc() + offset);
+        }
+    }
+
+    private void moveLocalVariables(List<TableEntryLocalVariable> localVariables, int offset) {
+        for (TableEntryLocalVariable variable : localVariables) {
+            variable.setStartPc(variable.getStartPc() + offset);
+        }
+    }
+
+    private void moveLocalVariableTypess(List<TableLocalVariableType> types, int offset) {
+        for (TableLocalVariableType type : types) {
+            type.setStartPc(type.getStartPc() + offset);
+        }
+    }
 
     private void addParameterValueArray(char[] parameterTypes, int address, String descriptor) {
         int arrayAddress;
@@ -367,6 +410,12 @@ public class StubCodeGenerator {
             }
         }
 
+        if ("ldc".equals(name)) {
+            if (parameters[0] > 255) {
+                name = "ldc_w";
+            }
+        }
+
         instruction = new Instruction(CodeTable.getInstructionDefinition(name));
         instruction.setValues(parameters);
 
@@ -456,4 +505,5 @@ public class StubCodeGenerator {
 
         return s;
     }
+
 }
