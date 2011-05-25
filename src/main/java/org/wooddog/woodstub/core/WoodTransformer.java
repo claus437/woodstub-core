@@ -19,6 +19,7 @@ import java.util.logging.Logger;
  */
 public class WoodTransformer implements ClassFileTransformer {
     private static final Logger LOGGER = Logger.getLogger(WoodTransformer.class.getName());
+    private static int count;
 
 	public WoodTransformer() {
 		super();
@@ -32,11 +33,38 @@ public class WoodTransformer implements ClassFileTransformer {
         ByteArrayInputStream source;
         ByteArrayOutputStream target;
 
-        if (loader.getResourceAsStream("org/wooddog/woodstub/core/WoodStub.class") == null) {
-            LOGGER.log(Level.FINE, "skipping " +  className + " on loader " + loader + " as found no client lib");
+        //System.out.println("class " + className);
+
+        /*
+        if (className != null && className.startsWith("org/wooddog/woodstub")) {
+            System.out.println("skipped " + className);
             return bytes;
         }
+        */
 
+        if (loader == null) {
+            System.out.println(count + "         " + className);
+            return bytes;
+        }
+        System.out.println(count + " " + loader.hashCode() + " " + className);
+
+        count ++;
+
+
+        if (count < 119) {
+            return null;
+        }
+        /*
+        System.out.println("loader " + loader);
+
+        if (loader.getResourceAsStream("org/wooddog/woodstub/core/WoodStub.class") == null) {
+            System.out.println("-SKIP " + className);
+            LOGGER.log(Level.FINE, "skipping " +  className + " on loader " + loader + " as found no client lib");
+            return bytes;
+        } else {
+            System.out.println("-FOUND " + className);
+        }
+        */
         source = new ByteArrayInputStream(bytes);
         target = new ByteArrayOutputStream();
 
@@ -48,7 +76,7 @@ public class WoodTransformer implements ClassFileTransformer {
             LOGGER.log(Level.FINE, "stubbed " +  className + " on loader " + loader);
         } catch (Throwable x) {
             LOGGER.log(Level.WARNING, "failed stubbing " +  className + " on loader " + loader + " " + x.getMessage(), x);
-            return bytes;
+            return null;
         }
 
 		return target.toByteArray();

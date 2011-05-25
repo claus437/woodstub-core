@@ -42,6 +42,19 @@ public class ParameterAndReturnTest {
     }
 
 
+    @Test
+    public void testStaticReturnValues() throws Exception {
+        WoodStub.setStubFactory(new StubReturnWriter());
+
+        Assert.assertEquals(VALUES.get("L"), ValueObject.getStaticObject());
+    }
+
+    @Test
+    public void testStaticParameterValues() throws Exception {
+        WoodStub.setStubFactory(new StubReturnWriter());
+
+        ValueObject.setStaticObject(VALUES.get("L"));
+    }
 
     @Test
     public void testReturnValues() throws Exception {

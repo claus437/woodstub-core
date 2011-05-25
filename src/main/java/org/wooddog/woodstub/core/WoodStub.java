@@ -70,7 +70,8 @@ public class WoodStub {
             LOGGER.log(Level.SEVERE, "failed creating file logger", x);
         }
 
-        instrumentation.addTransformer(new WoodTransformer());
+
+        instrumentation.addTransformer(new WoodTransformer(), true);
         LOGGER.log(Level.INFO, "woodstub transformer installed successfully");
     }
 
@@ -79,7 +80,12 @@ public class WoodStub {
     }
 
     public static StubFactory getStubFactory() {
-        return FACTORY;
+        StubFactory tmpFactory;
+
+        tmpFactory = FACTORY;
+        FACTORY = DEFAULT_FACTORY;
+
+        return DEFAULT_FACTORY;
     }
 
     public static void setStubFactory(StubFactory factory) {

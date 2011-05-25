@@ -19,6 +19,15 @@ public class ValueObject {
     private Object objectValue = null;
     private int[] array2DValue = null;
     private int[][] array3DValue = null;
+    private static Object STATIC_OBJECT = null;
+
+    public static Object getStaticObject() {
+        return STATIC_OBJECT;
+    }
+
+    public static void setStaticObject(Object staticObject) {
+        ValueObject.STATIC_OBJECT = staticObject;
+    }
 
     public boolean getBooleanValue() {
         return booleanValue;

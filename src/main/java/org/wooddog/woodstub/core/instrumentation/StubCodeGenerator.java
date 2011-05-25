@@ -122,6 +122,7 @@ public class StubCodeGenerator {
         String methodDescriptor;
         char[] parameterTypes;
         int parameterRegisterSize;
+        int parameterStartIndex;
 
 
         methodDescriptor = ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue();
@@ -143,8 +144,10 @@ public class StubCodeGenerator {
         addInstruction("invokestatic", idxMethodStubFactory);
         if (AccessFlags.isStatic(method.getAccessFlags())) {
             addInstruction("aconst_null");
+            parameterStartIndex = 0;
         } else {
             addInstruction("aload_0");
+            parameterStartIndex = 1;
         }
         addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringName);
@@ -156,7 +159,7 @@ public class StubCodeGenerator {
         jumpOffset = calculateCodeSize();
         addInstruction("ifnull", -1);
 
-        addParameterValueArray(parameterTypes, parameterRegisterSize + 2, methodDescriptor);
+        addParameterValueArray(parameterTypes, parameterRegisterSize + 2, methodDescriptor, parameterStartIndex);
 
         addInstruction("aload", parameterRegisterSize + 1);
         addInstruction("aconst_null");
@@ -224,9 +227,8 @@ public class StubCodeGenerator {
         }
     }
 
-    private void addParameterValueArray(char[] parameterTypes, int address, String descriptor) {
+    private void addParameterValueArray(char[] parameterTypes, int address, String descriptor, int stackAddress) {
         int arrayAddress;
-        int stackAddress;
 
 
         if (parameterTypes.length > 5) {
@@ -238,8 +240,6 @@ public class StubCodeGenerator {
         arrayAddress = address;
         addInstruction("anewarray", pool.addClass("java/lang/Object"));
         addInstruction("astore", arrayAddress);
-
-        stackAddress = 1;
 
         for (int i = 0; i < parameterTypes.length; i++) {
             addInstruction("aload", arrayAddress);
