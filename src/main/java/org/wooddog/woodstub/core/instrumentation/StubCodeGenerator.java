@@ -69,7 +69,7 @@ public class StubCodeGenerator {
 
             methodName = ((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue();
 
-            if (methodName.startsWith("<")) {
+            if (methodName.startsWith("<i")) {
                 LOGGER.log(Level.INFO, "skipping constructor " + className + " " + methodName + " (yet to be implemented)");
                 continue;
             }

@@ -10,6 +10,10 @@ package org.wooddog.woodstub.core;
 public class MethodAccessObject {
     public String invoked = null;
 
+    static {
+        System.out.println("im not stubbed");
+    }
+
 
     public void publicMethod() throws Throwable {
         invoked = "public";

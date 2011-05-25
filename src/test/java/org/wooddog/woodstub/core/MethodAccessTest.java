@@ -23,6 +23,24 @@ public class MethodAccessTest implements StubFactory, Stub {
 
 
     static {
+        WoodStub.setStubFactory(new StubFactory() {
+            public Stub createStub(Object source, String clazz, String name, String description) {
+                System.out.println(source + " " + clazz + " " + name + " " + description);
+                return new Stub() {
+                    public void setParameters(String[] names, Object[] values) {
+                        //To change body of implemented methods use File | Settings | File Templates.
+                    }
+
+                    public void execute() throws Throwable {
+                        System.out.println("replaced logic");
+                    }
+
+                    public Object getResult() {
+                        return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    }
+                };
+            }
+        });
         IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/MethodAccessObject");
     }
 
