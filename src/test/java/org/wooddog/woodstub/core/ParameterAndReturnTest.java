@@ -25,8 +25,9 @@ import org.junit.Test;
 public class ParameterAndReturnTest {
     private static final Map<String, Object> VALUES = new HashMap<String, Object>();
 
-    @BeforeClass
-    public static void init() throws Exception {
+    static {
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/ValueObject");
+
         VALUES.put("Z", Boolean.TRUE);
         VALUES.put("B", Byte.MAX_VALUE);
         VALUES.put("C", Character.MAX_VALUE);
@@ -38,33 +39,28 @@ public class ParameterAndReturnTest {
         VALUES.put("L", new Object());
         VALUES.put("[I", new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE});
         VALUES.put("[[I", new int[][]{{Integer.MIN_VALUE, Integer.MAX_VALUE}, {Integer.MIN_VALUE, Integer.MAX_VALUE}});
-
-        installStubbedValueObjectClass();
-        WoodStub.setStubFactory(new StubReturnWriter());
     }
 
-    @Test
-    public void testStatic() {
-        System.out.print(ValueObject.testStatic(10));
-    }
 
 
     @Test
     public void testReturnValues() throws Exception {
         ValueObject objectUnderTest;
 
+        WoodStub.setStubFactory(new StubReturnWriter());
         objectUnderTest = new ValueObject();
-        Assert.assertEquals(objectUnderTest.getBooleanValue(), Boolean.TRUE);
-        Assert.assertEquals(objectUnderTest.getByteValue(), Byte.MAX_VALUE);
-        Assert.assertEquals(objectUnderTest.getCharValue(), Character.MAX_VALUE);
-        Assert.assertEquals(objectUnderTest.getShortValue(), Short.MAX_VALUE);
-        Assert.assertEquals(objectUnderTest.getIntegerValue(), Integer.MAX_VALUE);
-        Assert.assertEquals(objectUnderTest.getFloatValue(), Float.MAX_VALUE, 0);
-        Assert.assertEquals(objectUnderTest.getDoubleValue(), Double.MAX_VALUE, 0);
-        Assert.assertEquals(objectUnderTest.getLongValue(), Long.MAX_VALUE);
-        Assert.assertEquals(objectUnderTest.getObjectValue(), VALUES.get("L"));
-        Assert.assertArrayEquals(objectUnderTest.getArray2DValue(), (int[]) VALUES.get("[I"));
-        Assert.assertArrayEquals(objectUnderTest.getArray3DValue(), (int[][]) VALUES.get("[[I"));
+
+        Assert.assertEquals(Boolean.TRUE, objectUnderTest.getBooleanValue());
+        Assert.assertEquals(Byte.MAX_VALUE, objectUnderTest.getByteValue());
+        Assert.assertEquals(Character.MAX_VALUE, objectUnderTest.getCharValue());
+        Assert.assertEquals(Short.MAX_VALUE, objectUnderTest.getShortValue());
+        Assert.assertEquals(Integer.MAX_VALUE, objectUnderTest.getIntegerValue());
+        Assert.assertEquals(Float.MAX_VALUE, objectUnderTest.getFloatValue(), 0);
+        Assert.assertEquals(Double.MAX_VALUE, objectUnderTest.getDoubleValue(), 0);
+        Assert.assertEquals(Long.MAX_VALUE, objectUnderTest.getLongValue());
+        Assert.assertEquals(VALUES.get("L"), objectUnderTest.getObjectValue());
+        Assert.assertArrayEquals((int[]) VALUES.get("[I"), objectUnderTest.getArray2DValue());
+        Assert.assertArrayEquals((int[][]) VALUES.get("[[I"), objectUnderTest.getArray3DValue());
     }
 
 
@@ -72,7 +68,9 @@ public class ParameterAndReturnTest {
     public void testParameterValues() throws IOException {
         ValueObject objectUnderTest;
 
+        WoodStub.setStubFactory(new StubReturnWriter());
         objectUnderTest = new ValueObject();
+
         objectUnderTest.setBooleanValue(Boolean.TRUE);
         objectUnderTest.setByteValue(Byte.MAX_VALUE);
         objectUnderTest.setCharValue(Character.MAX_VALUE);
@@ -111,7 +109,7 @@ public class ParameterAndReturnTest {
             }
         }
 
-        public void execute() throws Throwable {
+        public void execute() {
         }
 
         public Object getResult() {
@@ -131,32 +129,10 @@ public class ParameterAndReturnTest {
         public Stub createStub(Object source, String clazz, String name, String description) {
             StubReturnWriter stub;
 
-            System.out.println(source);
-
             stub = new StubReturnWriter();
             stub.description = description;
 
             return stub;
         }
     }
-
-    private static void installStubbedValueObjectClass() throws IOException {
-           StubCodeGenerator stubGenerator;
-           FileInputStream source;
-           FileOutputStream target;
-
-           source = new FileInputStream(new File("src/test/resources/org/wooddog/woodstub/core/CleanValueObject.class"));
-           target= new FileOutputStream(new File("target/test-classes/org/wooddog/woodstub/core/ValueObject.class"));
-
-           try {
-               stubGenerator = new StubCodeGenerator();
-               stubGenerator.stubClass(source, target);
-           } finally {
-               try {
-                   source.close();
-               } finally {
-                   target.close();
-               }
-           }
-       }
 }

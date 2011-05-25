@@ -8,25 +8,17 @@ import org.wooddog.woodstub.core.runtime.Stub;
  *
  */
 public class ValueObject {
-    private boolean booleanValue;
-    private byte byteValue;
-    private char charValue;
-    private short shortValue;
-    private int integerValue;
-    private float floatValue;
-    private double doubleValue;
-    private long longValue;
-    private Object objectValue;
-    private int[] array2DValue;
-    private int[][] array3DValue;
-
-    public static int testStatic(int i) {
-        return i + i;
-    }
-
-    public int test(int i) {
-        return i + i;
-    }
+    private boolean booleanValue = false;
+    private byte byteValue = Byte.MIN_VALUE;
+    private char charValue = Character.MIN_VALUE;
+    private short shortValue = Short.MIN_VALUE;
+    private int integerValue = Integer.MIN_VALUE;
+    private float floatValue = Float.MIN_VALUE;
+    private double doubleValue = Double.MIN_VALUE;
+    private long longValue = Long.MIN_VALUE;
+    private Object objectValue = null;
+    private int[] array2DValue = null;
+    private int[][] array3DValue = null;
 
     public boolean getBooleanValue() {
         return booleanValue;
@@ -141,55 +133,4 @@ public class ValueObject {
         this.array2DValue = array2DValue;
         this.array3DValue = array3DValue;
     }
-
-
-    /*
-    public void setTemplate(int i) throws Throwable {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
-
-        if (stub != null) {
-            Object[] o = new Object[1];
-            o[0] = i;
-            //o[1] = b;
-            //o[2] = c;
-            //o[3] = i;
-            //o[4] = f;
-            //o[5] = j;
-            //o[6] = d;
-            //o[7] = l;
-
-            stub.setParameters(null, o);
-
-            stub.execute();
-            stub.getResult();
-
-            return;
-        }
-
-        throw new RuntimeException("not thrown");
-    }
-    */
-    /*
-    public int getTemplate() throws Throwable {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/runtime/Stub/ParameterTestObject", "template", "(Ljava/lang/Object;)V}");
-
-        if (stub != null) {
-            Object[] o = new Object[0];
-            //o[1] = b;
-            //o[2] = c;
-            //o[3] = i;
-            //o[4] = f;
-            //o[5] = j;
-            //o[6] = d;
-            //o[7] = l;
-
-            stub.setParameters(null, o);
-
-            stub.execute();
-            return ((Integer)stub.getResult()).intValue();
-        }
-
-        return 10;
-    }
-    */
 }

@@ -52,9 +52,17 @@ public class StubCodeGenerator {
         reader = new ClassReader();
         reader.read(stream);
 
+        /*
+        if (!className.startsWith("org/wooddog/woodstub")) {
+            reader.write(target);
+            return;
+        }
+        */
+
         pool = reader.getConstantPool();
         methods = reader.getMethods();
         setup();
+
 
         for (FieldInfo method : methods) {
             instructions.clear();
@@ -66,17 +74,11 @@ public class StubCodeGenerator {
                 continue;
             }
 
-            if (AccessFlags.isStatic(method.getAccessFlags())) {
-                LOGGER.log(Level.INFO, "skipping static method " + className + " " + methodName + " (yet to be implemented)");
-                continue;
-            }
-
             attributes = method.getAttributes("Code");
             if (attributes.isEmpty()) {
                 LOGGER.log(Level.INFO, "skipping empty method " + className + " " + methodName + " (yet to be implemented)");
                 continue;
             }
-
             code = (AttributeCode) attributes.get(0);
 
             buffer = new ByteArrayOutputStream();
@@ -139,8 +141,11 @@ public class StubCodeGenerator {
         idxStringDescriptor = pool.addString(methodDescriptor);
 
         addInstruction("invokestatic", idxMethodStubFactory);
-        addInstruction("aload_0");
-        //addInstruction("ldc", idxStringClassName);
+        if (AccessFlags.isStatic(method.getAccessFlags())) {
+            addInstruction("aconst_null");
+        } else {
+            addInstruction("aload_0");
+        }
         addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringName);
         addInstruction("ldc", idxStringDescriptor);

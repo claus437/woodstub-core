@@ -56,10 +56,16 @@ public class WoodStub {
             });
             handler.setLevel(Level.ALL);
 
+
             Logger.getLogger(WoodStub.class.getName()).addHandler(handler);
             Logger.getLogger(WoodTransformer.class.getName()).addHandler(handler);
             Logger.getLogger(StubCodeGenerator.class.getName()).addHandler(handler);
             Logger.getLogger(AttributeFactory.class.getName()).addHandler(handler);
+
+            Logger.getLogger(WoodStub.class.getName()).setLevel(Level.FINEST);
+            Logger.getLogger(WoodTransformer.class.getName()).setLevel(Level.FINEST);
+            Logger.getLogger(StubCodeGenerator.class.getName()).setLevel(Level.FINEST);
+            Logger.getLogger(AttributeFactory.class.getName()).setLevel(Level.INFO);
         } catch (IOException x) {
             LOGGER.log(Level.SEVERE, "failed creating file logger", x);
         }

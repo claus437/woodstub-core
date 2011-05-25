@@ -80,7 +80,7 @@ public class AttributeFactory {
             clazz = ATTRIBUTE_UNKNOWN;
         }
 
-        LOGGER.log(Level.INFO, "created attribute " + clazz.getSimpleName() + " for " + type);
+        LOGGER.log(Level.FINEST, "created attribute " + clazz.getSimpleName() + " for " + type);
 
         try {
             attribute = (Attribute) clazz.newInstance();
