@@ -31,6 +31,7 @@ public class AttributeUnknown implements Attribute {
         int length;
 
         name = constantPool.getUtf8(poolIndex).getValue();
+        System.out.println("UMK: " + name);
 
         length = stream.readInt();
         content = new byte[length];

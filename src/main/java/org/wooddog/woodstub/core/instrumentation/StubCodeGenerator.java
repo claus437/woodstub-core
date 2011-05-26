@@ -36,7 +36,17 @@ public class StubCodeGenerator {
     private int idxStringClassName;
 
     public void stubClass(InputStream stream, OutputStream target) throws IOException {
-        stubClass("un", stream, target);
+        byte[] original;
+        ByteArrayOutputStream stubbed;
+
+        original = IOUtil.read(stream);
+        IOUtil.write(original, new File("Original.class"));
+
+        stubbed = new ByteArrayOutputStream();
+        stubClass("un", new ByteArrayInputStream(original), stubbed);
+
+        IOUtil.write(stubbed.toByteArray(), new File("Stubbed.class"));
+        target.write(stubbed.toByteArray());
     }
 
     public void stubClass(String className, InputStream stream, OutputStream target) throws IOException {
@@ -60,19 +70,27 @@ public class StubCodeGenerator {
         */
 
         pool = reader.getConstantPool();
+        pool.dump();
         methods = reader.getMethods();
         setup();
 
+        for (FieldInfo field : reader.getFields()) {
+            String fieldName;
+            fieldName = ((ConstantUtf8Info) pool.get(field.getNameIndex())).getValue();
+            System.out.println("field: " + fieldName);
+        }
 
         for (FieldInfo method : methods) {
             instructions.clear();
 
             methodName = ((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue();
-
+            System.out.println("mn: " + methodName);
             if (methodName.startsWith("<i")) {
                 LOGGER.log(Level.INFO, "skipping constructor " + className + " " + methodName + " (yet to be implemented)");
                 continue;
             }
+
+            System.out.println(methodName + " " + method.getAccessFlags());
 
             attributes = method.getAttributes("Code");
             if (attributes.isEmpty()) {

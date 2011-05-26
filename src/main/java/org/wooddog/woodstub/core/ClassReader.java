@@ -121,6 +121,10 @@ public class ClassReader {
         return methods;
     }
 
+    public List<FieldInfo> getFields() {
+        return fields;
+    }
+
     private int[] readInterfaces(DataInputStream stream) throws IOException {
         int[] interfaces;
         int size;

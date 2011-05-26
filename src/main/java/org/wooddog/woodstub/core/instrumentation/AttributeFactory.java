@@ -30,6 +30,7 @@ public class AttributeFactory {
         ATTRIBUTE_TYPES.put("LineNumberTable", AttributeLineNumber.class);
         ATTRIBUTE_TYPES.put("LocalVariableTable", AttributeLocalVariable.class);
         ATTRIBUTE_TYPES.put("LocalVariableTypeTable", AttributeLocalVariable.class);
+        ATTRIBUTE_TYPES.put("InnerClasses", AttributeInnerClass.class);
     }
 
     public static Attribute create(ConstantPool constantPool, DataInputStream stream) throws  IOException {

@@ -22,12 +22,12 @@ public class AttributeLineNumber implements Attribute {
         lineNumberList = new ArrayList<TableLineNumber>();
     }
 
-    @Override
+
     public void setConstantPoolIndex(int index) {
         this.poolIndex = index;
     }
 
-    @Override
+
     public int getLength() {
         return 8 + (lineNumberList.size() * 4);
     }
@@ -40,7 +40,7 @@ public class AttributeLineNumber implements Attribute {
         this.lineNumberList = lineNumberList;
     }
 
-    @Override
+
     public void read(ConstantPool constantPool, DataInputStream stream) throws IOException {
         int size;
         int tableSize;
@@ -56,7 +56,7 @@ public class AttributeLineNumber implements Attribute {
         }
     }
 
-    @Override
+
     public void write(ConstantPool constantPool, DataOutputStream stream) throws IOException {
         stream.writeShort(poolIndex);
         stream.writeInt(getLength() - 6);
@@ -66,7 +66,7 @@ public class AttributeLineNumber implements Attribute {
         }
     }
 
-    @Override
+
     public String getName() {
         return "LineNumberTable";
     }

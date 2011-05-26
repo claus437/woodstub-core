@@ -48,12 +48,15 @@ public class WoodTransformer implements ClassFileTransformer {
         }
         System.out.println(count + " " + loader.hashCode() + " " + className);
 
-        count ++;
+        if (className.equals("org/junit/runner/notification/RunNotifier")) {
+            count ++;
+        }
 
-
-        if (count < 119) {
+                       //119
+        if (count == 0) {
             return null;
         }
+        count ++;
         /*
         System.out.println("loader " + loader);
 
