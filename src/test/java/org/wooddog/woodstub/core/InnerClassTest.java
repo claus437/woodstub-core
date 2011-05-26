@@ -1,6 +1,5 @@
 package org.wooddog.woodstub.core;
 
-import com.sun.org.apache.bcel.internal.classfile.InnerClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.wooddog.woodstub.core.runtime.Stub;
@@ -17,37 +16,76 @@ public class InnerClassTest implements StubFactory, Stub {
     private boolean stub;
 
     static {
-        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/InnerClassObject");
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/MyOuterClass");
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/InnerClassTestSubject$MyInnerClass");
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/InnerClassTestSubject");
     }
 
-    /*
+
     @Test
+    /**
+     * Tests whether anonymous inner classes behaves ok.
+     *
+     * expected result:
+     *      should return the value defined by the inner class stubbed or not, as we don't create
+     *      hooks for this.
+     */
     public void testAnonymousInnerClass() throws Throwable {
-        InnerClassObject subject;
+        InnerClassTestSubject subject;
 
         WoodStub.setStubFactory(this);
-        subject = new InnerClassObject();
+        subject = new InnerClassTestSubject();
 
         stub = false;
-        Assert.assertEquals("hello|HELLO", subject.myAnonymousInnerClass("hello"));
+        Assert.assertEquals("hello|HELLO", subject.runAnonymousClass("hello"));
 
         stub = true;
-        Assert.assertEquals("mirror|rorrim", subject.myAnonymousInnerClass("hello"));
+        Assert.assertEquals("hello|HELLO", subject.runAnonymousClass("hello"));
     }
-    */
+
+
     @Test
+    /**
+     * Tests whether named inner classes behaves ok.
+     *
+     * expected result:
+     *      should return the value defined either by the named inner class or by the Stub depending
+     *      whether stub is set true.
+     */
     public void testInnerClass() throws Throwable {
-        InnerClassObject.MyInnerClass subject;
+        InnerClassTestSubject subject;
 
         WoodStub.setStubFactory(this);
-        subject = new InnerClassObject().newInnerClass();
+        subject = new InnerClassTestSubject();
 
         stub = false;
-        Assert.assertEquals("hello/HELLO", subject.mirror("hello"));
+        Assert.assertEquals("hello/HELLO", subject.runInnerClass("hello"));
 
         stub = true;
-        Assert.assertEquals("mirror|rorrim", subject.mirror("hello"));
+        Assert.assertEquals("mirror|rorrim", subject.runInnerClass("hello"));
     }
+
+    @Test
+    /**
+     * Tests whether outer classes behaves ok.
+     *
+     * expected result:
+     *      should return the value defined either by the outer class or by the Stub depending
+     *      whether stub is set true.
+     */
+    public void testOuterClass() throws Throwable {
+        InnerClassTestSubject subject;
+
+        WoodStub.setStubFactory(this);
+        subject = new InnerClassTestSubject();
+
+        stub = false;
+        Assert.assertEquals("hello-HELLO", subject.runOuterClass("hello"));
+
+        stub = true;
+        Assert.assertEquals("mirror|rorrim", subject.runOuterClass("hello"));
+    }
+
 
 
     public void setParameters(String[] names, Object[] values) {
@@ -61,6 +99,6 @@ public class InnerClassTest implements StubFactory, Stub {
     }
 
     public Stub createStub(Object source, String clazz, String name, String description) {
-        return stub ? this : null;
+        return "mirror".equals(name) && stub ? this : null;
     }
 }

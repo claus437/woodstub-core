@@ -1,13 +1,11 @@
 package org.wooddog.woodstub.core;
 
 
-import org.wooddog.woodstub.core.runtime.Stub;
-
 /**
  * This Class is used only during compile time, runtime it is replaced by CleanValueObject.class found in resources
  *
  */
-public class ValueObject {
+public class ParameterAndReturnTestSubject {
     private boolean booleanValue = false;
     private byte byteValue = Byte.MIN_VALUE;
     private char charValue = Character.MIN_VALUE;
@@ -26,7 +24,7 @@ public class ValueObject {
     }
 
     public static void setStaticObject(Object staticObject) {
-        ValueObject.STATIC_OBJECT = staticObject;
+        ParameterAndReturnTestSubject.STATIC_OBJECT = staticObject;
     }
 
     public boolean getBooleanValue() {

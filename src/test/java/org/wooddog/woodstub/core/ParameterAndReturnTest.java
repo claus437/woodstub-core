@@ -1,8 +1,6 @@
 package org.wooddog.woodstub.core;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.wooddog.woodstub.core.instrumentation.StubCodeGenerator;
 import org.wooddog.woodstub.core.runtime.Stub;
 import org.wooddog.woodstub.core.runtime.StubFactory;
 
@@ -26,7 +24,7 @@ public class ParameterAndReturnTest {
     private static final Map<String, Object> VALUES = new HashMap<String, Object>();
 
     static {
-        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/ValueObject");
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/ParameterAndReturnTestSubject");
 
         VALUES.put("Z", Boolean.TRUE);
         VALUES.put("B", Byte.MAX_VALUE);
@@ -46,22 +44,22 @@ public class ParameterAndReturnTest {
     public void testStaticReturnValues() throws Exception {
         WoodStub.setStubFactory(new StubReturnWriter());
 
-        Assert.assertEquals(VALUES.get("L"), ValueObject.getStaticObject());
+        Assert.assertEquals(VALUES.get("L"), ParameterAndReturnTestSubject.getStaticObject());
     }
 
     @Test
     public void testStaticParameterValues() throws Exception {
         WoodStub.setStubFactory(new StubReturnWriter());
 
-        ValueObject.setStaticObject(VALUES.get("L"));
+        ParameterAndReturnTestSubject.setStaticObject(VALUES.get("L"));
     }
 
     @Test
     public void testReturnValues() throws Exception {
-        ValueObject objectUnderTest;
+        ParameterAndReturnTestSubject objectUnderTest;
 
         WoodStub.setStubFactory(new StubReturnWriter());
-        objectUnderTest = new ValueObject();
+        objectUnderTest = new ParameterAndReturnTestSubject();
 
         Assert.assertEquals(Boolean.TRUE, objectUnderTest.getBooleanValue());
         Assert.assertEquals(Byte.MAX_VALUE, objectUnderTest.getByteValue());
@@ -79,10 +77,10 @@ public class ParameterAndReturnTest {
 
     @Test
     public void testParameterValues() throws IOException {
-        ValueObject objectUnderTest;
+        ParameterAndReturnTestSubject objectUnderTest;
 
         WoodStub.setStubFactory(new StubReturnWriter());
-        objectUnderTest = new ValueObject();
+        objectUnderTest = new ParameterAndReturnTestSubject();
 
         objectUnderTest.setBooleanValue(Boolean.TRUE);
         objectUnderTest.setByteValue(Byte.MAX_VALUE);

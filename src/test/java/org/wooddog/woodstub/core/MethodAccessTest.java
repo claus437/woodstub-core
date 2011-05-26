@@ -18,7 +18,7 @@ import org.wooddog.woodstub.core.runtime.StubFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class MethodAccessTest implements StubFactory, Stub {
-    private MethodAccessObject object;
+    private MethodAccessTestSubject object;
     private boolean stub;
 
 
@@ -41,13 +41,13 @@ public class MethodAccessTest implements StubFactory, Stub {
                 };
             }
         });
-        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/MethodAccessObject");
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/MethodAccessTestSubject");
     }
 
     @Before
     public void before() {
         WoodStub.setStubFactory(this);
-        object = new MethodAccessObject();
+        object = new MethodAccessTestSubject();
     }
 
     @Test

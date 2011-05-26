@@ -15,80 +15,80 @@ import org.wooddog.woodstub.core.runtime.StubFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class MethodTypeTest implements StubFactory, Stub {
-    private MethodTypeObject object;
+    private MethodTypeTestSubject object;
     private boolean stub;
 
 
     static {
-        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/MethodTypeObject");
+        IOUtil.loadStubbedClass("target/test-classes", "org/wooddog/woodstub/core/MethodTypeTestSubject");
     }
 
     @Before
     public void before() {
         WoodStub.setStubFactory(this);
-        object = new MethodTypeObject();
+        object = new MethodTypeTestSubject();
     }
 
     @Test
     public void testStaticMethod() {
-       MethodTypeObject.staticMethod();
-       Assert.assertEquals("static", MethodTypeObject.invoked);
+       MethodTypeTestSubject.staticMethod();
+       Assert.assertEquals("static", MethodTypeTestSubject.invoked);
 
        stub = true;
-       MethodTypeObject.invoked = "unset";
+       MethodTypeTestSubject.invoked = "unset";
 
-       MethodTypeObject.staticMethod();
-       Assert.assertEquals("unset", MethodTypeObject.invoked);
+       MethodTypeTestSubject.staticMethod();
+       Assert.assertEquals("unset", MethodTypeTestSubject.invoked);
     }
 
 
     @Test
     public void testFinalMethod() {
         object.finalMethod();
-        Assert.assertEquals("final", MethodTypeObject.invoked);
+        Assert.assertEquals("final", MethodTypeTestSubject.invoked);
 
         stub = true;
-        MethodTypeObject.invoked = "unset";
+        MethodTypeTestSubject.invoked = "unset";
 
         object.finalMethod();
-        Assert.assertEquals("unset", MethodTypeObject.invoked);
+        Assert.assertEquals("unset", MethodTypeTestSubject.invoked);
     }
 
     @Test
     public void testStrictFpMethod() {
         object.strictFpMethod();
-        Assert.assertEquals("strictfp", MethodTypeObject.invoked);
+        Assert.assertEquals("strictfp", MethodTypeTestSubject.invoked);
 
         stub = true;
-        MethodTypeObject.invoked = "unset";
+        MethodTypeTestSubject.invoked = "unset";
 
         object.strictFpMethod();
-        Assert.assertEquals("unset", MethodTypeObject.invoked);
+        Assert.assertEquals("unset", MethodTypeTestSubject.invoked);
     }
 
     @Test
     public void testSynchronizedMethod() {
         object.synchronizedMethod();
-        Assert.assertEquals("synchronized", MethodTypeObject.invoked);
+        Assert.assertEquals("synchronized", MethodTypeTestSubject.invoked);
 
         stub = true;
-        MethodTypeObject.invoked = "unset";
+        MethodTypeTestSubject.invoked = "unset";
 
         object.synchronizedMethod();
-        Assert.assertEquals("unset", MethodTypeObject.invoked);
+        Assert.assertEquals("unset", MethodTypeTestSubject.invoked);
     }
 
     @Test
     @Ignore
     public void testNativeMethod() {
         object.nativeMethod();
-        Assert.assertEquals("native", MethodTypeObject.invoked);
+        Assert.assertEquals("native", MethodTypeTestSubject.invoked);
 
         stub = true;
-        MethodTypeObject.invoked = "unset";
+        MethodTypeTestSubject.invoked = "unset";
 
         object.nativeMethod();
-        Assert.assertEquals("unset", MethodTypeObject.invoked);
+        Assert.assertEquals("unset", MethodTypeTestSubject.invoked);
     }
 
 

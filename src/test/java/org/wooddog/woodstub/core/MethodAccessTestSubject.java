@@ -7,7 +7,7 @@ package org.wooddog.woodstub.core;
  * Time: 16:44
  * To change this template use File | Settings | File Templates.
  */
-public class MethodAccessObject {
+public class MethodAccessTestSubject {
     public String invoked = null;
 
     static {
