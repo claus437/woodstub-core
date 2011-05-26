@@ -85,7 +85,7 @@ public class WoodStub {
         //tmpFactory = FACTORY;
         //FACTORY = DEFAULT_FACTORY;
 
-        return FACTORY; //DEFAULT_FACTORY;
+        return FACTORY;
     }
 
     public static void setStubFactory(StubFactory factory) {
