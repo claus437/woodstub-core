@@ -19,31 +19,17 @@ import java.util.logging.*;
 public class WoodStub {
     private static final Logger LOGGER = Logger.getLogger(WoodStub.class.getName());
     private static FileHandler handler;
+    private static boolean running = true;
 
-    private static final Stub STUB = new Stub() {
-        public void setParameters(String[] names, Object[] values) {
-        }
-
-        public void execute() throws IOException {
-        }
-
-        public Object getResult() {
+    private static StubFactory NON_STUB_FACTORY = new StubFactory() {
+        public Stub createStub(Object source, String clazz, String name, String description) {
             return null;
         }
     };
 
-
-    private static StubFactory DEFAULT_FACTORY = new StubFactory() {
-        public Stub createStub(Object source, String clazz, String name, String description) {
-            return STUB;
-        }
-    };
-
-    private static StubFactory FACTORY = DEFAULT_FACTORY;
+    private static StubFactory FACTORY = NON_STUB_FACTORY;
 
  	public static void premain(String agentArguments, Instrumentation instrumentation) {
-
-
 
         try {
             // Create a file handler that write log record to a file called my.log
@@ -80,19 +66,29 @@ public class WoodStub {
     }
 
     public static StubFactory getStubFactory() {
-        StubFactory tmpFactory;
-
-        //tmpFactory = FACTORY;
-        //FACTORY = DEFAULT_FACTORY;
-
-        return FACTORY;
+        return running ? FACTORY : NON_STUB_FACTORY;
     }
 
     public static void setStubFactory(StubFactory factory) {
         if (factory == null) {
-            FACTORY = DEFAULT_FACTORY;
+            FACTORY = NON_STUB_FACTORY;
         } else {
             FACTORY = factory;
         }
+    }
+
+    public static void resume() {
+        System.out.println("resume");
+        running = true;
+    }
+
+    public static void pause() {
+        System.out.println("pause");
+        running = false;
+    }
+
+    public static boolean isRunning() {
+        System.out.println("isRunning " + running);
+        return running;
     }
 }

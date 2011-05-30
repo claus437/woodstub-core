@@ -14,38 +14,95 @@ import java.util.List;
  */
 public class Template {
     List list;
-    public int methodB() throws Throwable {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
-        if (stub != null) {
-            stub.setParameters(new String[]{"a", "b"}, new Object[]{});
+    static {
 
-            stub.execute();
+        if (WoodStub.isRunning()) {
+            WoodStub.pause();
 
-            return ((Integer) stub.getResult()).intValue();
+            try {
+                Stub stub = WoodStub.getStubFactory().createStub(null, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
+
+                if (stub != null) {
+                    stub.setParameters(new String[]{}, new Object[]{});
+
+                    //stub.execute();
+                    // return;
+                }
+            } finally {
+                WoodStub.resume();
+            }
         }
 
         System.out.println("im not stubbed");
-        return 0;
     }
 
-    public double methodA(boolean a, byte b, char c, int d, float e, double f, int[] g, int[][] h, Object i, Object[] j) throws Throwable {
-        Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "methodA", "(Ljava/lang/String;Ljava/lang/String;)I}");
+    public int[] methodB() throws Throwable {
+        if (WoodStub.isRunning()) {
+            WoodStub.pause();
 
-        if (stub != null) {
-            stub.setParameters(null, new Object[]{a, b, c, d, e, f, g, h, i}); //
+            try {
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
-            stub.execute();
+                if (stub != null) {
+                    stub.setParameters(new String[]{}, new Object[]{});
 
-            return ((Double) stub.getResult()).doubleValue();
+                    stub.execute();
+
+                    return ((int[]) stub.getResult());
+                }
+            } finally {
+                WoodStub.resume();
+            }
         }
 
-        throw new RuntimeException("not thrown");
+        System.out.println("im not stubbed");
+        return new int[]{};
     }
 
+    public void methodA(boolean a, byte b, char c, int d, float e, double f, int[] g, int[][] h, Object i, Object[] j) throws Throwable {
+        if (WoodStub.isRunning()) {
+            WoodStub.pause();
 
+            try {
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
 
+                if (stub != null) {
+                    stub.setParameters(new String[]{}, new Object[]{});
 
+                    stub.execute();
+                    return;
+                }
+            } finally {
+                WoodStub.resume();
+            }
+        }
+
+        System.out.println("im not stubbed");
+    }
+
+     public static void methodC() throws Throwable {
+        if (WoodStub.isRunning()) {
+            WoodStub.pause();
+
+            try {
+                Stub stub = WoodStub.getStubFactory().createStub(null, "org/wooddog/woodstub/core/Test", "methodB", "(Ljava/lang/String;Ljava/lang/String;)I}");
+
+                if (stub != null) {
+                    stub.setParameters(new String[]{}, new Object[]{});
+
+                    stub.execute();
+                    return;
+                    //return ((int[]) stub.getResult());
+                }
+            } finally {
+                WoodStub.resume();
+            }
+        }
+
+        System.out.println("im not stubbed");
+        //return new int[]{};
+    }
 }
 
 

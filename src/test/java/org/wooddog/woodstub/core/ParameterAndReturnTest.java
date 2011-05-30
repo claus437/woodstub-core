@@ -39,6 +39,11 @@ public class ParameterAndReturnTest {
         VALUES.put("[[I", new int[][]{{Integer.MIN_VALUE, Integer.MAX_VALUE}, {Integer.MIN_VALUE, Integer.MAX_VALUE}});
     }
 
+    @Test
+    public void testCN() {
+        System.out.println("CLL " + getClass().getCanonicalName());
+        System.out.println("CLL " + getClass().getName());
+    }
 
     @Test
     public void testStaticReturnValues() throws Exception {

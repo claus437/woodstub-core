@@ -89,8 +89,8 @@ public class Instruction  {
         char[] parameterTypes;
 
         parameterTypes = getParameterTypes();
-        out.writeByte(getCode());
 
+        out.writeByte(getCode());
         for (int i = 0; i < parameterTypes.length; i++) {
             switch (Character.toUpperCase(parameterTypes[i])) {
                 case 'B':
@@ -109,11 +109,10 @@ public class Instruction  {
                 default:
                     throw new InternalErrorException("unknown parameter type " + parameterTypes[i] + " instruction code");
             }
-
         }
     }
 
-    private String toString(int[] values) {
+    public String toString(int[] values) {
         String s = "";
 
         for (Object i : values) {

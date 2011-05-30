@@ -32,6 +32,9 @@ public class StubCodeGenerator {
     private int idxMethodResult;
     private int idxClassObject;
     private int adrCodeStart;
+    private int idxMethodResume;
+    private int idxMethodPause;
+    private int idxMethodIsRunning;
 
     private int idxStringClassName;
 
@@ -129,6 +132,10 @@ public class StubCodeGenerator {
         idxMethodResult = pool.addInterfaceMethodRefInfo("org/wooddog/woodstub/core/runtime/Stub", "getResult", "()Ljava/lang/Object;");
         idxClassObject = pool.addClass("java/lang/Object");
 
+        idxMethodIsRunning = pool.addMethodRef("org/wooddog/woodstub/core/WoodStub", "isRunning", "()Z");
+        idxMethodPause = pool.addMethodRef("org/wooddog/woodstub/core/WoodStub", "pause", "()V");
+        idxMethodResume = pool.addMethodRef("org/wooddog/woodstub/core/WoodStub", "resume", "()V");
+
         LOGGER.log(Level.FINE, "setup " + idxStringClassName + " name " + className);
     }
 
@@ -141,6 +148,13 @@ public class StubCodeGenerator {
         char[] parameterTypes;
         int parameterRegisterSize;
         int parameterStartIndex;
+        int localVariableStartIndex;
+
+
+        addInstruction("invokestatic", idxMethodIsRunning);
+        addInstruction("ifeq", -1);
+
+        addInstruction("invokestatic", idxMethodPause);
 
 
         methodDescriptor = ((ConstantUtf8Info) pool.get(method.getDescriptorIndex())).getValue();
@@ -163,10 +177,18 @@ public class StubCodeGenerator {
         if (AccessFlags.isStatic(method.getAccessFlags())) {
             addInstruction("aconst_null");
             parameterStartIndex = 0;
+            localVariableStartIndex = 0;
         } else {
             addInstruction("aload_0");
             parameterStartIndex = 1;
+            localVariableStartIndex = 1;
         }
+
+        localVariableStartIndex += parameterTypes.length;
+        if ('V' != methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0)) {
+            localVariableStartIndex++;
+        }
+
         addInstruction("ldc", idxStringClassName);
         addInstruction("ldc", idxStringName);
         addInstruction("ldc", idxStringDescriptor);
@@ -188,8 +210,18 @@ public class StubCodeGenerator {
         addInstruction("invokeinterface", idxMethodExecute, 1, 0);
 
         addInstruction("aload", parameterRegisterSize + 1);
-        addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1));
+        addReturn(methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1), localVariableStartIndex);
 
+        addInstruction("invokestatic", idxMethodResume);
+        int gotoJumpOffset = calculateCodeSize();
+        int goto_index = instructions.size();
+        addInstruction("goto", -1);
+
+
+        addInstruction("astore", localVariableStartIndex);
+        addInstruction("invokestatic", idxMethodResume);
+        addInstruction("aload", localVariableStartIndex);
+        addInstruction("athrow");
 
         size = calculateCodeSize();
         while (size % 4 != 0) {
@@ -197,7 +229,9 @@ public class StubCodeGenerator {
             size ++;
         }
 
-        instructions.get(8).setValues(new int[]{size - jumpOffset});
+        instructions.get(1).setValues(new int[]{size - 3});
+        instructions.get(11).setValues(new int[]{size - jumpOffset});
+        instructions.get(goto_index).setValues(new int[]{size - gotoJumpOffset});
 
         List<TableException> exceptions = code.getExceptions();
         for (TableException exception : exceptions) {
@@ -327,13 +361,14 @@ public class StubCodeGenerator {
     }
 
 
-    private void addReturn(String methodDescriptor) {
+    private void addReturn(String methodDescriptor, int localVariableStartIndex) {
         String type;
 
         type = methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1);
 
         if (type.charAt(0) == 'V') {
             addInstruction("pop");
+            addInstruction("invokestatic", idxMethodResume);
             addInstruction("return");
 
             return;
@@ -346,18 +381,27 @@ public class StubCodeGenerator {
                 case 'Z':
                     addInstruction("checkcast", pool.addClass("java/lang/Boolean"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Boolean", "booleanValue", "()Z"));
+                    addInstruction("istore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("iload", localVariableStartIndex);
                     addInstruction("ireturn");
                     break;
 
                 case 'B':
                     addInstruction("checkcast", pool.addClass("java/lang/Byte"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Byte", "byteValue", "()B"));
+                    addInstruction("istore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("iload", localVariableStartIndex);
                     addInstruction("ireturn");
                     break;
 
                 case 'C':
                     addInstruction("checkcast", pool.addClass("java/lang/Character"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Character", "charValue", "()C"));
+                    addInstruction("istore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("iload", localVariableStartIndex);
                     addInstruction("ireturn");
                     break;
 
@@ -370,24 +414,36 @@ public class StubCodeGenerator {
                 case 'I':
                     addInstruction("checkcast", pool.addClass("java/lang/Integer"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Integer", "intValue", "()I"));
+                    addInstruction("istore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("iload", localVariableStartIndex);
                     addInstruction("ireturn");
                     break;
 
                 case 'F':
                     addInstruction("checkcast", pool.addClass("java/lang/Float"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Float", "floatValue", "()F"));
+                    addInstruction("fstore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("fload", localVariableStartIndex);
                     addInstruction("freturn");
                     break;
 
                 case 'D':
                     addInstruction("checkcast", pool.addClass("java/lang/Double"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Double", "doubleValue", "()D"));
+                    addInstruction("dstore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("dload", localVariableStartIndex);
                     addInstruction("dreturn");
                     break;
 
                  case 'J':
                     addInstruction("checkcast", pool.addClass("java/lang/Long"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Long", "longValue", "()J"));
+                    addInstruction("lstore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("lload", localVariableStartIndex);
                     addInstruction("lreturn");
                     break;
 
@@ -401,11 +457,17 @@ public class StubCodeGenerator {
         if (type.startsWith("[")) {
             addInstruction("checkcast", pool.addClass(type));
             addInstruction("checkcast", pool.addClass(type));
+            addInstruction("astore", localVariableStartIndex);
+            addInstruction("invokestatic", idxMethodResume);
+            addInstruction("aload", localVariableStartIndex);
             addInstruction("areturn");
             return;
         }
 
         addInstruction("checkcast", pool.addClass(type.substring(1, type.length() - 1)));
+        addInstruction("astore", localVariableStartIndex);
+        addInstruction("invokestatic", idxMethodResume);
+        addInstruction("aload", localVariableStartIndex);
         addInstruction("areturn");
     }
 
@@ -458,8 +520,12 @@ public class StubCodeGenerator {
     }
 
     private void write(DataOutputStream stream) throws IOException {
+        int address;
+        address = 0;
         for (Instruction instruction : instructions) {
+            System.out.println(address + " " + instruction.getName() + " " + instruction.toString(instruction.getValues()));
             instruction.write(stream);
+            address += instruction.getLength();
         }
     }
 

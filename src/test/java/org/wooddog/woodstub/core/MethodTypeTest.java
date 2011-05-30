@@ -26,6 +26,7 @@ public class MethodTypeTest implements StubFactory, Stub {
     @Before
     public void before() {
         WoodStub.setStubFactory(this);
+        //WoodStub.resume();
         object = new MethodTypeTestSubject();
     }
 
