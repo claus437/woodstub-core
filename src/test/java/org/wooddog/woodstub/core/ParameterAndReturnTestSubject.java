@@ -18,7 +18,7 @@ public class ParameterAndReturnTestSubject {
     private int[] array2DValue = null;
     private int[][] array3DValue = null;
     private static Object STATIC_OBJECT = null;
-
+    /*
     public static Object getStaticObject() {
         return STATIC_OBJECT;
     }
@@ -26,7 +26,7 @@ public class ParameterAndReturnTestSubject {
     public static void setStaticObject(Object staticObject) {
         ParameterAndReturnTestSubject.STATIC_OBJECT = staticObject;
     }
-
+    */
     public boolean getBooleanValue() {
         return booleanValue;
     }
@@ -74,7 +74,7 @@ public class ParameterAndReturnTestSubject {
     public void setFloatValue(float floatValue) {
         this.floatValue = floatValue;
     }
-
+    /*
     public double getDoubleValue() {
         return doubleValue;
     }
@@ -98,6 +98,7 @@ public class ParameterAndReturnTestSubject {
     public void setObjectValue(Object objectValue) {
         this.objectValue = objectValue;
     }
+
 
     public int[] getArray2DValue() {
         return array2DValue;
@@ -140,4 +141,5 @@ public class ParameterAndReturnTestSubject {
         this.array2DValue = array2DValue;
         this.array3DValue = array3DValue;
     }
+    */
 }

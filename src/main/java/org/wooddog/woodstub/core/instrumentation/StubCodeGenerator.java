@@ -187,6 +187,12 @@ public class StubCodeGenerator {
         localVariableStartIndex += parameterTypes.length;
         if ('V' != methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0)) {
             localVariableStartIndex++;
+            if ('J' != methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0)) {
+//                localVariableStartIndex ++;
+            }
+            if ('D' != methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0)) {
+//                localVariableStartIndex ++;
+            }
         }
 
         addInstruction("ldc", idxStringClassName);
@@ -230,7 +236,7 @@ public class StubCodeGenerator {
         }
 
         instructions.get(1).setValues(new int[]{size - 3});
-        instructions.get(11).setValues(new int[]{size - jumpOffset});
+        instructions.get(11).setValues(new int[]{gotoJumpOffset - 3 - jumpOffset});
         instructions.get(goto_index).setValues(new int[]{size - gotoJumpOffset});
 
         List<TableException> exceptions = code.getExceptions();

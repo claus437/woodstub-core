@@ -66,7 +66,7 @@ public class WoodStub {
     }
 
     public static StubFactory getStubFactory() {
-        return running ? FACTORY : NON_STUB_FACTORY;
+        return FACTORY;
     }
 
     public static void setStubFactory(StubFactory factory) {

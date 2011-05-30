@@ -94,12 +94,15 @@ public class MethodTypeTest implements StubFactory, Stub {
 
 
     public void setParameters(String[] names, Object[] values) {
+        System.out.println("cust para");
     }
 
     public void execute() throws Throwable {
+        System.out.println("cust exec");
     }
 
     public Object getResult() {
+        System.out.println("cust result");
         return "stubbed";
     }
 

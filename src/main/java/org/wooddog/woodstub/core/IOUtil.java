@@ -85,18 +85,26 @@ public class IOUtil {
 
         try {
             source = read(classFile);
+        } catch (IOException x) {
+            throw new RuntimeException(x.getMessage(), x);
+        }
 
+        try {
             stubGenerator = new StubCodeGenerator();
             stubGenerator.stubClass(new ByteArrayInputStream(source), stubbed);
             write(stubbed.toByteArray(), classFile);
 
             Class.forName(name.replaceAll("/", "."));
-
-            write(source, classFile);
         } catch (IOException x) {
             throw new RuntimeException(x);
         } catch (ClassNotFoundException x) {
             throw new RuntimeException(x);
+        } finally {
+            try {
+                write(source, classFile);
+            } catch (IOException x) {
+                System.out.println("failed reestablishing original class");
+            }
         }
     }
 }
