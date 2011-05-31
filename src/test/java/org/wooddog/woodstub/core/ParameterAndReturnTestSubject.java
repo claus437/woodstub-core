@@ -74,7 +74,7 @@ public class ParameterAndReturnTestSubject {
     public void setFloatValue(float floatValue) {
         this.floatValue = floatValue;
     }
-    /*
+
     public double getDoubleValue() {
         return doubleValue;
     }
@@ -82,7 +82,7 @@ public class ParameterAndReturnTestSubject {
     public void setDoubleValue(double doubleValue) {
         this.doubleValue = doubleValue;
     }
-
+    /*
     public long getLongValue() {
         return longValue;
     }
@@ -90,7 +90,7 @@ public class ParameterAndReturnTestSubject {
     public void setLongValue(long longValue) {
         this.longValue = longValue;
     }
-
+    */
     public Object getObjectValue() {
         return objectValue;
     }
@@ -115,7 +115,7 @@ public class ParameterAndReturnTestSubject {
     public void setArray3DValue(int[][] array3DValue) {
         this.array3DValue = array3DValue;
     }
-
+    /*
     public void setAll(
             boolean booleanValue,
             byte byteValue,

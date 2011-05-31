@@ -49,7 +49,7 @@ public class ParameterAndReturnTest {
     public void testStaticReturnValues() throws Exception {
         WoodStub.setStubFactory(new StubReturnWriter());
 
-       // Assert.assertEquals(VALUES.get("L"), ParameterAndReturnTestSubject.getStaticObject());
+        // Assert.assertEquals(VALUES.get("L"), ParameterAndReturnTestSubject.getStaticObject());
     }
 
     @Test
@@ -74,9 +74,9 @@ public class ParameterAndReturnTest {
         Assert.assertEquals(Float.MAX_VALUE, objectUnderTest.getFloatValue(), 0);
         // Assert.assertEquals(Double.MAX_VALUE, objectUnderTest.getDoubleValue(), 0);
         // Assert.assertEquals(Long.MAX_VALUE, objectUnderTest.getLongValue());
-        // Assert.assertEquals(VALUES.get("L"), objectUnderTest.getObjectValue());
-        // Assert.assertArrayEquals((int[]) VALUES.get("[I"), objectUnderTest.getArray2DValue());
-        // Assert.assertArrayEquals((int[][]) VALUES.get("[[I"), objectUnderTest.getArray3DValue());
+        Assert.assertEquals(VALUES.get("L"), objectUnderTest.getObjectValue());
+        Assert.assertArrayEquals((int[]) VALUES.get("[I"), objectUnderTest.getArray2DValue());
+        Assert.assertArrayEquals((int[][]) VALUES.get("[[I"), objectUnderTest.getArray3DValue());
     }
 
 
@@ -93,11 +93,11 @@ public class ParameterAndReturnTest {
         objectUnderTest.setShortValue(Short.MAX_VALUE);
         objectUnderTest.setIntegerValue(Integer.MAX_VALUE);
         objectUnderTest.setFloatValue(Float.MAX_VALUE);
-        //objectUnderTest.setDoubleValue(Double.MAX_VALUE);
+        objectUnderTest.setDoubleValue(Double.MAX_VALUE);
         //objectUnderTest.setLongValue(Long.MAX_VALUE);
-        //objectUnderTest.setObjectValue(VALUES.get("L"));
-        //objectUnderTest.setArray2DValue((int[]) VALUES.get("[I"));
-        //objectUnderTest.setArray3DValue((int[][]) VALUES.get("[[I"));
+        objectUnderTest.setObjectValue(VALUES.get("L"));
+        objectUnderTest.setArray2DValue((int[]) VALUES.get("[I"));
+        objectUnderTest.setArray3DValue((int[][]) VALUES.get("[[I"));
         //objectUnderTest.setAll(Boolean.TRUE, Byte.MAX_VALUE, Character.MAX_VALUE, Short.MAX_VALUE, Integer.MAX_VALUE, Float.MAX_VALUE, Double.MAX_VALUE, Long.MAX_VALUE, VALUES.get("L"), (int[]) VALUES.get("[I"), (int[][]) VALUES.get("[[I"));
     }
 
@@ -139,12 +139,14 @@ public class ParameterAndReturnTest {
                 return null;
             }
 
+            System.out.println(matcher.group(1) + " " + VALUES.get(matcher.group(1)));
             return VALUES.get(matcher.group(1));
         }
 
         public Stub createStub(Object source, String clazz, String name, String description) {
             StubReturnWriter stub;
 
+            System.out.println(clazz + " " + name);
             stub = new StubReturnWriter();
             stub.description = description;
 

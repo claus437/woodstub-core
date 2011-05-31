@@ -414,6 +414,9 @@ public class StubCodeGenerator {
                 case 'S':
                     addInstruction("checkcast", pool.addClass("java/lang/Short"));
                     addInstruction("invokevirtual", pool.addMethodRef("java/lang/Short", "shortValue", "()S"));
+                    addInstruction("istore", localVariableStartIndex);
+                    addInstruction("invokestatic", idxMethodResume);
+                    addInstruction("iload", localVariableStartIndex);
                     addInstruction("ireturn");
                     break;
 
