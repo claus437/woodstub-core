@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class Template {
     List list;
+    private int integer;
+    private double d;
 
     static {
 
@@ -103,6 +105,69 @@ public class Template {
         System.out.println("im not stubbed");
         //return new int[]{};
     }
+
+    public int getInteger() throws Throwable {
+        if (WoodStub.isRunning()) {
+            WoodStub.pause();
+
+            try {
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "getInteger", "()I}");
+
+                if (stub != null) {
+                    stub.setParameters(new String[]{}, new Object[]{});
+
+                    stub.execute();
+                    return ((Integer) stub.getResult()).intValue();
+                }
+            } finally {
+                WoodStub.resume();
+            }
+        }
+
+        return integer;
+    }
+
+    public double getDouble() throws Throwable {
+
+       if (WoodStub.isRunning()) {
+           WoodStub.pause();
+
+           try {
+               Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "getDouble", "()D}");
+
+               if (stub != null) {
+                   stub.setParameters(new String[]{}, new Object[]{});
+
+                   stub.execute();
+                   return ((Double) stub.getResult()).doubleValue();
+               }
+           } finally {
+               WoodStub.resume();
+           }
+       }
+       return d;
+   }
+
+    public double doDouble(double dob) throws Throwable {
+       if (WoodStub.isRunning()) {
+           WoodStub.pause();
+
+           try {
+               Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Template", "getDouble", "()D}");
+
+               if (stub != null) {
+                   stub.setParameters(new String[]{}, new Object[]{dob});
+
+                   stub.execute();
+
+                   return ((Double) stub.getResult()).doubleValue();
+               }
+           } finally {
+               WoodStub.resume();
+           }
+       }
+       return d;
+   }
 }
 
 

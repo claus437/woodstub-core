@@ -12,6 +12,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ *
+ * major  minor Java platform version
+45       3           1.0
+45       3           1.1
+46       0           1.2
+47       0           1.3
+48       0           1.4
+49       0           1.5
+50       0           1.6
+
  * Created by IntelliJ IDEA.
  * User: claus
  * Date: 27-04-11
@@ -223,10 +233,14 @@ public class StubCodeGenerator {
         int goto_index = instructions.size();
         addInstruction("goto", -1);
 
+        int additional = methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0) == 'J'
+                || methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0) == 'D' ? 2 : 0;
 
-        addInstruction("astore", localVariableStartIndex);
+
+        addInstruction("astore", localVariableStartIndex + additional);
         addInstruction("invokestatic", idxMethodResume);
-        addInstruction("aload", localVariableStartIndex);
+
+        addInstruction("aload", localVariableStartIndex + additional);
         addInstruction("athrow");
 
         size = calculateCodeSize();
@@ -497,9 +511,30 @@ public class StubCodeGenerator {
             }
         }
 
+        if ("dload".equals(name)) {
+            if (parameters[0] < 4) {
+                name = "dload_" + parameters[0];
+                parameters = new int[0];
+            }
+        }
+
+        if ("dstore".equals(name)) {
+            if (parameters[0] < 4) {
+                name = "dstore_" + parameters[0];
+                parameters = new int[0];
+            }
+        }
+
         if ("iload".equals(name)) {
             if (parameters[0] < 4) {
                 name = "iload_" + parameters[0];
+                parameters = new int[0];
+            }
+        }
+
+        if ("istore".equals(name)) {
+            if (parameters[0] < 4) {
+                name = "istore_" + parameters[0];
                 parameters = new int[0];
             }
         }

@@ -1,5 +1,6 @@
 package org.wooddog.woodstub.core;
 
+import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.wooddog.woodstub.core.instrumentation.AttributeFactory;
 import org.wooddog.woodstub.core.instrumentation.StubCodeGenerator;
 import org.wooddog.woodstub.core.runtime.Stub;
@@ -59,6 +60,16 @@ public class WoodStub {
 
         instrumentation.addTransformer(new WoodTransformer(), true);
         LOGGER.log(Level.INFO, "woodstub transformer installed successfully");
+    }
+
+    public static void begin(String method) {
+    }
+
+    public static void complete() {
+    }
+
+    public static ExecutionTree getExecutionTree() {
+        return null;
     }
 
     public static void flushLog() {
