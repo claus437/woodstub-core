@@ -24,8 +24,8 @@ public class MethodAccessTest implements StubFactory, Stub {
 
     static {
         WoodStub.setStubFactory(new StubFactory() {
-            public Stub createStub(Object source, String clazz, String name, String description) {
-                System.out.println(source + " " + clazz + " " + name + " " + description);
+            public Stub createStub(ExecutionTree tree, Object source, String name) {
+                System.out.println(source + " " + name);
                 return new Stub() {
                     public void setParameters(String[] names, Object[] values) {
                         //To change body of implemented methods use File | Settings | File Templates.
@@ -143,7 +143,7 @@ public class MethodAccessTest implements StubFactory, Stub {
         return "stubbed";
     }
 
-    public Stub createStub(Object source, String clazz, String name, String description) {
+    public Stub createStub(ExecutionTree tree, Object source, String methodName) {
         return stub ? this : null;
     }
 }

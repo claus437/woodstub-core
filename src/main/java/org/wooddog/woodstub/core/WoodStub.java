@@ -23,7 +23,7 @@ public class WoodStub {
     private static boolean running = true;
 
     private static StubFactory NON_STUB_FACTORY = new StubFactory() {
-        public Stub createStub(Object source, String clazz, String name, String description) {
+        public Stub createStub(ExecutionTree tree, Object source, String method) {
             return null;
         }
     };

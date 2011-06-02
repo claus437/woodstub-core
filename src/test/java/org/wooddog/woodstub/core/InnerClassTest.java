@@ -98,7 +98,7 @@ public class InnerClassTest implements StubFactory, Stub {
         return "mirror|rorrim";
     }
 
-    public Stub createStub(Object source, String clazz, String name, String description) {
+    public Stub createStub(ExecutionTree tree, Object source, String name) {
         return "mirror".equals(name) && stub ? this : null;
     }
 }

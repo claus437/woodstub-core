@@ -143,10 +143,10 @@ public class ParameterAndReturnTest {
             return VALUES.get(matcher.group(1));
         }
 
-        public Stub createStub(Object source, String clazz, String name, String description) {
+        public Stub createStub(ExecutionTree tree, Object source, String method) {
             StubReturnWriter stub;
 
-            System.out.println(clazz + " " + name);
+            System.out.println(method);
             stub = new StubReturnWriter();
             stub.description = description;
 
