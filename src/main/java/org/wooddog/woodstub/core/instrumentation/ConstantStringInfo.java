@@ -72,4 +72,8 @@ public class ConstantStringInfo implements ConstantPoolInfo {
                 ", stringIndex=" + stringIndex +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"STRING", Integer.toString(stringIndex)};
+    }
 }

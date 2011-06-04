@@ -70,10 +70,12 @@ public class CodeTable {
         entry.setName(tokens[0].trim());
         entry.setCode(Integer.parseInt(tokens[1], 10));
 
-        if (tokens.length > 3) {
+        if (tokens.length > 4) {
             entry.setParameterTypes(tokens[3].trim().toCharArray());
+            entry.setParameterInfo(tokens[4].trim().toCharArray());
         } else {
             entry.setParameterTypes(new char[0]);
+            entry.setParameterInfo(new char[0]);
         }
 
         return entry;

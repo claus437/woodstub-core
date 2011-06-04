@@ -18,6 +18,9 @@ public class InstructionReader {
     private List<Instruction> instructions;
 
 
+    public List<Instruction> getInstructions() {
+        return instructions;
+    }
 
     public void readBlock(DataInputStream stream, int length) throws IOException {
         int remaining;

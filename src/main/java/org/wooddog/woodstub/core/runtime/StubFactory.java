@@ -6,5 +6,5 @@ import org.wooddog.woodstub.core.ExecutionTree;
  * Factory for creating stubs.
  */
 public interface StubFactory {
-    Stub createStub(ExecutionTree tree, Object source, String method);
+    Stub createStub(Object source, String method);
 }

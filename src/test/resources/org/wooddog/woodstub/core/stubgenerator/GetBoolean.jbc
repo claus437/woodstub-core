@@ -1,0 +1,59 @@
+METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
+ 0 invokestatic org/wooddog/woodstub/core/WoodStub#isRunning()Z
+ 3 ifeq 72
+ 6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
+ 9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
+12 aload_0
+13 ldc org/wooddog/woodstub/core/StubTemplate#getBoolean()B
+15 invokeinterface org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub; 3 0
+20 astore_1
+21 aload_1
+22 ifnull 41
+25 aload_1
+26 iconst_0
+27 anewarray java/lang/String
+30 iconst_0
+31 anewarray java/lang/Object
+34 invokeinterface org/wooddog/woodstub/core/runtime/Stub#setParameters([Ljava/lang/String;[Ljava/lang/Object;)V 3 0
+39 aload_1
+40 invokeinterface org/wooddog/woodstub/core/runtime/Stub#execute()V 1 0
+45 aload_1
+46 invokeinterface org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object; 1 0
+51 checkcast java/lang/Boolean
+54 invokevirtual java/lang/Boolean#booleanValue()Z
+57 istore_2
+58 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+61 iload_2
+62 ireturn
+63 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+66 goto 9
+69 astore_3
+70 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+73 aload_3
+74 athrow
+75 iconst_0
+76 ireturn
+
+EXCEPTIONS
+SPC   EPC   HPC   CTP
+    9    58    69     0
+   69    70    69     0
+
+LINE NUMBERS
+SPC    LINE
+    0    20
+    6    21
+    9    24
+   21    26
+   25    27
+   39    29
+   45    30
+   58    33
+   66    34
+   69    33
+   75    37
+
+LOCAL VARIABLES
+ID    SPC   LEN   NAME
+    1    21    42 stub Lorg/wooddog/woodstub/core/runtime/Stub;
+    0     0    77 this Lorg/wooddog/woodstub/core/stubgenerator/TemplateStub;

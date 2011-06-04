@@ -45,6 +45,15 @@ public class IOUtil {
         return out.toByteArray();
     }
 
+    public static byte[] read(String resource) throws IOException {
+        InputStream stream;
+
+        stream = IOUtil.class.getClassLoader().getResourceAsStream(resource);
+        return read(stream);
+    }
+
+
+
     public static void write(byte[] data, File file) throws IOException {
         BufferedOutputStream stream;
 

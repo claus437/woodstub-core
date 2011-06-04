@@ -23,7 +23,7 @@ public class Template {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(null, null, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
+                Stub stub = WoodStub.getStubFactory().createStub(null, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});
@@ -44,7 +44,7 @@ public class Template {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(null, this, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});
@@ -67,7 +67,7 @@ public class Template {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(null, this, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});
@@ -88,7 +88,7 @@ public class Template {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(null, null, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
+                Stub stub = WoodStub.getStubFactory().createStub(null, "org/wooddog/woodstub/core/Test#methodB(Ljava/lang/String;Ljava/lang/String;)I}");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});
@@ -111,7 +111,7 @@ public class Template {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(null, this, "org/wooddog/woodstub/core/Template#getInteger()I}");
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/GetBoolean#getInteger()I}");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});
@@ -133,7 +133,7 @@ public class Template {
            WoodStub.pause();
 
            try {
-               Stub stub = WoodStub.getStubFactory().createStub(null, this, "org/wooddog/woodstub/core/Template#getDouble()D}");
+               Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/GetBoolean#getDouble()D}");
 
                if (stub != null) {
                    stub.setParameters(new String[]{}, new Object[]{});
@@ -153,7 +153,7 @@ public class Template {
            WoodStub.pause();
 
            try {
-               Stub stub = WoodStub.getStubFactory().createStub(null, this, "org/wooddog/woodstub/core/Template#getDouble()D}");
+               Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/GetBoolean#getDouble()D}");
 
                if (stub != null) {
                    stub.setParameters(new String[]{}, new Object[]{dob});

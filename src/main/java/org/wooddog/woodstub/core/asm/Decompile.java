@@ -8,4 +8,5 @@ package org.wooddog.woodstub.core.asm;
  * To change this template use File | Settings | File Templates.
  */
 public class Decompile {
+
 }

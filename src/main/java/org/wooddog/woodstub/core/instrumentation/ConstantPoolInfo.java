@@ -15,4 +15,5 @@ public interface ConstantPoolInfo {
     int getTag();
     void read(DataInputStream stream) throws IOException;
     void write(DataOutputStream stream) throws IOException;
+    String[] values();
 }

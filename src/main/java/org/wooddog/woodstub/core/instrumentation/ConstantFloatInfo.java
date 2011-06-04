@@ -13,7 +13,7 @@ import java.io.IOException;
  * Time: 14:37
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantFloatInfo implements ConstantPoolInfo {
+public class ConstantFloatInfo implements ConstantPoolInfo, ConstantPoolValue {
     private static final int TAG = 4;
     private float value;
 
@@ -22,7 +22,7 @@ public class ConstantFloatInfo implements ConstantPoolInfo {
     }
 
 
-    public float getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -46,4 +46,9 @@ public class ConstantFloatInfo implements ConstantPoolInfo {
                 ", value=" + value +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"FLOAT", Float.toString(value)};
+    }
+
 }

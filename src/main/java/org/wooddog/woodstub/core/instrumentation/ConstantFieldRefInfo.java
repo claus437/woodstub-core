@@ -14,7 +14,7 @@ import java.io.IOException;
  * Time: 14:32
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantFieldRefInfo implements ConstantPoolInfo {
+public class ConstantFieldRefInfo implements ConstantPoolInfo, ConstantPoolReference {
     private static final int TAG = 9;
     private int classIndex;
     private int nameAndTypeIndex;
@@ -59,4 +59,9 @@ public class ConstantFieldRefInfo implements ConstantPoolInfo {
                 ", nameAndTypeIndex=" + nameAndTypeIndex +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"FIELD_REFERENCE", Integer.toString(classIndex), Integer.toString(nameAndTypeIndex)};
+    }
+
 }

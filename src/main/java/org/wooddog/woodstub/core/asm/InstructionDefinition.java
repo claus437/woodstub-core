@@ -13,6 +13,7 @@ public class InstructionDefinition {
     private int code;
     private String name;
     private char[] parameterTypes;
+    private char[] parameterInfo;
 
     public int getCode() {
         return code;
@@ -37,5 +38,13 @@ public class InstructionDefinition {
 
     public void setParameterTypes(char[] parameterTypes) {
         this.parameterTypes = parameterTypes;
+    }
+
+    public char[] getParameterInfo() {
+        return parameterInfo;
+    }
+
+    public void setParameterInfo(char[] parameterInfo) {
+        this.parameterInfo = parameterInfo;
     }
 }

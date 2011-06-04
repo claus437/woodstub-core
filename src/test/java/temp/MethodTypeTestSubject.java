@@ -14,7 +14,7 @@ public class MethodTypeTestSubject {
 
 
     public static void staticMethod() {
-        WoodStub.getStubFactory().createStub(null, null, "method");
+        WoodStub.getStubFactory().createStub(null, "method");
         invoked = "static";
     }
 

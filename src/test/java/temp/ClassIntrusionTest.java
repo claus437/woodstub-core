@@ -48,7 +48,7 @@ public class ClassIntrusionTest {
         err = System.out;
 
         //file = new File("c:\\woodstub-test\\classes\\com\\sun\\corba\\se\\impl\\activation\\RepositoryImpl.class");
-        file = new File("C:\\git-hub\\woodstub-core\\target\\classes\\org\\wooddog\\woodstub\\core\\Template.class");
+        file = new File("C:\\git-hub\\woodstub-core\\target\\classes\\org\\wooddog\\woodstub\\core\\GetBoolean.class");
 
         load(file);
     }

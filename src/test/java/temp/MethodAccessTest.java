@@ -29,7 +29,7 @@ public class MethodAccessTest implements StubFactory, Stub {
 
     static {
         WoodStub.setStubFactory(new StubFactory() {
-            public Stub createStub(ExecutionTree tree, Object source, String name) {
+            public Stub createStub(Object source, String name) {
                 System.out.println(source + " " + name);
                 return new Stub() {
                     public void setParameters(String[] names, Object[] values) {
@@ -148,7 +148,7 @@ public class MethodAccessTest implements StubFactory, Stub {
         return "stubbed";
     }
 
-    public Stub createStub(ExecutionTree tree, Object source, String methodName) {
+    public Stub createStub(Object source, String methodName) {
         return stub ? this : null;
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
  * Time: 14:41
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantUtf8Info implements ConstantPoolInfo {
+public class ConstantUtf8Info implements ConstantPoolInfo, ConstantPoolValue {
     private static final int TAG = 1;
     private String value;
 
@@ -73,5 +73,9 @@ public class ConstantUtf8Info implements ConstantPoolInfo {
                 "tag=" + TAG +
                 ", value='" + value + '\'' +
                 '}';
+    }
+
+    public String[] values() {
+        return new String[]{"UTF8", value};
     }
 }

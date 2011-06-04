@@ -1,5 +1,6 @@
 package org.wooddog.woodstub.core;
 
+import org.wooddog.woodstub.core.formatter.CodeFormatter;
 import org.wooddog.woodstub.core.instrumentation.*;
 
 import java.io.*;
@@ -171,5 +172,84 @@ public class ClassReader {
                 ", fields=" + (fields == null ? null : Arrays.asList(fields)) +
                 ", methods=" + (methods == null ? null : Arrays.asList(methods)) +
                 '}';
+    }
+
+    public String getSource() throws IOException {
+        StringBuffer buffer;
+        List<ConstantPoolInfo> constantEntries;
+        CodeFormatter codeFormatter;
+        String lineNum;
+        int maxWidth;
+        String[] values;
+
+        codeFormatter = new CodeFormatter(constants);
+        buffer = new StringBuffer();
+        buffer.append(Integer.toHexString(magic) + " version " + major + "." + minor + "\n\n");
+
+        constantEntries = constants.getConstants();
+        maxWidth = Integer.toString(constantEntries.size()).length();
+
+        for (int i = 0; i < constantEntries.size(); i++) {
+            if (constantEntries.get(i) != null) {
+                values = constantEntries.get(i).values();
+
+                lineNum = Integer.toString(i);
+                fill(buffer, maxWidth - lineNum.length(), ' ');
+                buffer.append(lineNum);
+                buffer.append(" ");
+                buffer.append(values[0]);
+                fill(buffer, 16 - values[0].length(), ' ');
+                buffer.append(" ");
+                for (int j = 1; j < values.length; j++) {
+                    buffer.append(values[j]);
+                    if (j < values.length - 1) {
+                        buffer.append(", ");
+                    }
+                }
+                buffer.append("\n");
+            }
+        }
+
+        buffer.append("\n");
+
+        buffer.append("ACCESS FLAGS:   " + Integer.toString(accessFlags) + "\n");
+        buffer.append("INDEX OF CLASS: " + Integer.toString(indexOfClass) + "\n");
+        buffer.append("INDEX OF SUPER: " + Integer.toString(indexOfSuper) + "\n");
+        buffer.append("IMPLEMENTS:     ");
+        for (int i = 0; i < interfaceReferences.length; i++) {
+            buffer.append(interfaceReferences[i]);
+            if (i < interfaceReferences.length - 1) {
+                buffer.append(", ");
+            }
+        }
+        buffer.append("\n\n");
+        buffer.append("FIELDS:\n");
+        for (int i = 0; i < fields.size(); i ++) {
+            buffer.append("NAME: " + fields.get(i).getNameIndex() + " DESCRIPTOR: " + fields.get(i).getDescriptorIndex() + " FLAGS: " + fields.get(i).getAccessFlags() + "\n");
+        }
+
+        buffer.append("\n");
+        for (FieldInfo method : methods) {
+            buffer.append("METHOD: " + ((ConstantUtf8Info) constants.get(method.getNameIndex())).getValue());
+            buffer.append(((ConstantUtf8Info) constants.get(method.getDescriptorIndex())).getValue());
+            buffer.append(", FLAGS: " + method.getAccessFlags());
+            buffer.append(", ");
+            List<Attribute> attributes = method.getAttributes();
+            for (int i = 0; i < attributes.size(); i++) {
+                if (attributes.get(i) instanceof AttributeCode) {
+                    codeFormatter.write((AttributeCode) attributes.get(i), buffer);
+                } else {
+                    buffer.append("UNKNWON ATT: " + attributes.get(i).getName());
+                }
+            }
+        }
+
+        return buffer.toString();
+    }
+
+    private void fill(StringBuffer buffer, int length, char value) {
+        for (int i = 0; i < length; i ++) {
+            buffer.append(value);
+        }
     }
 }

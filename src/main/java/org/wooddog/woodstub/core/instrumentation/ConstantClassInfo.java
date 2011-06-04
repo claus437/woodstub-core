@@ -67,4 +67,9 @@ public class ConstantClassInfo implements ConstantPoolInfo {
                 ", nameIndex=" + nameIndex +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"CLASS", Integer.toString(nameIndex)};
+    }
+
 }

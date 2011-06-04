@@ -14,7 +14,7 @@ import java.util.List;
  * Time: 14:34
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantMethodRefInfo implements ConstantPoolInfo {
+public class ConstantMethodRefInfo implements ConstantPoolInfo, ConstantPoolReference {
     private static final int TAG = 10;
     private int classIndex;
     private int nameAndTypeIndex;
@@ -88,4 +88,9 @@ public class ConstantMethodRefInfo implements ConstantPoolInfo {
                 ", nameAndTypeIndex=" + nameAndTypeIndex +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"METHOD_REFERENCE", Integer.toString(classIndex), Integer.toString(nameAndTypeIndex)};
+    }
+
 }

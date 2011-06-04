@@ -146,7 +146,7 @@ public class ParameterAndReturnTest {
             return VALUES.get(matcher.group(1));
         }
 
-        public Stub createStub(ExecutionTree tree, Object source, String method) {
+        public Stub createStub(Object source, String method) {
             StubReturnWriter stub;
 
             System.out.println(method);

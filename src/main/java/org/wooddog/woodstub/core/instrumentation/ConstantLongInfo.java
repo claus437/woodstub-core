@@ -13,7 +13,7 @@ import java.io.IOException;
  * Time: 14:39
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantLongInfo implements ConstantPoolInfo {
+public class ConstantLongInfo implements ConstantPoolInfo, ConstantPoolValue {
     private static final int TAG = 5;
     private long value;
 
@@ -21,7 +21,7 @@ public class ConstantLongInfo implements ConstantPoolInfo {
         return TAG;
     }
 
-    public long getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -45,4 +45,9 @@ public class ConstantLongInfo implements ConstantPoolInfo {
                 ", value=" + value +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"LONG", Long.toString(value)};
+    }
+
 }

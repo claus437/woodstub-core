@@ -13,12 +13,16 @@ import java.io.IOException;
  * Time: 14:36
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantIntegerInfo implements ConstantPoolInfo {
+public class ConstantIntegerInfo implements ConstantPoolInfo, ConstantPoolValue {
     private static final int TAG = 3;
     private int value;
 
     public int getTag() {
         return TAG;
+    }
+
+    public Object getValue() {
+        return value;
     }
 
     public void read(DataInputStream stream) throws IOException {
@@ -36,5 +40,9 @@ public class ConstantIntegerInfo implements ConstantPoolInfo {
                 "tag=" + TAG +
                 ", value=" + value +
                 '}';
+    }
+
+    public String[] values() {
+        return new String[]{"INTEGER", Integer.toString(value)};
     }
 }

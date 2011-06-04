@@ -1,15 +1,32 @@
+# fourth column contains type
+#
+# b unsigned byte
+# B signed byte
+# s unsigned short
+# S signed  short
+# V table switch arguments
+# W wide operation arguments
+#
+# fitch column contains info about where the parameter value should point at
+#
+# F index in current frame
+# P index in constant pool
+# A code address
+# V value
+
+
 aaload               50 (0x32)
 aastore              83 (0x53)
 aconst_null           1 (0x1)
-aload                25 (0x19) B
+aload                25 (0x19)  B   F
 aload_0              42 (0x2a)
 aload_1              43 (0x2b)
 aload_2              44 (0x2c)
 aload_3              45 (0x2d)
-anewarray           189 (0xbd)  S
+anewarray           189 (0xbd)  S   P
 areturn             176 (0xb0)
 arraylength         190 (0xbe)
-astore               58 (0x3a)  B
+astore               58 (0x3a)  B   F
 astore_0             75 (0x4b)
 astore_1             76 (0x4c)
 astore_2             77 (0x4d)
@@ -17,10 +34,10 @@ astore_3             78 (0x4e)
 athrow              191 (0xbf)
 baload               51 (0x33)
 bastore              84 (0x54)
-bipush               16 (0x10)  B
+bipush               16 (0x10)  B   V
 caload               52 (0x34)
 castore              85 (0x55)
-checkcast           192 (0xc0)  S
+checkcast           192 (0xc0)  S   P
 d2f                 144 (0x90)
 d2i                 142 (0x8e)
 d2l                 143 (0x8f)
@@ -32,7 +49,7 @@ dcmpl               151 (0x97)
 dconst_0             14 (0xe)
 dconst_1             15 (0xf)
 ddiv                111 (0x6f)
-dload                24 (0x18)  B
+dload                24 (0x18)  B   F
 dload_0              38 (0x26)
 dload_1              39 (0x27)
 dload_2              40 (0x28)
@@ -41,7 +58,7 @@ dmul                107 (0x6b)
 dneg                119 (0x77)
 drem                115 (0x73)
 dreturn             175 (0xaf)
-dstore               57 (0x39)  B
+dstore               57 (0x39)  B   F
 dstore_0             71 (0x47)
 dstore_1             72 (0x48)
 dstore_2             73 (0x49)
@@ -65,7 +82,7 @@ fconst_0             11 (0xb)
 fconst_1             12 (0xc)
 fconst_2             13 (0xd)
 fdiv                110 (0x6e)
-fload                23 (0x17)  B
+fload                23 (0x17)  B   F
 fload_0              34 (0x22)
 fload_1              35 (0x23)
 fload_2              36 (0x24)
@@ -74,16 +91,16 @@ fmul                106 (0x6a)
 fneg                118 (0x76)
 frem                114 (0x72)
 freturn             174 (0xae)
-fstore               56 (0x38)  B
+fstore               56 (0x38)  B   F
 fstore_0             67 (0x43)
 fstore_1             68 (0x44)
 fstore_2             69 (0x45)
 fstore_3             70 (0x46)
 fsub                102 (0x66)
-getfield            180 (0xb4)  S
-getstatic           178 (0xb2)  S
-goto                167 (0xa7)  s
-goto_w              200 (0xc8)  i
+getfield            180 (0xb4)  S   P
+getstatic           178 (0xb2)  S   P
+goto                167 (0xa7)  s   A
+goto_w              200 (0xc8)  i   A
 i2b                 145 (0x91)
 i2c                 146 (0x92)
 i2d                 135 (0x87)
@@ -102,41 +119,41 @@ iconst_3              6 (0x6)
 iconst_4              7 (0x7)
 iconst_5              8 (0x8)
 idiv                108 (0x6c)
-if_acmpeq           165 (0xa5)  S
-if_acmpne           166 (0xa6)  S
-if_icmpeq           159 (0x9f)  S
-if_icmpne           160 (0xa0)  S
-if_icmplt           161 (0xa1)  S
-if_icmpge           162 (0xa2)  S
-if_icmpgt           163 (0xa3)  S
-if_icmple           164 (0xa4)  S
-ifeq                153 (0x99)  S
-ifne                154 (0x9a)  S
-iflt                155 (0x9b)  S
-ifge                156 (0x9c)  S
-ifgt                157 (0x9d)  S
-ifle                158 (0x9e)  S
-ifnonnull           199 (0xc7)  S
-ifnull              198 (0xc6)  S
-iinc                132 (0x84)  Bb
-iload                21 (0x15)  B
+if_acmpeq           165 (0xa5)  S    A
+if_acmpne           166 (0xa6)  S    A
+if_icmpeq           159 (0x9f)  S    A
+if_icmpne           160 (0xa0)  S    A
+if_icmplt           161 (0xa1)  S    A
+if_icmpge           162 (0xa2)  S    A
+if_icmpgt           163 (0xa3)  S    A
+if_icmple           164 (0xa4)  S    A
+ifeq                153 (0x99)  S    A
+ifne                154 (0x9a)  S    A
+iflt                155 (0x9b)  S    A
+ifge                156 (0x9c)  S    A
+ifgt                157 (0x9d)  S    A
+ifle                158 (0x9e)  S    A
+ifnonnull           199 (0xc7)  S    A
+ifnull              198 (0xc6)  S    A
+iinc                132 (0x84)  Bb   FV
+iload                21 (0x15)  B    F
 iload_0              26 (0x1a)
 iload_1              27 (0x1b)
 iload_2              28 (0x1c)
 iload_3              29 (0x1d)
 imul                104 (0x68)
 ineg                116 (0x74)
-instanceof          193 (0xc1)  S
-invokeinterface     185 (0xb9)  SBB     # last byte should always be null
-invokespecial       183 (0xb7)  S
-invokestatic        184 (0xb8)  S       # CONSTANT_METHOD_REF
-invokevirtual       182 (0xb6)  S
+instanceof          193 (0xc1)  S    P
+invokeinterface     185 (0xb9)  SBB  PV0   # last byte should always be null
+invokespecial       183 (0xb7)  S    P
+invokestatic        184 (0xb8)  S    P     # CONSTANT_METHOD_REF
+invokevirtual       182 (0xb6)  S    P
 ior                 128 (0x80)
 irem                112 (0x70)
 ireturn             172 (0xac)
 ishl                120 (0x78)
 ishr                122 (0x7a)
-istore               54 (0x36)  B
+istore               54 (0x36)  B    F
 istore_0             59 (0x3b)
 istore_1             60 (0x3c)
 istore_2             61 (0x3d)
@@ -144,8 +161,8 @@ istore_3             62 (0x3e)
 isub                100 (0x64)
 iushr               124 (0x7c)
 ixor                130 (0x82)
-jsr                 168 (0xa8)  s
-jsr_w               201 (0xc9)  i
+jsr                 168 (0xa8)  s    A
+jsr_w               201 (0xc9)  i    A
 l2d                 138 (0x8a)
 l2f                 137 (0x89)
 l2i                 136 (0x88)
@@ -156,24 +173,24 @@ lastore              80 (0x50)
 lcmp                148 (0x94)
 lconst_0              9 (0x9)
 lconst_1             10 (0xa)
-ldc                  18 (0x12)  B
-ldc_w                19 (0x13)  S
-ldc2_w               20 (0x14)  S
+ldc                  18 (0x12)  B    P
+ldc_w                19 (0x13)  S    P
+ldc2_w               20 (0x14)  S    P
 ldiv                109 (0x6d)
-lload                22 (0x16)  B
+lload                22 (0x16)  B    F
 lload_0              30 (0x1e)
 lload_1              31 (0x1f)
 lload_2              32 (0x20)
 lload_3              33 (0x21)
 lmul                105 (0x69)
 lneg                117 (0x75)
-lookupswitch        171 (0xab)  L
+lookupswitch        171 (0xab)  L    X
 lor                 129 (0x81)
 lrem                113 (0x71)
 lreturn             173 (0xad)
 lshl                121 (0x79)
 lshr                123 (0x7b)
-lstore               55 (0x37)  B
+lstore               55 (0x37)  B    F
 lstore_0             63 (0x3f)
 lstore_1             64 (0x40)
 lstore_2             65 (0x41)
@@ -183,21 +200,21 @@ lushr               125 (0x7d)
 lxor                131 (0x83)
 monitorenter        194 (0xc2)
 monitorexit         195 (0xc3)
-multianewarray      197 (0xc5)  SB
-new                 187 (0xbb)  S
-newarray            188 (0xbc)  B
+multianewarray      197 (0xc5)  SB   PV
+new                 187 (0xbb)  S    P
+newarray            188 (0xbc)  B    P
 nop                   0 (0x0)
 pop                  87 (0x57)
 pop2                 88 (0x58)
-putfield            181 (0xb5)  S
-putstatic           179 (0xb3)  S
-ret                 169 (0xa9)  B
+putfield            181 (0xb5)  S    P
+putstatic           179 (0xb3)  S    P
+ret                 169 (0xa9)  B    F
 return              177 (0xb1)
 saload               53 (0x35)
 sastore              86 (0x56)
-sipush               17 (0x11)  S
+sipush               17 (0x11)  S    V
 swap                 95 (0x5f)
-tableswitch         170 (0xaa)  V       # variable length need to implement.
-wide                196 (0xc4)  V       # parameters depends on previoues opcode.
+tableswitch         170 (0xaa)  V    X   # variable length needs to be implemented.
+wide                196 (0xc4)  W    X   # parameters depends on previoues opcode.
 
 

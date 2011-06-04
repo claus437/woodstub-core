@@ -110,7 +110,7 @@ public class MethodTypeTest implements StubFactory, Stub {
         return "stubbed";
     }
 
-    public Stub createStub(ExecutionTree tree, Object source, String name) {
+    public Stub createStub(Object source, String name) {
         return stub ? this : null;
     }
 }

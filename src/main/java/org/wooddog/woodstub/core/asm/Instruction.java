@@ -36,6 +36,10 @@ public class Instruction  {
         return definition.getParameterTypes();
     }
 
+    public char[] getParameterInfo() {
+        return definition.getParameterInfo();
+    }
+
     public int[] getValues() {
         return values;
     }

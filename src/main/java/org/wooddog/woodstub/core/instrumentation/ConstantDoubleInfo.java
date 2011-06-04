@@ -1,5 +1,7 @@
 package org.wooddog.woodstub.core.instrumentation;
 
+import com.sun.org.apache.bcel.internal.classfile.*;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,7 +13,7 @@ import java.io.IOException;
  * Time: 14:39
  * To change this template use File | Settings | File Templates.
  */
-public class ConstantDoubleInfo implements ConstantPoolInfo {
+public class ConstantDoubleInfo implements ConstantPoolInfo, ConstantPoolValue {
     private static final int TAG = 6;
     private double value;
 
@@ -19,7 +21,7 @@ public class ConstantDoubleInfo implements ConstantPoolInfo {
         return TAG;
     }
 
-    public double getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -43,4 +45,9 @@ public class ConstantDoubleInfo implements ConstantPoolInfo {
                 ", value=" + value +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"DOUBLE", Double.toString(value)};
+    }
+
 }

@@ -89,4 +89,8 @@ public class ConstantNameAndTypeInfo implements ConstantPoolInfo {
                 ", descriptorIndex=" + descriptorIndex +
                 '}';
     }
+
+    public String[] values() {
+        return new String[]{"NAME_AND_TYPE", Integer.toString(nameIndex), Integer.toString(descriptorIndex)};
+    }
 }
