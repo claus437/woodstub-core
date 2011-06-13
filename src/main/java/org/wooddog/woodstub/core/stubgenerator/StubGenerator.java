@@ -1,12 +1,13 @@
 package org.wooddog.woodstub.core.stubgenerator;
 
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.wooddog.woodstub.core.ClassReader;
 import org.wooddog.woodstub.core.asm.*;
 import org.wooddog.woodstub.core.asm.Compiler;
-import org.wooddog.woodstub.core.instrumentation.AttributeCode;
-import org.wooddog.woodstub.core.instrumentation.ConstantPool;
+import org.wooddog.woodstub.core.instrumentation.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,18 +19,31 @@ import java.io.InputStream;
  * To change this template use File | Settings | File Templates.
  */
 public class StubGenerator {
+    private ConstantPool pool;
+    private String className;
 
-    public byte[] stub(ConstantPool pool, AttributeCode code) throws IOException {
+    public StubGenerator(ConstantPool pool, String className) {
+        this.pool = pool;
+        this.className = className;
+    }
+
+    public byte[] stub(FieldInfo method) throws IOException {
         Compiler compiler;
+        String methodName;
+        String signature;
+
+
+        methodName = pool.getUtf8Value(method.getNameIndex());
+        signature = pool.getUtf8Value(method.getDescriptorIndex());
 
         compiler = new Compiler(pool);
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#isRunning()Z");
-        compiler.add("ifeq", "AFTER");
+        compiler.add("ifeq", "END");
 
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#pause()V");
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;");
         compiler.add("aload", 0);
-        compiler.add("ldc", "org/wooddog/woodstub/core/StubTemplate#getBoolean()B");
+        compiler.add("ldc", className + "#" + methodName + signature);
         compiler.add("invokeinterface",  "org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub;", 3 , 0);
         compiler.add("astore", 1);
         compiler.add("aload", 1);
@@ -56,14 +70,17 @@ public class StubGenerator {
 
         compiler.add("label", "RESUME_TO_ORIGINAL_CODE_BLOCK");
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
-        compiler.add("goto", "AFTER");
+        compiler.add("goto", "END");
 
         compiler.add("astore", 3);
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
         compiler.add("aload", 3);
         compiler.add("athrow");
 
-        return compiler.compile();
-    }
+        ByteArrayOutputStream code = new ByteArrayOutputStream();
+        code.write(compiler.compile());
+        code.write(((AttributeCode) method.getAttributes("Code").get(0)).getCode());
 
+        return code.toByteArray();
+    }
 }

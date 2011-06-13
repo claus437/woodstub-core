@@ -128,10 +128,12 @@ public class CodeFormatter {
         values = instruction.getValues();
 
         for (int i = 0; i < infoCodes.length; i++) {
-            if (infoCodes[i] == 'P') {
-                out.append(" " + lookup(values[i]));
+            out.append(" ");
+
+            if (infoCodes[i] == 'C' || infoCodes[i] == 'M' || infoCodes[i] == 'K') {
+                out.append(lookup(values[i]));
             } else {
-                out.append(" " + values[i]);
+                out.append(values[i]);
             }
         }
     }
@@ -178,7 +180,7 @@ public class CodeFormatter {
             return (((ConstantUtf8Info) pool.get(((ConstantStringInfo) entry).getStringIndex())).getValue());
         }
 
-        throw new InternalErrorException("unknown constant " + entry);
+        throw new InternalErrorException("unknown entry " + index + " in constant pool");
     }
 
     public String getTypeByNameAndTypeIndex(int index) {

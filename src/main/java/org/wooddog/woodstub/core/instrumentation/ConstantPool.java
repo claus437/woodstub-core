@@ -1,5 +1,6 @@
 package org.wooddog.woodstub.core.instrumentation;
 
+import com.sun.org.apache.bcel.internal.classfile.ConstantNameAndType;
 import org.wooddog.woodstub.core.InternalErrorException;
 import org.wooddog.woodstub.core.MyLogger;
 
@@ -297,5 +298,39 @@ public class ConstantPool {
         }
 
         return index;
+    }
+
+    public String getClassName(int classIndex) {
+        ConstantClassInfo classInfo;
+        ConstantUtf8Info utf8Info;
+
+        classInfo = (ConstantClassInfo) pool.get(classIndex);
+        utf8Info = (ConstantUtf8Info) pool.get(classInfo.getNameIndex());
+
+        return utf8Info.getValue();
+    }
+
+    public String getMethodName(int nameAndTypeIndex) {
+        ConstantNameAndTypeInfo nameAndTypeInfo;
+        ConstantUtf8Info utf8Info;
+
+        nameAndTypeInfo = (ConstantNameAndTypeInfo) pool.get(nameAndTypeIndex);
+        utf8Info = (ConstantUtf8Info) pool.get(nameAndTypeInfo.getNameIndex());
+
+        return utf8Info.getValue();
+    }
+
+    public String getSignature(int nameAndTypeIndex) {
+        ConstantNameAndTypeInfo nameAndTypeInfo;
+        ConstantUtf8Info utf8Info;
+
+        nameAndTypeInfo = (ConstantNameAndTypeInfo) pool.get(nameAndTypeIndex);
+        utf8Info = (ConstantUtf8Info) pool.get(nameAndTypeInfo.getDescriptorIndex());
+
+        return utf8Info.getValue();
+    }
+
+    public String getUtf8Value(int index) {
+        return ((ConstantUtf8Info) pool.get(index)).getValue();
     }
 }

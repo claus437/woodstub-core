@@ -4,7 +4,7 @@ METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
  6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
  9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
 12 aload_0
-13 ldc org/wooddog/woodstub/core/StubTemplate#getBoolean()B
+13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()B
 15 invokeinterface org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub; 3 0
 20 astore_1
 21 aload_1
@@ -19,8 +19,8 @@ METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
 40 invokeinterface org/wooddog/woodstub/core/runtime/Stub#execute()V 1 0
 45 aload_1
 46 invokeinterface org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object; 1 0
-51 checkcast java/lang/Boolean
-54 invokevirtual java/lang/Boolean#booleanValue()Z
+51 checkcast 12
+54 invokevirtual 13
 57 istore_2
 58 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
 61 iload_2
@@ -31,29 +31,37 @@ METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
 70 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
 73 aload_3
 74 athrow
-75 iconst_0
-76 ireturn
+75 getstatic 15
+78 invokevirtual 13
+81 ireturn
 
 EXCEPTIONS
 SPC   EPC   HPC   CTP
-    9    58    69     0
-   69    70    69     0
+   14    63    77     0
+   77    78    77     0
+    0    66    95     0
+   71    90    95     0
+   95    97    95     0
 
 LINE NUMBERS
 SPC    LINE
-    0    20
-    6    21
-    9    24
-   21    26
-   25    27
-   39    29
-   45    30
-   58    33
-   66    34
-   69    33
-   75    37
+    0    17
+    5    19
+   11    20
+   14    23
+   26    25
+   30    26
+   44    28
+   50    29
+   63    32
+   66    37
+   71    32
+   74    33
+   77    32
+   83    35
+   90    37
 
 LOCAL VARIABLES
 ID    SPC   LEN   NAME
-    1    21    42 stub Lorg/wooddog/woodstub/core/runtime/Stub;
-    0     0    77 this Lorg/wooddog/woodstub/core/stubgenerator/TemplateStub;
+    1    26    45 stub Lorg/wooddog/woodstub/core/runtime/Stub;
+    0     0   103 this Lorg/wooddog/woodstub/core/stubgenerator/GetBooleanExpected;

@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.wooddog.woodstub.core.ClassReader;
 import org.wooddog.woodstub.core.IOUtil;
-import org.wooddog.woodstub.core.asm.Decompile;
-import org.wooddog.woodstub.core.instrumentation.StubCodeGenerator;
+import org.wooddog.woodstub.core.instrumentation.AttributeCode;
+import org.wooddog.woodstub.core.instrumentation.ConstantPool;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,16 +27,25 @@ public class StubGeneratorTest {
 
     private void run(String test) throws Exception {
         ClassReader reader;
-        StubCodeGenerator generator;
+        ConstantPool pool;
+        StubGenerator generator;
         InputStream source;
         ByteArrayOutputStream instrumented;
         String expected;
+        byte[] stubbedMethod;
 
         source = getClass().getClassLoader().getResourceAsStream("org/wooddog/woodstub/core/stubgenerator/templates/" + test + ".class");
         instrumented = new ByteArrayOutputStream();
 
-        generator = new StubCodeGenerator();
-        generator.stubClass("org/wooddog/woodstub/core/stubgenerator/" + test, source, instrumented);
+        reader = new ClassReader();
+        reader.read(source);
+        pool = reader.getConstantPool();
+
+        generator = new StubGenerator(pool, pool.getClassName(reader.getIndexOfClass()));
+        stubbedMethod = generator.stub(reader.getMethods().get(1));
+        ((AttributeCode) reader.getMethods().get(1).getAttributes("Code").get(0)).setCode(stubbedMethod);
+        reader.write(instrumented);
+
 
         reader = new ClassReader();
         reader.read(new ByteArrayInputStream(instrumented.toByteArray()));

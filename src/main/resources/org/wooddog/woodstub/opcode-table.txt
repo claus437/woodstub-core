@@ -10,10 +10,11 @@
 # fitch column contains info about where the parameter value should point at
 #
 # F index in current frame
-# P index in constant pool
 # A code address
 # V value
-
+# C index in constant pool pointing at value eg. String ref, Integer, Double, Float, Long
+# M index in constant pool pointing at a method reference
+# K index in constant pool pointing at a class reference
 
 aaload               50 (0x32)
 aastore              83 (0x53)
@@ -23,7 +24,7 @@ aload_0              42 (0x2a)
 aload_1              43 (0x2b)
 aload_2              44 (0x2c)
 aload_3              45 (0x2d)
-anewarray           189 (0xbd)  S   P
+anewarray           189 (0xbd)  S   K
 areturn             176 (0xb0)
 arraylength         190 (0xbe)
 astore               58 (0x3a)  B   F
@@ -144,9 +145,9 @@ iload_3              29 (0x1d)
 imul                104 (0x68)
 ineg                116 (0x74)
 instanceof          193 (0xc1)  S    P
-invokeinterface     185 (0xb9)  SBB  PV0   # last byte should always be null
+invokeinterface     185 (0xb9)  SBB  MV0   # last byte should always be null
 invokespecial       183 (0xb7)  S    P
-invokestatic        184 (0xb8)  S    P     # CONSTANT_METHOD_REF
+invokestatic        184 (0xb8)  S    M     # CONSTANT_METHOD_REF
 invokevirtual       182 (0xb6)  S    P
 ior                 128 (0x80)
 irem                112 (0x70)
@@ -173,9 +174,9 @@ lastore              80 (0x50)
 lcmp                148 (0x94)
 lconst_0              9 (0x9)
 lconst_1             10 (0xa)
-ldc                  18 (0x12)  B    P
-ldc_w                19 (0x13)  S    P
-ldc2_w               20 (0x14)  S    P
+ldc                  18 (0x12)  B    C
+ldc_w                19 (0x13)  S    C
+ldc2_w               20 (0x14)  S    C
 ldiv                109 (0x6d)
 lload                22 (0x16)  B    F
 lload_0              30 (0x1e)

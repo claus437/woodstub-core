@@ -149,6 +149,8 @@ public class StubCodeGenerator {
         LOGGER.log(Level.FINE, "setup " + idxStringClassName + " name " + className);
     }
 
+
+
     public void stub(AttributeCode code, FieldInfo method) {
         int idxStringName;
         int idxStringDescriptor;
