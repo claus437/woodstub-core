@@ -1,10 +1,10 @@
-METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
+METHOD: getShort()S, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
  0 invokestatic org/wooddog/woodstub/core/WoodStub#isRunning()Z
  3 ifeq 73
  6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
  9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
 12 aload_0
-13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()Z
+13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetShort#getShort()S
 15 invokeinterface org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub; 3 0
 20 astore_1
 21 aload_1
@@ -19,8 +19,8 @@ METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
 40 invokeinterface org/wooddog/woodstub/core/runtime/Stub#execute()V 1 0
 45 aload_1
 46 invokeinterface org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object; 1 0
-51 checkcast java/lang/Boolean
-54 invokevirtual java/lang/Boolean#booleanValue()Z
+51 checkcast java/lang/Short
+54 invokevirtual java/lang/Short#shortValue()S
 57 istore_2
 58 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
 61 iload_2

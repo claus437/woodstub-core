@@ -3,39 +3,46 @@ package org.wooddog.woodstub.core.stubgenerator.templates;
 import org.wooddog.woodstub.core.WoodStub;
 import org.wooddog.woodstub.core.runtime.Stub;
 
+import java.io.IOException;
+
 /**
  * Created by IntelliJ IDEA.
  * User: claus
- * Date: 03-06-11
- * Time: 12:47
+ * Date: 14-06-11
+ * Time: 17:07
  * To change this template use File | Settings | File Templates.
  */
-public class GetBoolean {
-    public boolean getBoolean() {
-        return false;
+public class GetObject {
+    public Object getObject() {
+        return null;
     }
 }
 
-class GetBooleanExpected {
-    public boolean getBoolean() throws Throwable {
+class GetObjectExpected extends ToSource {
+    public Object getObject() throws Throwable {
         if (WoodStub.isRunning()) {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()Z");
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/stubgenerator/templates/GetObject#getObject()Ljava/lang/Object;");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});
 
                     stub.execute();
-                    return ((Boolean) stub.getResult()).booleanValue();
+                    return (Object) stub.getResult();
                 }
             } finally {
                 WoodStub.resume();
             }
         }
 
-        return false;
+        return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        new GetObjectExpected().toByteCode();
     }
 }
+
 

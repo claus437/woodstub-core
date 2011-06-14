@@ -22,10 +22,65 @@ public class StubGeneratorTest {
 
     @Test
     public void testStubGetBoolean() throws Exception {
-        run("GetBoolean");
+        run("GetBoolean", "getBoolean()Z");
     }
 
-    private void run(String test) throws Exception {
+    @Test
+    public void testStubGetByte() throws Exception {
+        run("GetByte", "getByte()B");
+    }
+
+    @Test
+    public void testStubGetShort() throws Exception {
+        run("GetShort", "getShort()S");
+    }
+
+    @Test
+    public void testStubGetCharacter() throws Exception {
+        run("GetCharacter", "getCharacter()C");
+    }
+
+    @Test
+    public void testStubGetInteger() throws Exception {
+        run("GetInteger", "getInteger()I");
+    }
+
+    @Test
+    public void testStubGetFloat() throws Exception {
+        run("GetFloat", "getFloat()F");
+    }
+
+    @Test
+    public void testStubGetDouble() throws Exception {
+        run("GetDouble", "getDouble()D");
+    }
+
+    @Test
+    public void testStubGetLong() throws Exception {
+        run("GetLong", "getLong()J");
+    }
+
+    @Test
+    public void testStubGetObject() throws Exception {
+        run("GetObject", "getObject()Ljava/lang/Object;");
+    }
+
+    @Test
+    public void testStubGetString() throws Exception {
+        run("GetString", "getString()Ljava/lang/String;");
+    }
+
+    @Test
+    public void testStubGetArrayOfObjects() throws Exception {
+        run("GetArrayOfObjects", "getArrayOfObjects()[Ljava/lang/Object;");
+    }
+
+    @Test
+    public void testStubGetArrayOfIntegers() throws Exception {
+        run("GetArrayOfIntegers", "getArrayOfIntegers()[I");
+    }
+
+    private void run(String test, String method) throws Exception {
         ClassReader reader;
         ConstantPool pool;
         StubGenerator generator;
@@ -51,10 +106,12 @@ public class StubGeneratorTest {
         reader.read(new ByteArrayInputStream(instrumented.toByteArray()));
 
         expected = new String(IOUtil.read("org/wooddog/woodstub/core/stubgenerator/" + test + ".jbc"));
-        Assert.assertEquals(expected, getMethod("getBoolean()Z", reader.getSource()));
+        expected = expected.replaceAll("\r", "");
+        expected = expected.trim();
+
+        Assert.assertEquals(expected, getMethod(method, reader.getSource()));
     }
 
-    @Test
     public void decompile() throws Exception {
         ClassReader reader;
         String classFile;
@@ -92,8 +149,8 @@ public class StubGeneratorTest {
                 }
             }
 
-            if (elements == 3) {
-                return methodBlock.toString();
+            if (elements == 1) {
+                return methodBlock.toString().trim();
             }
         }
 

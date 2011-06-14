@@ -2,6 +2,7 @@ package org.wooddog.woodstub.core.stubgenerator;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.wooddog.woodstub.core.ClassReader;
+import org.wooddog.woodstub.core.InternalErrorException;
 import org.wooddog.woodstub.core.asm.*;
 import org.wooddog.woodstub.core.asm.Compiler;
 import org.wooddog.woodstub.core.instrumentation.*;
@@ -28,13 +29,16 @@ public class StubGenerator {
     }
 
     public byte[] stub(FieldInfo method) throws IOException {
+        NativeType type;
+        AttributeCode code;
         Compiler compiler;
         String methodName;
         String signature;
 
-
         methodName = pool.getUtf8Value(method.getNameIndex());
         signature = pool.getUtf8Value(method.getDescriptorIndex());
+
+        type = NativeType.getNativeType(signature);
 
         compiler = new Compiler(pool);
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#isRunning()Z");
@@ -61,26 +65,53 @@ public class StubGenerator {
 
         compiler.add("aload", 1);
         compiler.add("invokeinterface", "org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object;", 1, 0);
-        compiler.add("checkcast", "java/lang/Boolean");
-        compiler.add("invokevirtual", "java/lang/Boolean#booleanValue()Z");
-        compiler.add("istore", 2);
+
+        if (type.isPrimitive()) {
+            compiler.add("checkcast", type.getType());
+            compiler.add("invokevirtual", type.getParseMethod());
+        } else if (type.isArray()) {
+            compiler.add("checkcast", "[" + type.getType() + ";");
+            compiler.add("checkcast", "[" + type.getType() + ";");
+        } else if (! "java/lang/Object".equals(type.getType())) {
+            compiler.add("checkcast", type.getType());
+        }
+
+        compiler.add(type.getStoreOperation(), 2);
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
-        compiler.add("iload", 2);
-        compiler.add("ireturn");
+        compiler.add(type.getLoadOperation(), 2);
+        compiler.add(type.getReturnOperation());
 
         compiler.setLabel("RESUME_TO_ORIGINAL_CODE_BLOCK");
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
         compiler.add("goto", "END");
 
-        compiler.add("astore", 3);
+        compiler.add("astore", 2 + type.size());
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
-        compiler.add("aload", 3);
+        compiler.add("aload", 2 + type.size());
         compiler.add("athrow");
 
-        ByteArrayOutputStream code = new ByteArrayOutputStream();
-        code.write(compiler.compile());
-        code.write(((AttributeCode) method.getAttributes("Code").get(0)).getCode());
+        code = (AttributeCode) method.getAttributes("Code").get(0);
 
-        return code.toByteArray();
+        setMaxSize(code, type);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        stream.write(compiler.compile());
+        stream.write(code.getCode());
+
+        return stream.toByteArray();
+    }
+
+    private void setMaxSize(AttributeCode code, NativeType type) {
+        int locals;
+
+        locals = 3 + type.size();
+
+        if (code.getMaxLocals() < locals) {
+            code.setMaxLocals(locals);
+        }
+
+        if (code.getMaxStack() < 3) {
+            code.setMaxStack(3);
+        }
     }
 }
