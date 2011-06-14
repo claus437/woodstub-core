@@ -1,0 +1,37 @@
+METHOD: getObject()Ljava/lang/Object;, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
+ 0 invokestatic org/wooddog/woodstub/core/WoodStub#isRunning()Z
+ 3 ifeq 69
+ 6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
+ 9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
+12 aload_0
+13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetObject#getObject()Ljava/lang/Object;
+15 invokeinterface org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub; 3 0
+20 astore_1
+21 aload_1
+22 ifnull 35
+25 aload_1
+26 iconst_0
+27 anewarray java/lang/String
+30 iconst_0
+31 anewarray java/lang/Object
+34 invokeinterface org/wooddog/woodstub/core/runtime/Stub#setParameters([Ljava/lang/String;[Ljava/lang/Object;)V 3 0
+39 aload_1
+40 invokeinterface org/wooddog/woodstub/core/runtime/Stub#execute()V 1 0
+45 aload_1
+46 invokeinterface org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object; 1 0
+51 astore_2
+52 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+55 aload_2
+56 areturn
+57 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+60 goto 12
+63 astore_3
+64 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+67 aload_3
+68 athrow
+69 nop
+70 nop
+71 nop
+72 aconst_null
+73 areturn
+
