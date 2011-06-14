@@ -1,8 +1,6 @@
 package org.wooddog.woodstub.core.instrumentation;
 
-import org.wooddog.woodstub.core.asm.CodeTable;
 import org.wooddog.woodstub.core.asm.Instruction;
-import org.wooddog.woodstub.core.asm.InstructionDefinition;
 import org.wooddog.woodstub.core.asm.InstructionReader;
 
 import java.io.ByteArrayInputStream;

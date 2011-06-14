@@ -1,9 +1,9 @@
 package org.wooddog.woodstub.core.instrumentation;
 
 
+import com.sun.org.apache.xpath.internal.operations.Operation;
 import org.wooddog.woodstub.core.*;
 import org.wooddog.woodstub.core.asm.*;
-import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public class StubCodeGenerator {
             out = new DataOutputStream(buffer);
 
             stub(code, method);
-            write(out);
+            write(new OperationWriter(out));
             out.flush();
             out.close();
             buffer.write(code.getCode());
@@ -547,7 +547,7 @@ public class StubCodeGenerator {
             }
         }
 
-        instruction = new Instruction(CodeTable.getInstructionDefinition(name));
+        instruction = CodeTable.createInstruction(name);
         instruction.setValues(parameters);
 
         instructions.add(instruction);
@@ -565,12 +565,12 @@ public class StubCodeGenerator {
         return size;
     }
 
-    private void write(DataOutputStream stream) throws IOException {
+    private void write(OperationWriter writer) throws IOException {
         int address;
         address = 0;
         for (Instruction instruction : instructions) {
             System.out.println(address + " " + instruction.getName() + " " + instruction.toString(instruction.getValues()));
-            instruction.write(stream);
+            writer.write(instruction);
             address += instruction.getLength();
         }
     }

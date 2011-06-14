@@ -39,61 +39,47 @@ public class InstructionReader {
 
     public static Instruction read(DataInputStream stream) throws IOException {
         int code;
-        int length;
-        InstructionDefinition definition;
         Instruction instruction;
         char[] parameterTypes;
 
         code = stream.readUnsignedByte();
-        definition = CodeTable.getInstructionDefinition(code);
+        instruction = CodeTable.createInstruction(code);
 
-        instruction = new Instruction(definition);
         parameterTypes = instruction.getParameterTypes();
-        length = 1;
 
         for (int i = 0; i < parameterTypes.length; i++) {
             switch (parameterTypes[i]) {
                 case 'b':
                     instruction.getValues()[i] = stream.readByte();
-                    length ++;
                     break;
 
                 case 'B':
                     instruction.getValues()[i] = stream.readUnsignedByte();
-                    length ++;
                     break;
 
                 case 's':
                     instruction.getValues()[i] = stream.readShort();
-                    length += 2;
                     break;
 
                 case 'S':
                     instruction.getValues()[i] = stream.readUnsignedShort();
-                    length += 2;
                     break;
 
                 case 'I':
                     instruction.getValues()[i] = stream.readInt();
-                    length += 4;
                     break;
 
                 case 'V':
                     instruction.getValues()[i] = stream.readUnsignedByte();
-                    length ++;
                     break;
 
                 case 'L':
-                    length += readTableSwitch(instruction, stream);
                     break;
 
                 default:
                     throw new InternalErrorException("unknown parameter type " + parameterTypes[i]);
             }
         }
-
-        instruction.setLength(length);
-
 
         return instruction;
     }

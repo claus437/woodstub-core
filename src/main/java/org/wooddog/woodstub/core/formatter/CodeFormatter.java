@@ -1,12 +1,7 @@
 package org.wooddog.woodstub.core.formatter;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
-import com.sun.org.apache.bcel.internal.classfile.ConstantFieldref;
-import com.sun.org.apache.bcel.internal.generic.NamedAndTyped;
-import org.wooddog.woodstub.core.ConstantPoolEntry;
 import org.wooddog.woodstub.core.InternalErrorException;
 import org.wooddog.woodstub.core.asm.Instruction;
-import org.wooddog.woodstub.core.asm.InstructionDefinition;
 import org.wooddog.woodstub.core.asm.InstructionReader;
 import org.wooddog.woodstub.core.instrumentation.*;
 

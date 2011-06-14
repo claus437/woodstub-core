@@ -21,48 +21,23 @@ import java.util.Map;
 public class Compiler {
     private List<Operation> operations;
     private List<Instruction> codeTable;
-    private Map<String, Integer> labels;
-    private Map<Instruction, String> postFixLabels;
+    private LabelTable labels;
     private ConstantPool pool;
 
     public Compiler(ConstantPool pool) {
         this.pool = pool;
         this.operations = new ArrayList<Operation>();
         this.codeTable = new ArrayList<Instruction>();
-        this.labels = new HashMap<String, Integer>();
-        this.postFixLabels = new HashMap<Instruction, String>();
+        this.labels = new LabelTable();
     }
-
 
     public void add(String operation, Object... args) {
-        if ("label".equals(operation)) {
-            labels.put((String) args[0], operations.size());
-            return;
-        }
-
-        if ("iconst".equals(operation)) {
-            operations.add(new Operation("iconst_" + args[0].toString()));
-            return;
-        }
-
-        if ("aload".equals(operation)) {
-            if ((Integer) args[0] < 5) {
-                operations.add(new Operation("aload_" + args[0].toString()));
-            } else {
-                operations.add(new Operation("aload", new Integer[]{(Integer) args[0]}));
-            }
-            return;
-        }
-
         operations.add(new Operation(operation,  args));
-
     }
-
 
     public byte[] compile() throws IOException {
         int address;
 
-        InstructionDefinition def;
         Instruction instruction;
         int[] values;
 
@@ -70,15 +45,17 @@ public class Compiler {
 
         for (Operation operation : operations) {
             if ("label".equals(operation.operation)) {
-                labels.put((String) operation.args[0], address);
+                labels.setAddress((String) operation.args[0], address);
                 continue;
             }
 
-            def = CodeTable.getInstructionDefinition(operation.operation);
-
-            instruction = new Instruction(def);
-            values = resolveValues(instruction, operation);
-            instruction.setValues(values);
+            if (isJvmOperationConstant(operation)) {
+                instruction = CodeTable.createInstruction(operation.operation + "_" + operation.args[0]);
+            } else {
+                instruction = CodeTable.createInstruction(operation.operation);
+                values = resolveValues(instruction, address, operation);
+                instruction.setValues(values);
+            }
 
             address += instruction.getLength();
             codeTable.add(instruction);
@@ -87,7 +64,11 @@ public class Compiler {
         return compile(codeTable);
     }
 
-    private int[] resolveValues(Instruction instruction, Operation operation) {
+    private boolean isJvmOperationConstant(Operation operation) {
+        return operation.args.length == 1 && CodeTable.isOperation(operation.operation + "_" + operation.args[0]);
+    }
+
+    private int[] resolveValues(Instruction instruction, int address, Operation operation) {
         char[] info;
         int[] values;
         String value;
@@ -107,7 +88,7 @@ public class Compiler {
 
             if (info[i] == 'A') {
                 if (operation.args[i] instanceof String) {
-                    postFixLabels.put(instruction, (String) operation.args[i]);
+                    labels.map(instruction, address, (String) operation.args[i], i);
                 } else {
                     values[i] = (Integer) operation.args[i];
                 }
@@ -124,7 +105,7 @@ public class Compiler {
 
             if (info[i] == 'M') {
                 value = (String) operation.args[i];
-                poolIndex = pool.addMethodRef(getClassName(value), getMehtodName(value), getSignature(value));
+                poolIndex = pool.addMethodRef(getClassName(value), getMethodName(value), getSignature(value));
                 values[i] = poolIndex;
             }
 
@@ -143,7 +124,7 @@ public class Compiler {
         return qualifiedMethod.substring(0, qualifiedMethod.indexOf("#"));
     }
 
-    private String getMehtodName(String qualifiedMethod) {
+    private String getMethodName(String qualifiedMethod) {
         return qualifiedMethod.substring(qualifiedMethod.indexOf("#") + 1, qualifiedMethod.indexOf(")") + 1);
     }
 
@@ -152,58 +133,33 @@ public class Compiler {
     }
 
     private byte[] compile(List<Instruction> codeTable) throws IOException {
+        OperationWriter operationWriter;
         ByteArrayOutputStream stream;
-        DataOutputStream dataStream;
+        int size;
 
-        resolveLabels();
-
-        stream = new ByteArrayOutputStream();
-        dataStream = new DataOutputStream(stream);
+        size = 0;
 
         for (Instruction instruction : codeTable) {
-            instruction.write(dataStream);
+            size += instruction.getLength();
         }
 
-        dataStream.close();
+        labels.setAddress("END", size);
+
+        stream = new ByteArrayOutputStream();
+        operationWriter = new OperationWriter(new DataOutputStream(stream));
+
+        for (Instruction instruction : codeTable) {
+            operationWriter.write(instruction);
+        }
+
+        operationWriter.close();
 
         return stream.toByteArray();
-    }
-
-
-    private void resolveLabels() {
-        int[] addresses;
-        int address;
-        int instructionAddress;
-        int index;
-        String label;
-
-        addresses = new int[operations.size() + 1];
-        addresses[0] = 0;
-        for (int i = 1; i < addresses.length; i++) {
-            addresses[i] = addresses[i - 1] + codeTable.get(i - 1).getLength();
-        }
-
-        labels.put("END", operations.size());
-
-        for (Instruction instruction : postFixLabels.keySet()) {
-            label = postFixLabels.get(instruction);
-            index = labels.get(label);
-            address = addresses[index];
-
-            instructionAddress = codeTable.indexOf(instruction);
-            instructionAddress = addresses[instructionAddress];
-
-            instruction.setValues(new int[]{address - instructionAddress});
-        }
     }
 
     private class Operation {
         String operation;
         Object[] args;
-
-        public Operation(String operation) {
-            this.operation = operation;
-        }
 
         private Operation(String operation, Object[] args) {
             this.operation = operation;

@@ -1,8 +1,6 @@
 package org.wooddog.woodstub.core.instrumentation;
 
 
-import org.wooddog.woodstub.core.asm.InstructionReader;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
