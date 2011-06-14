@@ -43,7 +43,7 @@ public class InstructionReader {
         char[] parameterTypes;
 
         code = stream.readUnsignedByte();
-        instruction = CodeTable.createInstruction(code);
+        instruction = OperationFactory.createInstruction(code);
 
         parameterTypes = instruction.getParameterTypes();
 

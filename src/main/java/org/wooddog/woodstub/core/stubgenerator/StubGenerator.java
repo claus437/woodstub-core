@@ -68,7 +68,7 @@ public class StubGenerator {
         compiler.add("iload", 2);
         compiler.add("ireturn");
 
-        compiler.add("label", "RESUME_TO_ORIGINAL_CODE_BLOCK");
+        compiler.setLabel("RESUME_TO_ORIGINAL_CODE_BLOCK");
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
         compiler.add("goto", "END");
 

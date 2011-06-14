@@ -1,7 +1,6 @@
 package org.wooddog.woodstub.core.instrumentation;
 
 
-import com.sun.org.apache.xpath.internal.operations.Operation;
 import org.wooddog.woodstub.core.*;
 import org.wooddog.woodstub.core.asm.*;
 
@@ -547,7 +546,7 @@ public class StubCodeGenerator {
             }
         }
 
-        instruction = CodeTable.createInstruction(name);
+        instruction = OperationFactory.createInstruction(name);
         instruction.setValues(parameters);
 
         instructions.add(instruction);

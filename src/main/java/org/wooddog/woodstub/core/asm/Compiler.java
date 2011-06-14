@@ -6,10 +6,6 @@ import org.wooddog.woodstub.core.instrumentation.ConstantPool;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,56 +15,56 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class Compiler {
-    private List<Operation> operations;
-    private List<Instruction> codeTable;
+    private CodeTable codeTable;
     private LabelTable labels;
     private ConstantPool pool;
 
     public Compiler(ConstantPool pool) {
         this.pool = pool;
-        this.operations = new ArrayList<Operation>();
-        this.codeTable = new ArrayList<Instruction>();
         this.labels = new LabelTable();
+        this.codeTable = new CodeTable();
     }
 
-    public void add(String operation, Object... args) {
-        operations.add(new Operation(operation,  args));
+    public void setLabel(String label) {
+        labels.setAddress(label, codeTable.getAddress());
     }
 
-    public byte[] compile() throws IOException {
-        int address;
-
+    public void add(String operationName, Object... args) {
         Instruction instruction;
         int[] values;
 
-        address = 0;
-
-        for (Operation operation : operations) {
-            if ("label".equals(operation.operation)) {
-                labels.setAddress((String) operation.args[0], address);
-                continue;
-            }
-
-            if (isJvmOperationConstant(operation)) {
-                instruction = CodeTable.createInstruction(operation.operation + "_" + operation.args[0]);
-            } else {
-                instruction = CodeTable.createInstruction(operation.operation);
-                values = resolveValues(instruction, address, operation);
-                instruction.setValues(values);
-            }
-
-            address += instruction.getLength();
-            codeTable.add(instruction);
+        if (isJvmOperationConstant(operationName, args)) {
+            instruction = OperationFactory.createInstruction(operationName + "_" + args[0]);
+        } else {
+            instruction = OperationFactory.createInstruction(operationName);
+            values = resolveValues(instruction, codeTable.getAddress(), args);
+            instruction.setValues(values);
         }
 
-        return compile(codeTable);
+        codeTable.add(instruction);
     }
 
-    private boolean isJvmOperationConstant(Operation operation) {
-        return operation.args.length == 1 && CodeTable.isOperation(operation.operation + "_" + operation.args[0]);
+    public byte[] compile() throws IOException {
+        OperationWriter operationWriter;
+        ByteArrayOutputStream stream;
+
+        labels.setAddress("END", codeTable.getAddress());
+
+        stream = new ByteArrayOutputStream();
+        operationWriter = new OperationWriter(new DataOutputStream(stream));
+
+        codeTable.write(operationWriter);
+
+        operationWriter.close();
+
+        return stream.toByteArray();
     }
 
-    private int[] resolveValues(Instruction instruction, int address, Operation operation) {
+    private boolean isJvmOperationConstant(String operationName, Object[] args) {
+        return args.length == 1 && OperationFactory.isOperation(operationName + "_" + args[0]);
+    }
+
+    private int[] resolveValues(Instruction instruction, int address, Object[] args) {
         char[] info;
         int[] values;
         String value;
@@ -79,39 +75,39 @@ public class Compiler {
         info = instruction.getParameterInfo();
         for (int i = 0; i < info.length; i++) {
             if (info[i] == 'V') {
-                values[i] = (Integer) operation.args[i];
+                values[i] = (Integer) args[i];
             }
 
             if (info[i] == 'F') {
-                values[i] = (Integer) operation.args[i];
+                values[i] = (Integer) args[i];
             }
 
             if (info[i] == 'A') {
-                if (operation.args[i] instanceof String) {
-                    labels.map(instruction, address, (String) operation.args[i], i);
+                if (args[i] instanceof String) {
+                    labels.map(instruction, address, (String) args[i], i);
                 } else {
-                    values[i] = (Integer) operation.args[i];
+                    values[i] = (Integer) args[i];
                 }
             }
 
             if (info[i] == 'C') {
-                if (operation.args[i] instanceof String) {
-                    poolIndex = pool.addString((String) operation.args[i]);
+                if (args[i] instanceof String) {
+                    poolIndex = pool.addString((String) args[i]);
                     values[i] = poolIndex;
                 } else {
-                    throw new UnImplementedFeatureException("pool constants (C) can only be resolved to a string not " + operation.args[i].getClass().getSimpleName());
+                    throw new UnImplementedFeatureException("pool constants (C) can only be resolved to a string not " + args[i].getClass().getSimpleName());
                 }
             }
 
             if (info[i] == 'M') {
-                value = (String) operation.args[i];
+                value = (String) args[i];
                 poolIndex = pool.addMethodRef(getClassName(value), getMethodName(value), getSignature(value));
                 values[i] = poolIndex;
             }
 
             if (info[i] == 'K') {
-                if (operation.args[i] instanceof  String) {
-                    poolIndex = pool.addClass((String) operation.args[i]);
+                if (args[i] instanceof  String) {
+                    poolIndex = pool.addClass((String) args[i]);
                     values[i] = poolIndex;
                 }
             }
@@ -130,40 +126,5 @@ public class Compiler {
 
     private String getSignature(String qualifiedMethod) {
         return qualifiedMethod.substring(qualifiedMethod.indexOf(")") + 1);
-    }
-
-    private byte[] compile(List<Instruction> codeTable) throws IOException {
-        OperationWriter operationWriter;
-        ByteArrayOutputStream stream;
-        int size;
-
-        size = 0;
-
-        for (Instruction instruction : codeTable) {
-            size += instruction.getLength();
-        }
-
-        labels.setAddress("END", size);
-
-        stream = new ByteArrayOutputStream();
-        operationWriter = new OperationWriter(new DataOutputStream(stream));
-
-        for (Instruction instruction : codeTable) {
-            operationWriter.write(instruction);
-        }
-
-        operationWriter.close();
-
-        return stream.toByteArray();
-    }
-
-    private class Operation {
-        String operation;
-        Object[] args;
-
-        private Operation(String operation, Object[] args) {
-            this.operation = operation;
-            this.args = args;
-        }
     }
 }

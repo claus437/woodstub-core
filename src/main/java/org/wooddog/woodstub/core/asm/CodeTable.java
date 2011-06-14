@@ -1,108 +1,56 @@
 package org.wooddog.woodstub.core.asm;
 
-import org.wooddog.woodstub.core.InternalErrorException;
+import com.sun.org.apache.xpath.internal.operations.Operation;
 
-import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
  * User: claus
- * Date: 30-04-11
- * Time: 11:35
+ * Date: 14-06-11
+ * Time: 10:54
  * To change this template use File | Settings | File Templates.
  */
-public class CodeTable {
-    public static final char POINTER_TYPE_CONSTANT = 'C';
+public class CodeTable implements Iterable {
+    private List<CodeEntry> list;
+    private int address;
 
-    private static final int COLUMN_NAME = 0;
-    private static final int COLUMN_CODE = 1;
-    private static final int COLUMN_ARGUMENT_DATA_TYPE = 3;
-    private static final int COLUMN_ARGUMENT_POINTER_TYPE = 4;
+    public CodeTable() {
+        list = new ArrayList<CodeEntry>();
+    }
 
-    private static final Map<String, OperationDefinition> OPERATION_NAME_MAP = new HashMap <String, OperationDefinition>();
-    private static final Map<Integer, OperationDefinition> OPERATION_CODE_MAP = new HashMap <Integer, OperationDefinition>();
+    public void add(Instruction instruction) {
+        CodeEntry entry;
 
-    static {
-        OperationDefinition definition;
-        String line;
-        BufferedReader reader;
-        InputStream stream;
+        entry = new CodeEntry();
+        entry.address = address;
+        entry.instruction = instruction;
 
-        stream = CodeTable.class.getClassLoader().getResourceAsStream("org/wooddog/woodstub/opcode-table.txt");
+        list.add(entry);
 
-        reader = new BufferedReader(new InputStreamReader(stream));
+        address += instruction.getLength();
+    }
 
-        try {
-            while((line = reader.readLine()) != null) {
-                if (!line.isEmpty() && !line.startsWith("#")) {
-                    definition = createOperationDefinition(line);
+    public int getAddress() {
+        return address;
+    }
 
-                    OPERATION_CODE_MAP.put(definition.getCode(), definition);
-                    OPERATION_NAME_MAP.put(definition.getName(), definition);
-                }
-            }
-        } catch (IOException x) {
-            throw new InstantiationError("failed reading lines of operation code table");
+    private class CodeEntry {
+        int address;
+        Instruction instruction;
+    }
+
+    public Iterator iterator() {
+        return list.iterator();
+    }
+
+    public void write(OperationWriter writer) throws IOException {
+        for (CodeEntry entry : list) {
+            writer.write(entry.instruction);
         }
-    }
-
-
-    public static Instruction createInstruction(String name) {
-        OperationDefinition def;
-
-        def = OPERATION_NAME_MAP.get(name);
-        if (def == null) {
-            throw new InternalErrorException("unknown instruction code " + name);
-        }
-
-        return new Instruction(def);
-    }
-
-    public static Instruction createInstruction(int code) {
-        OperationDefinition def;
-
-        def = OPERATION_CODE_MAP.get(code);
-        if (def == null) {
-            throw new InternalErrorException("unknown instruction code " + code);
-        }
-
-        return new Instruction(def);
-    }
-
-
-    public static boolean isOperation(String name) {
-        return OPERATION_NAME_MAP.containsKey(name);
-    }
-
-    private static OperationDefinition createOperationDefinition(String line) {
-        String[] tokens;
-        int code;
-        String name;
-        char[] parameterDataTypes;
-        char[] parameterPointerTypes;
-
-        tokens = line.split("[ \\t]+");
-
-        name = getColumnValue(COLUMN_NAME, tokens);
-        code = Integer.parseInt(getColumnValue(COLUMN_CODE, tokens), 10);
-
-        parameterDataTypes = getColumnValue(COLUMN_ARGUMENT_DATA_TYPE, tokens).toCharArray();
-        parameterPointerTypes = getColumnValue(COLUMN_ARGUMENT_POINTER_TYPE, tokens).toCharArray();
-
-        try {
-            return new OperationDefinition(code, name, parameterDataTypes, parameterPointerTypes);
-        } catch (InternalErrorException x) {
-            throw new InternalErrorException("unable to create operation definition for " + line + ", " + x.getMessage(), x);
-        }
-    }
-
-    private static String getColumnValue(int column, String[] tokens) {
-        return tokens.length > column ? tokens[column].trim() : "";
     }
 }

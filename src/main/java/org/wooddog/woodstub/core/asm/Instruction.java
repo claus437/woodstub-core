@@ -1,10 +1,5 @@
 package org.wooddog.woodstub.core.asm;
 
-import org.wooddog.woodstub.core.InternalErrorException;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 /**
  * Created by IntelliJ IDEA.
  * User: claus
@@ -71,7 +66,7 @@ public class Instruction  {
     }
 
     public boolean isArgumentConstant(int index) {
-        return definition.getParameterPointerTypes()[index] == CodeTable.POINTER_TYPE_CONSTANT;
+        return definition.getParameterPointerTypes()[index] == OperationFactory.POINTER_TYPE_CONSTANT;
     }
 
     public void setValue(int argumentIndex, int value) {

@@ -17,7 +17,7 @@ public class GetBooleanExpected {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()B");
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()Z");
 
                 if (stub != null) {
                     stub.setParameters(new String[]{}, new Object[]{});

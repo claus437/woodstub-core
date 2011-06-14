@@ -4,7 +4,7 @@ METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
  6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
  9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
 12 aload_0
-13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()B
+13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetBoolean#getBoolean()Z
 15 invokeinterface org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub; 3 0
 20 astore_1
 21 aload_1
