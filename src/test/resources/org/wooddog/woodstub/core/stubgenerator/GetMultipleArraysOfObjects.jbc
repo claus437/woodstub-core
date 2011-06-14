@@ -1,0 +1,37 @@
+METHOD: getMultipleArraysOfObjects()[[Ljava/lang/Object;, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
+ 0 invokestatic org/wooddog/woodstub/core/WoodStub#isRunning()Z
+ 3 ifeq 73
+ 6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
+ 9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
+12 aload_0
+13 ldc org/wooddog/woodstub/core/stubgenerator/templates/GetMultipleArraysOfObjects#getMultipleArraysOfObjects()[[Ljava/lang/Object;
+15 invokeinterface org/wooddog/woodstub/core/runtime/StubFactory#createStub(Ljava/lang/Object;Ljava/lang/String;)Lorg/wooddog/woodstub/core/runtime/Stub; 3 0
+20 astore_1
+21 aload_1
+22 ifnull 41
+25 aload_1
+26 iconst_0
+27 anewarray java/lang/String
+30 iconst_0
+31 anewarray java/lang/Object
+34 invokeinterface org/wooddog/woodstub/core/runtime/Stub#setParameters([Ljava/lang/String;[Ljava/lang/Object;)V 3 0
+39 aload_1
+40 invokeinterface org/wooddog/woodstub/core/runtime/Stub#execute()V 1 0
+45 aload_1
+46 invokeinterface org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object; 1 0
+51 checkcast [[Ljava/lang/Object;
+54 checkcast [[Ljava/lang/Object;
+57 astore_2
+58 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+61 aload_2
+62 areturn
+63 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+66 goto 10
+69 astore_3
+70 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
+73 aload_3
+74 athrow
+75 nop
+76 aconst_null
+77 checkcast [[Ljava/lang/Object;
+80 areturn
