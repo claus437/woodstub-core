@@ -9,7 +9,6 @@ package org.wooddog.woodstub.core.stubgenerator.templates;
  */
 public class GetBoolean {
     public boolean getBoolean() {
-        System.out.println("GOT BOOLEAN");
         return false;
     }
 }

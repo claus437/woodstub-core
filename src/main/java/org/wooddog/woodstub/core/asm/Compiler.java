@@ -48,6 +48,10 @@ public class Compiler {
         OperationWriter operationWriter;
         ByteArrayOutputStream stream;
 
+        while (codeTable.getAddress() % 4 != 0) {
+            codeTable.add(OperationFactory.createOperation("nop"));
+        }
+
         labels.setAddress("END", codeTable.getAddress());
 
         stream = new ByteArrayOutputStream();

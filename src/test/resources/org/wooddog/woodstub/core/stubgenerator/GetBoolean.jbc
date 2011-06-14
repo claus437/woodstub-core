@@ -1,6 +1,6 @@
 METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
  0 invokestatic org/wooddog/woodstub/core/WoodStub#isRunning()Z
- 3 ifeq 72
+ 3 ifeq 73
  6 invokestatic org/wooddog/woodstub/core/WoodStub#pause()V
  9 invokestatic org/wooddog/woodstub/core/WoodStub#getStubFactory()Lorg/wooddog/woodstub/core/runtime/StubFactory;
 12 aload_0
@@ -19,21 +19,21 @@ METHOD: getBoolean()Z, FLAGS: 1, MAX STACK: 3, MAX LOCAL 4
 40 invokeinterface org/wooddog/woodstub/core/runtime/Stub#execute()V 1 0
 45 aload_1
 46 invokeinterface org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object; 1 0
-51 checkcast 12
-54 invokevirtual 13
+51 checkcast java/lang/Boolean
+54 invokevirtual java/lang/Boolean#booleanValue()Z
 57 istore_2
 58 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
 61 iload_2
 62 ireturn
 63 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
-66 goto 9
+66 goto 10
 69 astore_3
 70 invokestatic org/wooddog/woodstub/core/WoodStub#resume()V
 73 aload_3
 74 athrow
-75 getstatic 15
-78 invokevirtual 13
-81 ireturn
+75 nop
+76 iconst_0
+77 ireturn
 
 EXCEPTIONS
 SPC   EPC   HPC   CTP

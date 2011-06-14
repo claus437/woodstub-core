@@ -38,7 +38,7 @@ bastore              84 (0x54)
 bipush               16 (0x10)  B   V
 caload               52 (0x34)
 castore              85 (0x55)
-checkcast           192 (0xc0)  S   P
+checkcast           192 (0xc0)  S   K
 d2f                 144 (0x90)
 d2i                 142 (0x8e)
 d2l                 143 (0x8f)
@@ -148,7 +148,7 @@ instanceof          193 (0xc1)  S    P
 invokeinterface     185 (0xb9)  SBB  MV0   # last byte should always be null
 invokespecial       183 (0xb7)  S    P
 invokestatic        184 (0xb8)  S    M     # CONSTANT_METHOD_REF
-invokevirtual       182 (0xb6)  S    P
+invokevirtual       182 (0xb6)  S    M
 ior                 128 (0x80)
 irem                112 (0x70)
 ireturn             172 (0xac)

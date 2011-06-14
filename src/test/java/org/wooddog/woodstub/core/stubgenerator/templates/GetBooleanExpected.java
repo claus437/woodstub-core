@@ -29,6 +29,7 @@ public class GetBooleanExpected {
                 WoodStub.resume();
             }
         }
-        return Boolean.FALSE;
+
+        return false;
     }
 }
