@@ -52,7 +52,7 @@ public class OperationFactory {
     }
 
 
-    public static Operation createInstruction(String name) {
+    public static Operation createOperation(String name) {
         OperationDefinition def;
 
         def = OPERATION_NAME_MAP.get(name);
@@ -63,7 +63,7 @@ public class OperationFactory {
         return new Operation(def);
     }
 
-    public static Operation createInstruction(int code) {
+    public static Operation createOperation(int code) {
         OperationDefinition def;
 
         def = OPERATION_CODE_MAP.get(code);

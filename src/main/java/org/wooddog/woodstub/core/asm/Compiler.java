@@ -34,9 +34,9 @@ public class Compiler {
         int[] values;
 
         if (isJvmOperationConstant(operationName, args)) {
-            operation = OperationFactory.createInstruction(operationName + "_" + args[0]);
+            operation = OperationFactory.createOperation(operationName + "_" + args[0]);
         } else {
-            operation = OperationFactory.createInstruction(operationName);
+            operation = OperationFactory.createOperation(operationName);
             values = resolveValues(operation, codeTable.getAddress(), args);
             operation.setValues(values);
         }
@@ -74,42 +74,44 @@ public class Compiler {
 
         info = operation.getParameterInfo();
         for (int i = 0; i < info.length; i++) {
-            if (info[i] == 'V') {
-                values[i] = (Integer) args[i];
-            }
-
-            if (info[i] == 'F') {
-                values[i] = (Integer) args[i];
-            }
-
-            if (info[i] == 'A') {
-                if (args[i] instanceof String) {
-                    labels.map(operation, address, (String) args[i], i);
-                } else {
+            switch(info[i]) {
+                case 'V':
                     values[i] = (Integer) args[i];
-                }
-            }
+                    break;
 
-            if (info[i] == 'C') {
-                if (args[i] instanceof String) {
-                    poolIndex = pool.addString((String) args[i]);
+                case 'F':
+                    values[i] = (Integer) args[i];
+                    break;
+
+                case 'A':
+                    if (args[i] instanceof String) {
+                        labels.map(operation, address, (String) args[i], i);
+                    } else {
+                        values[i] = (Integer) args[i];
+                    }
+                    break;
+
+                case 'C':
+                    if (args[i] instanceof String) {
+                        poolIndex = pool.addString((String) args[i]);
+                        values[i] = poolIndex;
+                    } else {
+                        throw new UnImplementedFeatureException("pool constants (C) can only be resolved to a string not " + args[i].getClass().getSimpleName());
+                    }
+                    break;
+
+                case 'M':
+                    value = (String) args[i];
+                    poolIndex = pool.addMethodRef(getClassName(value), getMethodName(value), getSignature(value));
                     values[i] = poolIndex;
-                } else {
-                    throw new UnImplementedFeatureException("pool constants (C) can only be resolved to a string not " + args[i].getClass().getSimpleName());
-                }
-            }
+                    break;
 
-            if (info[i] == 'M') {
-                value = (String) args[i];
-                poolIndex = pool.addMethodRef(getClassName(value), getMethodName(value), getSignature(value));
-                values[i] = poolIndex;
-            }
-
-            if (info[i] == 'K') {
-                if (args[i] instanceof  String) {
-                    poolIndex = pool.addClass((String) args[i]);
-                    values[i] = poolIndex;
-                }
+                case 'K':
+                    if (args[i] instanceof  String) {
+                        poolIndex = pool.addClass((String) args[i]);
+                        values[i] = poolIndex;
+                    }
+                    break;
             }
         }
 

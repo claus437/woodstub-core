@@ -31,7 +31,7 @@ public class DeCompile {
         while (length < code.length) {
             operation = OperationReader.read(stream);
             buffer.append(format(length, operation) + "\n");
-            length += operation.getLength();
+            length += operation.size();
         }
 
         return buffer.toString();

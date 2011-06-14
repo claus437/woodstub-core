@@ -33,7 +33,7 @@ public class OperationReader {
             operation = read(stream);
             operations.add(operation);
 
-            remaining = remaining - operation.getLength();
+            remaining = remaining - operation.size();
         }
     }
 
@@ -43,7 +43,7 @@ public class OperationReader {
         char[] parameterTypes;
 
         code = stream.readUnsignedByte();
-        operation = OperationFactory.createInstruction(code);
+        operation = OperationFactory.createOperation(code);
 
         parameterTypes = operation.getParameterTypes();
 
@@ -83,50 +83,4 @@ public class OperationReader {
 
         return operation;
     }
-
-    private static int readTableSwitch(Operation operation, DataInputStream stream) throws IOException {
-        int defaultAddress;
-        int count;
-        int[] values;
-        int length;
-
-        length = 0;
-
-        length += 3;
-
-
-        defaultAddress = stream.readInt();
-        length += 4;
-        count = stream.readInt();
-        length += 4;
-
-        values = new int[(count * 2) + 2];
-        values[0] = defaultAddress;
-        values[1] = count;
-
-        for (int i = 0; i < count * 2; i++) {
-            values[i + 2] = stream.readInt();
-            length += 4;
-        }
-
-        operation.setValues(values);
-        return length;
-    }
-
-    public void dump() {
-        int pos;
-        pos = 0;
-        System.out.println("--- CODE DUMP -");
-        for (int i = 0; i < operations.size(); i++) {
-            System.out.print("#" + i + "/" + pos + " " + operations.get(i).getCode() + " " + operations.get(i).getName() + " ");
-            for (Integer value : operations.get(i).values) {
-                System.out.print(value + " ");
-            }
-
-            pos += operations.get(i).getLength();
-            System.out.println();
-        }
-    }
-
-
 }

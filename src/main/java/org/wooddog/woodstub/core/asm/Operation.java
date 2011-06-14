@@ -40,10 +40,9 @@ public class Operation {
         this.values = values;
     }
 
-    public int getLength() {
+    public int size() {
         return definition.getSize();
     }
-
 
     public String toString(int[] values) {
         String s = "";
@@ -53,20 +52,6 @@ public class Operation {
         }
 
         return s;
-    }
-
-    private String toString(char[] values) {
-        String s = "";
-
-        for (Object i : values) {
-            s += i + ",";
-        }
-
-        return s;
-    }
-
-    public boolean isArgumentConstant(int index) {
-        return definition.getParameterPointerTypes()[index] == OperationFactory.POINTER_TYPE_CONSTANT;
     }
 
     public void setValue(int argumentIndex, int value) {

@@ -546,7 +546,7 @@ public class StubCodeGenerator {
             }
         }
 
-        operation = OperationFactory.createInstruction(name);
+        operation = OperationFactory.createOperation(name);
         operation.setValues(parameters);
 
         operations.add(operation);
@@ -558,7 +558,7 @@ public class StubCodeGenerator {
         size = 0;
 
         for (Operation operation : operations) {
-            size += operation.getLength();
+            size += operation.size();
         }
 
         return size;
@@ -570,7 +570,7 @@ public class StubCodeGenerator {
         for (Operation operation : operations) {
             System.out.println(address + " " + operation.getName() + " " + operation.toString(operation.getValues()));
             writer.write(operation);
-            address += operation.getLength();
+            address += operation.size();
         }
     }
 
@@ -612,7 +612,7 @@ public class StubCodeGenerator {
                 System.out.print(operation.getValues()[j] + " ");
             }
 
-            add += operation.getLength();
+            add += operation.size();
         }
     }
 

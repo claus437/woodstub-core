@@ -45,7 +45,7 @@ public class CodeFormatter {
             out.append(" ");
             write(out, operation);
             out.append("\n");
-            address += operation.getLength();
+            address += operation.size();
         }
         out.append("\n");
 

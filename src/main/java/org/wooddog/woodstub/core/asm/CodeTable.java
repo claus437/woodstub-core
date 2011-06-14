@@ -2,7 +2,6 @@ package org.wooddog.woodstub.core.asm;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
  * Time: 10:54
  * To change this template use File | Settings | File Templates.
  */
-public class CodeTable implements Iterable {
+public class CodeTable {
     private List<CodeEntry> list;
     private int address;
 
@@ -29,25 +28,21 @@ public class CodeTable implements Iterable {
 
         list.add(entry);
 
-        address += operation.getLength();
+        address += operation.size();
     }
 
     public int getAddress() {
         return address;
     }
 
-    private class CodeEntry {
-        int address;
-        Operation operation;
-    }
-
-    public Iterator iterator() {
-        return list.iterator();
-    }
-
     public void write(OperationWriter writer) throws IOException {
         for (CodeEntry entry : list) {
             writer.write(entry.operation);
         }
+    }
+
+    private class CodeEntry {
+        int address;
+        Operation operation;
     }
 }
