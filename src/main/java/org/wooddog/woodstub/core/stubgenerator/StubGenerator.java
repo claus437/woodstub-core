@@ -70,8 +70,8 @@ public class StubGenerator {
             compiler.add("checkcast", type.getType());
             compiler.add("invokevirtual", type.getParseMethod());
         } else if (type.isArray()) {
-            compiler.add("checkcast", "[" + type.getType() + ";");
-            compiler.add("checkcast", "[" + type.getType() + ";");
+            compiler.add("checkcast", type.getType());
+            compiler.add("checkcast", type.getType());
         } else if (! "java/lang/Object".equals(type.getType())) {
             compiler.add("checkcast", type.getType());
         }

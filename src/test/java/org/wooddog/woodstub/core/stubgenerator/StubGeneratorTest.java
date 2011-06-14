@@ -80,6 +80,18 @@ public class StubGeneratorTest {
         run("GetArrayOfIntegers", "getArrayOfIntegers()[I");
     }
 
+    @Test
+    public void testStubGetMultipleArraysOfObjects() throws Exception {
+        run("GetMultipleArraysOfObjects", "getMultipleArraysOfObjects()[[Ljava/lang/Object");
+    }
+
+    @Test
+    public void testStubGetMultipleArraysOfIntegers() throws Exception {
+        run("GetMultipleArraysOfIntegers", "getMultipleArraysOfIntegers()[[I");
+    }
+
+
+
     private void run(String test, String method) throws Exception {
         ClassReader reader;
         ConstantPool pool;

@@ -21,43 +21,42 @@ public class NativeType {
     private boolean array;
 
     static {
-        TYPES.put('Z', new NativeType(Boolean.class, "booleanValue()Z", 'i'));
-        TYPES.put('B', new NativeType(Byte.class, "byteValue()B", 'i'));
-        TYPES.put('C', new NativeType(Character.class, "charValue()C", 'i'));
-        TYPES.put('S', new NativeType(Short.class, "shortValue()S", 'i'));
-        TYPES.put('I', new NativeType(Integer.class, "intValue()I", 'i'));
-        TYPES.put('F', new NativeType(Float.class, "floatValue()F", 'f'));
-        TYPES.put('D', new NativeType(Double.class, "doubleValue()D", 'd'));
-        TYPES.put('J', new NativeType(Long.class, "longValue()J", 'l'));
+        TYPES.put('Z', new NativeType("java/lang/Boolean", "booleanValue()Z", 'i'));
+        TYPES.put('B', new NativeType("java/lang/Byte", "byteValue()B", 'i'));
+        TYPES.put('C', new NativeType("java/lang/Character", "charValue()C", 'i'));
+        TYPES.put('S', new NativeType("java/lang/Short", "shortValue()S", 'i'));
+        TYPES.put('I', new NativeType("java/lang/Integer", "intValue()I", 'i'));
+        TYPES.put('F', new NativeType("java/lang/Float", "floatValue()F", 'f'));
+        TYPES.put('D', new NativeType("java/lang/Double", "doubleValue()D", 'd'));
+        TYPES.put('J', new NativeType("java/lang/Long", "longValue()J", 'l'));
     }
 
-    private NativeType(Class clazz, String parseMethod, char operationPrefix) {
-        this.type = clazz.getCanonicalName().replaceAll("\\.", "/");
+    private NativeType(String type, String parseMethod, char operationPrefix) {
+        this.type = type;
         this.parseMethod = this.type + "#" + parseMethod;
         this.operationPrefix = operationPrefix;
         this.size = operationPrefix == 'd' || operationPrefix == 'l' ? 2 : 1;
         this.primitive = true;
     }
 
-    private NativeType(String type) {
-        this.type = type;
+    private NativeType(String signature) {
+        this.type = getObjectType(signature);
         this.parseMethod = null;
         this.operationPrefix = 'a';
         this.size = 1;
         this.primitive = false;
+        this.array = isArray(signature);
     }
 
     public static NativeType getNativeType(String signature) {
         NativeType nativeType;
         char type;
 
-        type = signature.charAt(signature.indexOf(")") + 1);
-        nativeType = TYPES.get(type);
-        if (nativeType == null) {
-            nativeType = new NativeType(signature.substring(signature.indexOf(")") + 2, signature.length() - 1));
-            if (signature.charAt(signature.indexOf(")") + 1) == '[') {
-                nativeType.array = true;
-            }
+        if (isPrimitiveType(signature)) {
+            type = signature.charAt(signature.indexOf(")") + 1);
+            nativeType = TYPES.get(type);
+        } else {
+            nativeType = new NativeType(signature);
         }
 
         return nativeType;
@@ -93,5 +92,33 @@ public class NativeType {
 
     public boolean isArray() {
         return array;
+    }
+
+    private String getObjectType(String signature) {
+        String type;
+
+        if (isArray(signature)) {
+            type = signature.substring(signature.indexOf("["));
+        } else {
+            type = signature.substring(signature.indexOf(")") + 2, signature.length() - 1);
+        }
+
+        return type;
+    }
+
+    private boolean isArray(String signature) {
+        return signature.charAt(signature.indexOf(")") + 1) == '[';
+    }
+
+    private static boolean isPrimitiveType(String signature) {
+        char type;
+
+        type = signature.charAt(signature.indexOf(")") + 1);
+
+        return type != 'L' && type != '[';
+    }
+
+    private String getPrimitiveType(String signature) {
+        return signature.substring(signature.indexOf(")") + 1, signature.length());
     }
 }
