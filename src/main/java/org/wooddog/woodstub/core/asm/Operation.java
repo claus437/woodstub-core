@@ -7,11 +7,11 @@ package org.wooddog.woodstub.core.asm;
  * Time: 20:00
  * To change this template use File | Settings | File Templates.
  */
-public class Instruction  {
+public class Operation {
     private OperationDefinition definition;
     protected int[] values;
 
-    Instruction(OperationDefinition definition) {
+    Operation(OperationDefinition definition) {
         this.definition = definition;
         this.values = new int[definition.getParameterDataTypes().length];
     }

@@ -52,26 +52,26 @@ public class OperationFactory {
     }
 
 
-    public static Instruction createInstruction(String name) {
+    public static Operation createInstruction(String name) {
         OperationDefinition def;
 
         def = OPERATION_NAME_MAP.get(name);
         if (def == null) {
-            throw new InternalErrorException("unknown instruction code " + name);
+            throw new InternalErrorException("unknown operation code " + name);
         }
 
-        return new Instruction(def);
+        return new Operation(def);
     }
 
-    public static Instruction createInstruction(int code) {
+    public static Operation createInstruction(int code) {
         OperationDefinition def;
 
         def = OPERATION_CODE_MAP.get(code);
         if (def == null) {
-            throw new InternalErrorException("unknown instruction code " + code);
+            throw new InternalErrorException("unknown operation code " + code);
         }
 
-        return new Instruction(def);
+        return new Operation(def);
     }
 
 

@@ -90,8 +90,8 @@ public class AttributeCode implements Attribute {
         code = new byte[codeLength];
         stream.readFully(code);
         /*
-        InstructionReader ir;
-        ir = new InstructionReader();
+        OperationReader ir;
+        ir = new OperationReader();
         ir.readBlock(stream, codeLength);
         */
         exceptionCount = stream.readUnsignedShort();

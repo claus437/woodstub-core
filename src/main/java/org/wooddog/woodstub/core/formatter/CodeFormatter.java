@@ -1,8 +1,8 @@
 package org.wooddog.woodstub.core.formatter;
 
 import org.wooddog.woodstub.core.InternalErrorException;
-import org.wooddog.woodstub.core.asm.Instruction;
-import org.wooddog.woodstub.core.asm.InstructionReader;
+import org.wooddog.woodstub.core.asm.Operation;
+import org.wooddog.woodstub.core.asm.OperationReader;
 import org.wooddog.woodstub.core.instrumentation.*;
 
 import java.io.ByteArrayInputStream;
@@ -25,8 +25,8 @@ public class CodeFormatter {
     }
 
     public void write(AttributeCode code, StringBuffer out) throws IOException {
-        InstructionReader reader;
-        List<Instruction> instructionList;
+        OperationReader reader;
+        List<Operation> operationList;
         int address;
         int maxWidth;
 
@@ -34,18 +34,18 @@ public class CodeFormatter {
         out.append(", MAX LOCAL " + code.getMaxLocals());
         out.append("\n");
 
-        reader = new InstructionReader();
+        reader = new OperationReader();
         reader.readBlock(new DataInputStream(new ByteArrayInputStream(code.getCode())), code.getCode().length);
 
-        instructionList = reader.getInstructions();
+        operationList = reader.getOperations();
         address = 0;
         maxWidth = Integer.toString(code.getCode().length).length();
-        for (Instruction instruction : instructionList) {
+        for (Operation operation : operationList) {
             StringFormatter.alignRight(out, maxWidth, address);
             out.append(" ");
-            write(out, instruction);
+            write(out, operation);
             out.append("\n");
-            address += instruction.getLength();
+            address += operation.getLength();
         }
         out.append("\n");
 
@@ -114,13 +114,13 @@ public class CodeFormatter {
         out.append("\n");
     }
 
-    public void write(StringBuffer out, Instruction instruction) {
+    public void write(StringBuffer out, Operation operation) {
         char[] infoCodes;
         int[] values;
 
-        out.append(instruction.getName());
-        infoCodes = instruction.getParameterInfo();
-        values = instruction.getValues();
+        out.append(operation.getName());
+        infoCodes = operation.getParameterInfo();
+        values = operation.getValues();
 
         for (int i = 0; i < infoCodes.length; i++) {
             out.append(" ");

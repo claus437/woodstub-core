@@ -30,18 +30,18 @@ public class Compiler {
     }
 
     public void add(String operationName, Object... args) {
-        Instruction instruction;
+        Operation operation;
         int[] values;
 
         if (isJvmOperationConstant(operationName, args)) {
-            instruction = OperationFactory.createInstruction(operationName + "_" + args[0]);
+            operation = OperationFactory.createInstruction(operationName + "_" + args[0]);
         } else {
-            instruction = OperationFactory.createInstruction(operationName);
-            values = resolveValues(instruction, codeTable.getAddress(), args);
-            instruction.setValues(values);
+            operation = OperationFactory.createInstruction(operationName);
+            values = resolveValues(operation, codeTable.getAddress(), args);
+            operation.setValues(values);
         }
 
-        codeTable.add(instruction);
+        codeTable.add(operation);
     }
 
     public byte[] compile() throws IOException {
@@ -64,15 +64,15 @@ public class Compiler {
         return args.length == 1 && OperationFactory.isOperation(operationName + "_" + args[0]);
     }
 
-    private int[] resolveValues(Instruction instruction, int address, Object[] args) {
+    private int[] resolveValues(Operation operation, int address, Object[] args) {
         char[] info;
         int[] values;
         String value;
         int poolIndex;
 
-        values = new int[instruction.getParameterTypes().length];
+        values = new int[operation.getParameterTypes().length];
 
-        info = instruction.getParameterInfo();
+        info = operation.getParameterInfo();
         for (int i = 0; i < info.length; i++) {
             if (info[i] == 'V') {
                 values[i] = (Integer) args[i];
@@ -84,7 +84,7 @@ public class Compiler {
 
             if (info[i] == 'A') {
                 if (args[i] instanceof String) {
-                    labels.map(instruction, address, (String) args[i], i);
+                    labels.map(operation, address, (String) args[i], i);
                 } else {
                     values[i] = (Integer) args[i];
                 }

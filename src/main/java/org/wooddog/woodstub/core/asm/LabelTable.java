@@ -27,12 +27,12 @@ public class LabelTable {
         remap();
     }
 
-    public void map(Instruction instruction, int address, String label, int argumentIndex) {
+    public void map(Operation operation, int address, String label, int argumentIndex) {
         InstructionLabelMap instructionLabelMap;
 
         instructionLabelMap = new InstructionLabelMap();
         instructionLabelMap.address = address;
-        instructionLabelMap.instruction = instruction;
+        instructionLabelMap.operation = operation;
         instructionLabelMap.label = label;
         instructionLabelMap.argumentIndex = argumentIndex;
 
@@ -46,13 +46,13 @@ public class LabelTable {
             address = labels.get(map.label);
 
             if (address != null) {
-                map.instruction.setValue(map.argumentIndex, address - map.address);
+                map.operation.setValue(map.argumentIndex, address - map.address);
             }
         }
     }
 
     private class InstructionLabelMap {
-        Instruction instruction;
+        Operation operation;
         String label;
         int argumentIndex;
         int address;

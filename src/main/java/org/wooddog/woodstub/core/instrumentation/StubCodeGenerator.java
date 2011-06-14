@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class StubCodeGenerator {
     private static final Logger LOGGER = Logger.getLogger(StubCodeGenerator.class.getName());
-    private List<Instruction> instructions;
+    private List<Operation> operations;
     private byte[] code;
     private ConstantPool pool;
     private ClassReader reader;
@@ -70,7 +70,7 @@ public class StubCodeGenerator {
         String methodName;
 
 
-        instructions = new ArrayList<Instruction>();
+        operations = new ArrayList<Operation>();
         reader = new ClassReader();
         reader.read(stream);
 
@@ -93,7 +93,7 @@ public class StubCodeGenerator {
         }
 
         for (FieldInfo method : methods) {
-            instructions.clear();
+            operations.clear();
 
             methodName = ((ConstantUtf8Info) pool.get(method.getNameIndex())).getValue();
             System.out.println("mn: " + methodName);
@@ -231,7 +231,7 @@ public class StubCodeGenerator {
 
         addInstruction("invokestatic", idxMethodResume);
         int gotoJumpOffset = calculateCodeSize();
-        int goto_index = instructions.size();
+        int goto_index = operations.size();
         addInstruction("goto", -1);
 
         int additional = methodDescriptor.substring(methodDescriptor.lastIndexOf(")") + 1).charAt(0) == 'J'
@@ -250,9 +250,9 @@ public class StubCodeGenerator {
             size ++;
         }
 
-        instructions.get(1).setValues(new int[]{size - 3});
-        instructions.get(11).setValues(new int[]{gotoJumpOffset - 3 - jumpOffset});
-        instructions.get(goto_index).setValues(new int[]{size - gotoJumpOffset});
+        operations.get(1).setValues(new int[]{size - 3});
+        operations.get(11).setValues(new int[]{gotoJumpOffset - 3 - jumpOffset});
+        operations.get(goto_index).setValues(new int[]{size - gotoJumpOffset});
 
         List<TableException> exceptions = code.getExceptions();
         for (TableException exception : exceptions) {
@@ -496,7 +496,7 @@ public class StubCodeGenerator {
     }
 
     private void addInstruction(String name, int... parameters) {
-        Instruction instruction;
+        Operation operation;
 
         if ("aload".equals(name)) {
             if (parameters[0] < 4) {
@@ -546,10 +546,10 @@ public class StubCodeGenerator {
             }
         }
 
-        instruction = OperationFactory.createInstruction(name);
-        instruction.setValues(parameters);
+        operation = OperationFactory.createInstruction(name);
+        operation.setValues(parameters);
 
-        instructions.add(instruction);
+        operations.add(operation);
     }
 
     private int calculateCodeSize() {
@@ -557,8 +557,8 @@ public class StubCodeGenerator {
 
         size = 0;
 
-        for (Instruction instruction : instructions) {
-            size += instruction.getLength();
+        for (Operation operation : operations) {
+            size += operation.getLength();
         }
 
         return size;
@@ -567,10 +567,10 @@ public class StubCodeGenerator {
     private void write(OperationWriter writer) throws IOException {
         int address;
         address = 0;
-        for (Instruction instruction : instructions) {
-            System.out.println(address + " " + instruction.getName() + " " + instruction.toString(instruction.getValues()));
-            writer.write(instruction);
-            address += instruction.getLength();
+        for (Operation operation : operations) {
+            System.out.println(address + " " + operation.getName() + " " + operation.toString(operation.getValues()));
+            writer.write(operation);
+            address += operation.getLength();
         }
     }
 
@@ -597,22 +597,22 @@ public class StubCodeGenerator {
     }
 
     public void dump() {
-        Instruction instruction;
+        Operation operation;
         int add;
 
         add = 0;
 
         System.out.println();
-        for (int i = 0; i < instructions.size(); i++) {
-            instruction = instructions.get(i);
+        for (int i = 0; i < operations.size(); i++) {
+            operation = operations.get(i);
 
-            System.out.print("\n" + add + " " + instruction.getName() + " ");
+            System.out.print("\n" + add + " " + operation.getName() + " ");
 
-            for (int j = 0; j < instruction.getValues().length; j++) {
-                System.out.print(instruction.getValues()[j] + " ");
+            for (int j = 0; j < operation.getValues().length; j++) {
+                System.out.print(operation.getValues()[j] + " ");
             }
 
-            add += instruction.getLength();
+            add += operation.getLength();
         }
     }
 

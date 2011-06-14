@@ -1,7 +1,7 @@
 package org.wooddog.woodstub.core.instrumentation;
 
-import org.wooddog.woodstub.core.asm.Instruction;
-import org.wooddog.woodstub.core.asm.InstructionReader;
+import org.wooddog.woodstub.core.asm.Operation;
+import org.wooddog.woodstub.core.asm.OperationReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -18,7 +18,7 @@ public class DeCompile {
     public static String asSource(byte[] code) throws IOException {
         DataInputStream stream;
         int length;
-        Instruction instruction;
+        Operation operation;
         StringBuffer buffer;
 
 
@@ -29,19 +29,19 @@ public class DeCompile {
         buffer = new StringBuffer();
 
         while (length < code.length) {
-            instruction = InstructionReader.read(stream);
-            buffer.append(format(length, instruction) + "\n");
-            length += instruction.getLength();
+            operation = OperationReader.read(stream);
+            buffer.append(format(length, operation) + "\n");
+            length += operation.getLength();
         }
 
         return buffer.toString();
     }
 
-    private static String format(int address, Instruction instruction) {
+    private static String format(int address, Operation operation) {
         String source;
 
-        source = address + " " + instruction.getName() + " ";
-        for (int value : instruction.getValues()) {
+        source = address + " " + operation.getName() + " ";
+        for (int value : operation.getValues()) {
             source += value + " ";
         }
 

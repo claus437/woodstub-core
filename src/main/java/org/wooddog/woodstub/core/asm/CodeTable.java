@@ -1,8 +1,5 @@
 package org.wooddog.woodstub.core.asm;
 
-import com.sun.org.apache.xpath.internal.operations.Operation;
-
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,16 +20,16 @@ public class CodeTable implements Iterable {
         list = new ArrayList<CodeEntry>();
     }
 
-    public void add(Instruction instruction) {
+    public void add(Operation operation) {
         CodeEntry entry;
 
         entry = new CodeEntry();
         entry.address = address;
-        entry.instruction = instruction;
+        entry.operation = operation;
 
         list.add(entry);
 
-        address += instruction.getLength();
+        address += operation.getLength();
     }
 
     public int getAddress() {
@@ -41,7 +38,7 @@ public class CodeTable implements Iterable {
 
     private class CodeEntry {
         int address;
-        Instruction instruction;
+        Operation operation;
     }
 
     public Iterator iterator() {
@@ -50,7 +47,7 @@ public class CodeTable implements Iterable {
 
     public void write(OperationWriter writer) throws IOException {
         for (CodeEntry entry : list) {
-            writer.write(entry.instruction);
+            writer.write(entry.operation);
         }
     }
 }

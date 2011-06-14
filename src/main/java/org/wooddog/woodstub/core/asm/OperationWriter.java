@@ -20,15 +20,15 @@ public class OperationWriter implements Closeable {
         this.stream = stream;
     }
 
-    public void write(Instruction instruction) throws IOException {
+    public void write(Operation operation) throws IOException {
         char[] parameterTypes;
         int[] values;
 
-        values = instruction.getValues();
+        values = operation.getValues();
 
-        parameterTypes = instruction.getParameterTypes();
+        parameterTypes = operation.getParameterTypes();
 
-        stream.writeByte(instruction.getCode());
+        stream.writeByte(operation.getCode());
         for (int i = 0; i < parameterTypes.length; i++) {
             switch (Character.toUpperCase(parameterTypes[i])) {
                 case 'B':
@@ -44,7 +44,7 @@ public class OperationWriter implements Closeable {
                     break;
 
                 default:
-                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i] + " instruction code");
+                    throw new InternalErrorException("unknown parameter type " + parameterTypes[i] + " operation code");
             }
         }
     }
