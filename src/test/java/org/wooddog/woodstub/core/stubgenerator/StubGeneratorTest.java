@@ -91,6 +91,11 @@ public class StubGeneratorTest {
     }
 
 
+    @Test
+    public void testStubSetBoolean() throws Exception {
+        run("SetBoolean", "setBoolean(Z)V");
+    }
+
 
     private void run(String test, String method) throws Exception {
         ClassReader reader;

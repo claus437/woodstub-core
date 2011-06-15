@@ -29,6 +29,7 @@ public class NativeType {
         TYPES.put('F', new NativeType("java/lang/Float", "floatValue()F", 'f'));
         TYPES.put('D', new NativeType("java/lang/Double", "doubleValue()D", 'd'));
         TYPES.put('J', new NativeType("java/lang/Long", "longValue()J", 'l'));
+        TYPES.put('V', new NativeType("void", null, 'V'));
     }
 
     private NativeType(String type, String parseMethod, char operationPrefix) {
@@ -92,6 +93,10 @@ public class NativeType {
 
     public boolean isArray() {
         return array;
+    }
+
+    public boolean isVoid() {
+        return "void".equals(type);
     }
 
     private String getObjectType(String signature) {

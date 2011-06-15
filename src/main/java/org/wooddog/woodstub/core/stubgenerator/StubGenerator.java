@@ -1,16 +1,10 @@
 package org.wooddog.woodstub.core.stubgenerator;
 
-import org.omg.CORBA.PRIVATE_MEMBER;
-import org.wooddog.woodstub.core.ClassReader;
-import org.wooddog.woodstub.core.InternalErrorException;
-import org.wooddog.woodstub.core.asm.*;
 import org.wooddog.woodstub.core.asm.Compiler;
 import org.wooddog.woodstub.core.instrumentation.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by IntelliJ IDEA.
@@ -63,23 +57,7 @@ public class StubGenerator {
         compiler.add("aload", 1);
         compiler.add("invokeinterface", "org/wooddog/woodstub/core/runtime/Stub#execute()V", 1, 0);
 
-        compiler.add("aload", 1);
-        compiler.add("invokeinterface", "org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object;", 1, 0);
-
-        if (type.isPrimitive()) {
-            compiler.add("checkcast", type.getType());
-            compiler.add("invokevirtual", type.getParseMethod());
-        } else if (type.isArray()) {
-            compiler.add("checkcast", type.getType());
-            compiler.add("checkcast", type.getType());
-        } else if (! "java/lang/Object".equals(type.getType())) {
-            compiler.add("checkcast", type.getType());
-        }
-
-        compiler.add(type.getStoreOperation(), 2);
-        compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
-        compiler.add(type.getLoadOperation(), 2);
-        compiler.add(type.getReturnOperation());
+        addReturnBlock(compiler, type);
 
         compiler.setLabel("RESUME_TO_ORIGINAL_CODE_BLOCK");
         compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
@@ -113,5 +91,42 @@ public class StubGenerator {
         if (code.getMaxStack() < 3) {
             code.setMaxStack(3);
         }
+    }
+
+
+    private void addReturnBlock(Compiler compiler, NativeType type) {
+        if (type.isVoid()) {
+            addReturnVoidBlock(compiler, type);
+        } else {
+            addReturnValueBlock(compiler, type);
+        }
+    }
+
+    private void addReturnVoidBlock(Compiler compile, NativeType type) {
+
+    }
+
+
+
+    private void addReturnValueBlock(Compiler compiler, NativeType type) {
+        compiler.add("aload", 1);
+        compiler.add("invokeinterface", "org/wooddog/woodstub/core/runtime/Stub#getResult()Ljava/lang/Object;", 1, 0);
+
+        if (! "java/lang/Object".equals(type.getType())) {
+            compiler.add("checkcast", type.getType());
+        }
+
+        if (type.isPrimitive()) {
+            compiler.add("invokevirtual", type.getParseMethod());
+        }
+
+        if (type.isArray()) {
+            compiler.add("checkcast", type.getType());
+        }
+
+        compiler.add(type.getStoreOperation(), 2);
+        compiler.add("invokestatic", "org/wooddog/woodstub/core/WoodStub#resume()V");
+        compiler.add(type.getLoadOperation(), 2);
+        compiler.add(type.getReturnOperation());
     }
 }

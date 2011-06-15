@@ -8,40 +8,37 @@ import java.io.IOException;
 /**
  * Created by IntelliJ IDEA.
  * User: claus
- * Date: 14-06-11
- * Time: 16:15
+ * Date: 15-06-11
+ * Time: 10:17
  * To change this template use File | Settings | File Templates.
  */
-public class GetDouble {
-    public double getDouble() {
-        return 0;
+public class SetBoolean {
+    public void setBoolean(boolean bool) {
     }
 }
 
-class GetDoubleExpected extends ToSource {
-    public double getDouble() throws Throwable {
+class SetBooleanExpected extends ToSource {
+    public void setBoolean(boolean bool) throws Throwable {
         if (WoodStub.isRunning()) {
             WoodStub.pause();
 
             try {
-                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/stubgenerator/templates/GetDouble#getDouble()D");
+                Stub stub = WoodStub.getStubFactory().createStub(this, "org/wooddog/woodstub/core/stubgenerator/templates/SetBoolean#SetBoolean(Z)V");
 
                 if (stub != null) {
-                    stub.setParameters(new String[]{}, new Object[]{});
+                    stub.setParameters(new String[]{"bool"}, new Object[]{bool});
 
                     stub.execute();
-                    return ((Double) stub.getResult()).doubleValue();
                 }
             } finally {
                 WoodStub.resume();
             }
         }
-
-        return 0;
     }
 
     public static void main(String[] args) throws IOException {
-        new GetDoubleExpected().toByteCode();
+        new SetBooleanExpected().toByteCode();
     }
 }
+
 
