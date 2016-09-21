@@ -68,10 +68,6 @@ public class WoodStub {
     public static void complete() {
     }
 
-    public static ExecutionTree getExecutionTree() {
-        return null;
-    }
-
     public static void flushLog() {
         handler.flush();
     }

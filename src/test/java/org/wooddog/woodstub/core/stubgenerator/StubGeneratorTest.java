@@ -1,6 +1,7 @@
 package org.wooddog.woodstub.core.stubgenerator;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.wooddog.woodstub.core.ClassReader;
 import org.wooddog.woodstub.core.IOUtil;
@@ -18,6 +19,7 @@ import java.io.InputStream;
  * Time: 14:34
  * To change this template use File | Settings | File Templates.
  */
+@Ignore
 public class StubGeneratorTest {
 
     @Test

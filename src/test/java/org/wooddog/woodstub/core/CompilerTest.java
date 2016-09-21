@@ -17,6 +17,7 @@ import java.io.DataOutputStream;
  * Time: 17:01
  * To change this template use File | Settings | File Templates.
  */
+@Ignore
 public class CompilerTest {
     private static final int ALOAD = 25;
     private static final int LDC = 18;

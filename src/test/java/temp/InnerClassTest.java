@@ -3,7 +3,6 @@ package temp;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.wooddog.woodstub.core.ExecutionTree;
 import org.wooddog.woodstub.core.IOUtil;
 import org.wooddog.woodstub.core.WoodStub;
 import org.wooddog.woodstub.core.runtime.Stub;

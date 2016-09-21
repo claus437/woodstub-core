@@ -3,3 +3,6 @@ jdk:
 
 script:
   mvn clean package
+
+language:
+  java
